@@ -342,6 +342,9 @@ class WorkitemModel(AbstractDropModel):
         else:
             return self._backlog_or_tag.get_parent().find_category_by_id(self._selected_category_uid)
 
+    def is_category_selected(self) -> bool:
+        return self._selected_category_uid is not None
+
     def group_by_category(self, workitems: list[Workitem], parent_category: Category) -> (dict[Category, list[Workitem]], list[Workitem]):
         res: dict[Category|None, list[Workitem]] = dict()
         uncategorized: list[Workitem] = list()

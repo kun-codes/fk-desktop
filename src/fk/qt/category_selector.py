@@ -48,6 +48,9 @@ class CategorySelector(QMenu):
             self._actions[category_uid].setChecked(selected_uid == category_uid)
         source.get_settings().set({'Application.selected_category': selected_uid})
 
+    def _on_category_cleared(self, source: AbstractEventSource):
+        source.get_settings().set({'Application.selected_category': ''})
+
     def _create_action(self, cat: Category, selected_category_uid: str, source: AbstractEventSource) -> QAction:
         print('create_action', cat, selected_category_uid, source)
         cat_uid = cat.get_uid()
@@ -55,7 +58,7 @@ class CategorySelector(QMenu):
         action.setCheckable(True)
         action.setObjectName(f'category-selector-{cat_uid}')
         action.setChecked(cat_uid == selected_category_uid)
-        action.toggled.connect(lambda checked: self._on_category_selected(cat_uid, source) if checked else None)
+        action.toggled.connect(lambda checked: self._on_category_selected(cat_uid, source) if checked else self._on_category_cleared(source))
         return action
 
     def reload_actions(self, source: AbstractEventSource) -> None:

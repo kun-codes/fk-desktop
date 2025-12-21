@@ -164,22 +164,22 @@ class CategoryTableView(AbstractTableView[User, Category]):
     def define_actions(actions: Actions):
         actions.add('categories_table.newCategory',
                     "New Category",
-                    'Ctrl+N',
+                    '',
                     "tool-add",
                     CategoryTableView.create_category)
         actions.add('categories_table.renameCategory',
                     "Rename Category",
-                    'Ctrl+R',
+                    '',
                     "tool-rename",
                     CategoryTableView.rename_selected_category)
         actions.add('categories_table.deleteCategory',
                     "Delete Category",
-                    'F8',
+                    '',
                     "tool-delete",
                     CategoryTableView.delete_selected_category)
         actions.add('categories_table.dumpCategory',
                     "Dump (DEBUG)",
-                    'Ctrl+D',
+                    '',
                     None,
                     CategoryTableView.dump_selected_category)
         actions.add('categories_table.openSubCategory',

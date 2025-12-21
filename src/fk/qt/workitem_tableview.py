@@ -75,13 +75,15 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         self.model().dataChanged.connect(self._on_data_changed)
 
     def _on_data_changed(self):
-        # Create spans for categories
         self.clearSpans()
-        model = self.model()
-        for i in range(model.rowCount()):
-            index = model.index(i, 0)
-            if index.data(501) == 'category':
-                self.setSpan(i, 0, 1, 3)
+        if self.model().is_category_selected():
+            # Create spans for categories
+            model = self.model()
+            for i in range(model.rowCount()):
+                index = model.index(i, 0)
+                if index.data(501) == 'category':
+                    self.setSpan(i, 0, 1, 3)
+        self._resize()
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.theme' in new_values or 'Application.feature_tags' in new_values:
