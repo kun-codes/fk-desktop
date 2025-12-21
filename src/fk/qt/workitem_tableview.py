@@ -71,6 +71,17 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
             timer.on(PomodoroTimer.TimerTick, self._on_tick)
         else:
             logger.debug('WorkitemTableView will not update automatically on timer ticks')
+        self.model().headerDataChanged.connect(self._on_data_changed)
+        self.model().dataChanged.connect(self._on_data_changed)
+
+    def _on_data_changed(self):
+        # Create spans for categories
+        self.clearSpans()
+        model = self.model()
+        for i in range(model.rowCount()):
+            index = model.index(i, 0)
+            if index.data(501) == 'category':
+                self.setSpan(i, 0, 1, 3)
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.theme' in new_values or 'Application.feature_tags' in new_values:
@@ -285,9 +296,10 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         self._source.set_config_parameters({'Application.hide_completed': str(checked)})
 
     def _resize(self) -> None:
-        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.horizontalHeader().resizeSection(0, 16)
 
         # Resizing to contents results in visible blinking on Kubuntu 20.04, so cannot be enabled by default.
         self.verticalHeader().setSectionResizeMode(

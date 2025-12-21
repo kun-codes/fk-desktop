@@ -48,6 +48,9 @@ class WorkitemTextDelegate(AbstractItemDelegate):
                 f'">{text}</span>')
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+        if index.data(501) == 'stub':
+            return
+
         is_placeholder = index.data(501) == 'drop'
         is_category = index.data(501) == 'category'
         painter.save()

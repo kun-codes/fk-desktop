@@ -202,14 +202,14 @@ class MainWindow:
         super().__init__()
 
     @staticmethod
-    def toggle_focus_mode(state: bool):
+    def toggle_focus_mode(_, state: bool):
         if state:
             to_focus_mode()
         else:
             from_focus_mode()
 
     @staticmethod
-    def toggle_pin_window(state: bool):
+    def toggle_pin_window(_, state: bool):
         is_checked: bool = 'window.pinWindow' in actions and actions['window.pinWindow'].isChecked()
         settings.set({'Application.always_on_top': str(is_checked)})
 
@@ -252,11 +252,11 @@ class MainWindow:
             wizard.show()
 
     @staticmethod
-    def toggle_backlogs(enabled):
+    def toggle_backlogs(_, enabled):
         settings.set({'Application.backlogs_visible': str(enabled)})
 
     @staticmethod
-    def toggle_users(enabled):
+    def toggle_users(_, enabled):
         settings.set({'Application.users_visible': str(enabled)})
 
     @staticmethod

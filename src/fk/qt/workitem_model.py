@@ -15,7 +15,6 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import logging
-import random
 
 from PySide6 import QtGui, QtWidgets
 from PySide6.QtCore import Qt, QSize
@@ -31,7 +30,8 @@ from fk.core.events import AfterWorkitemRename, AfterWorkitemComplete, AfterWork
 from fk.core.pomodoro import POMODORO_TYPE_TRACKER, Pomodoro
 from fk.core.tag import Tag
 from fk.core.workitem import Workitem
-from fk.core.workitem_strategies import RenameWorkitemStrategy, ReorderWorkitemStrategy
+from fk.core.workitem_strategies import RenameWorkitemStrategy, ReorderWorkitemStrategy, \
+    UpdateWorkitemCategoriesStrategy
 from fk.qt.abstract_drop_model import AbstractDropModel, StubItem
 
 logger = logging.getLogger(__name__)
@@ -342,8 +342,8 @@ class WorkitemModel(AbstractDropModel):
         else:
             return self._backlog_or_tag.get_parent().find_category_by_id(self._selected_category_uid)
 
-    def group_by_category(self, workitems: list[Workitem], parent_category: Category) -> dict[Category, list[Workitem]]:
-        res: dict[Category, list[Workitem]] = dict()
+    def group_by_category(self, workitems: list[Workitem], parent_category: Category) -> (dict[Category, list[Workitem]], list[Workitem]):
+        res: dict[Category|None, list[Workitem]] = dict()
         uncategorized: list[Workitem] = list()
         cats = parent_category.values()
 
@@ -360,10 +360,7 @@ class WorkitemModel(AbstractDropModel):
             if not found:
                 uncategorized.append(w)
 
-        if len(uncategorized) > 0:
-            res[parent_category.get_parent().get_parent()['#none']] = uncategorized
-
-        return res
+        return res, uncategorized
 
     def load(self, backlog_or_tag: Backlog | Tag) -> None:
         logger.debug(f'WorkitemModel.load({backlog_or_tag})')
@@ -383,17 +380,23 @@ class WorkitemModel(AbstractDropModel):
                         continue
                     self.appendRow(self.item_for_object(workitem))
             else:
-                grouped = self.group_by_category(workitems, parent_category)
+                grouped, uncategorized = self.group_by_category(workitems, parent_category)
+
+                # First add uncategorized items
+                for workitem in uncategorized:
+                    if not self._hide_completed or not workitem.is_sealed():
+                        self.appendRow(self.item_for_object(workitem))
+
+                # Then all categories below
                 for category in grouped.keys():
                     self.appendRow([
-                        StubItem(),
                         CategoryItem(category, self._font_category),
-                        CategoryItem(category, self._font_category)
+                        StubItem(),
+                        StubItem(),
                     ])
                     for workitem in grouped[category]:
-                        if self._hide_completed and workitem.is_sealed():
-                            continue
-                        self.appendRow(self.item_for_object(workitem))
+                        if not self._hide_completed or not workitem.is_sealed():
+                            self.appendRow(self.item_for_object(workitem))
 
         self.setHorizontalHeaderItem(0, QStandardItem(''))
         self.setHorizontalHeaderItem(1, QStandardItem(''))
@@ -424,14 +427,34 @@ class WorkitemModel(AbstractDropModel):
             WorkitemPomodoro(workitem, self._row_height)
         ]
 
-    def _update_category(self, workitem: Workitem, to_index: int) -> None:
-        # First find the new category based on the index
-        for i in range(to_index, -1, -1):
-            item = self.item(i, 1)
+    def _get_category_for_index(self, raw_index: int) -> Category | None:
+        for i in range(raw_index, -1, -1):
+            item = self.item(i, 0)
             if isinstance(item, CategoryItem):
-                print(f'Found category {item.get_category()}')
+                return item.get_category()
+        return None
 
-    def reorder(self, to_index: int, uid: str):
+    def _update_category(self, workitem: Workitem, raw_index: int) -> None:
+        # This will be None if the user dragged the item to the top of the list, above all categories
+        category: Category | None = self._get_category_for_index(raw_index)
+
+        if category is not None and workitem.has_category(category):
+            print(f'Already has category {category}, nothing to do')
+            return
+
+        to_add: str = category.get_uid() if category is not None else ''
+        to_remove: set[str] = set()
+
+        parent_category: Category = self._get_selected_category()
+        for existing in workitem.get_categories():
+            if existing.get_parent() == parent_category:
+                to_remove.add(existing.get_uid())
+
+        print(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
+        self._source_holder.get_source().execute(UpdateWorkitemCategoriesStrategy,
+                                                 [workitem.get_uid(), ";".join(to_remove), to_add])
+
+    def reorder(self, to_index: int, raw_index: int, uid: str):
         # Convert to_index into the "item index".
         # We are sure it's a Backlog, since reordering is disabled for tags.
         to_add = 0
@@ -449,7 +472,7 @@ class WorkitemModel(AbstractDropModel):
                                                  [uid, str(to_index + to_add)],
                                                  carry='ui')
 
-        self._update_category(self._backlog_or_tag[uid], to_index)
+        self._update_category(self._backlog_or_tag[uid], raw_index)
 
     def repaint_workitem(self, workitem: Workitem):
         for i in range(self.rowCount()):

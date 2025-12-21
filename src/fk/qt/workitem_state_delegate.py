@@ -15,7 +15,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from PySide6.QtCore import QModelIndex, QObject
-from PySide6.QtGui import Qt, QPainter
+from PySide6.QtGui import Qt, QPainter, QStaticText
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QStyleOptionViewItem
 
@@ -37,15 +37,27 @@ class WorkitemStateDelegate(AbstractItemDelegate):
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
         if index.data(501) == 'planned':  # We can also get a drop placeholder here, which we don't want to paint
-            workitem = index.data(500)
             painter.save()
 
+            workitem = index.data(500)
             self.paint_background(painter, option, workitem.is_sealed())
 
             if not workitem.is_planned():
                 padding = get_padding(option)
-                rect = option.rect.adjusted(2, padding, -2, -padding)
+                rect = option.rect.adjusted(-2, padding, -2, -padding)
                 rect.setHeight(option.fontMetrics.height())
                 self._svg_renderer.render(painter, rect)
 
+            painter.restore()
+        elif index.data(501) == 'category':
+            painter.save()
+
+            txt = index.data(503)
+            st = QStaticText(f'<strong style="color: white;">Category: {txt}</strong>')
+            st.setTextOption(Qt.AlignmentFlag.AlignLeft)
+
+            st.setTextWidth(option.rect.width())
+            painter.drawStaticText(option.rect.left(),
+                                   option.rect.top() + get_padding(option),
+                                   st)
             painter.restore()

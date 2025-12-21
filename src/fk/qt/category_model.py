@@ -139,7 +139,7 @@ class CategoryModel(AbstractDropModel):
     def item_for_object(self, category: Category) -> list[QStandardItem]:
         return [CategoryItem(category)]
     
-    def reorder(self, to_index: int, uid: str):
+    def reorder(self, to_index: int, raw_index: int, uid: str):
         self._source_holder.get_source().execute(ReorderCategoryStrategy,
                                                  # We display categories in reverse order, so need to subtract here
                                                  [uid, str(self.rowCount() - to_index)],

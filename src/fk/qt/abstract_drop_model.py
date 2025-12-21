@@ -115,6 +115,7 @@ class AbstractDropModel(QStandardItemModel):
                 return False
             else:
                 self.reorder(to_index if to_index < from_index else to_index + 1,
+                             to_index,
                              data.data(self.get_primary_type()).toStdString())
                 return True
         elif self.get_secondary_type() is not None and data.hasFormat(self.get_secondary_type()) and where.isValid():
@@ -135,7 +136,7 @@ class AbstractDropModel(QStandardItemModel):
         return None
 
     @abstractmethod
-    def reorder(self, to_index: int, uid: str):
+    def reorder(self, to_index: int, raw_index: int, uid: str):
         pass
 
     def adopt_foreign_item(self, target: AbstractDataItem, uid: str) -> bool:

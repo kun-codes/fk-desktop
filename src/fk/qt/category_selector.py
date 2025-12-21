@@ -39,7 +39,7 @@ class CategorySelector(QMenu):
         #    self._on_source_changed(None, source_holder.get_source())
 
     def _on_source_changed(self, event: str, source: AbstractEventSource):
-        # TODO: Subscribe to all Category-related events
+        # TODO: Subscribe to all Category-related events, so that we update even the open list in real time
         # source.on(AfterWorkitemCreate, self._workitem_created)
         self.reload_actions(source)
 
@@ -49,6 +49,7 @@ class CategorySelector(QMenu):
         source.get_settings().set({'Application.selected_category': selected_uid})
 
     def _create_action(self, cat: Category, selected_category_uid: str, source: AbstractEventSource) -> QAction:
+        print('create_action', cat, selected_category_uid, source)
         cat_uid = cat.get_uid()
         action = QAction(cat.get_name(), self)
         action.setCheckable(True)
@@ -58,6 +59,7 @@ class CategorySelector(QMenu):
         return action
 
     def reload_actions(self, source: AbstractEventSource) -> None:
+        print('reloading actions')
         self.clear()
         self._actions.clear()
 
