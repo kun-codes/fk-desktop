@@ -24,33 +24,35 @@ logger = logging.getLogger(__name__)
 
 
 def create_system_categories(root: Category, now: datetime.datetime) -> None:
-    wg = root['#workitem_groups'] = Category('Workitem Groups', '#workitem_groups', True, root, now)
+    wg = root['#workitem_groups'] = Category('Workitem Groups', '#workitem_groups', True, "Info", root, now)
 
-    gr = wg['#workitem_group_importance'] = Category('Importance', '#workitem_group_importance', True, wg, now)
-    gr['#workitem_group_importance_critical'] = Category('Critical', '#workitem_group_importance_critical', True, gr, now)
-    gr['#workitem_group_importance_important'] = Category('Important', '#workitem_group_importance_important', True, gr, now)
-    gr['#workitem_group_importance_unimportant'] = Category('Unimportant', '#workitem_group_importance_unimportant', True, gr, now)
+    gr = wg['#workitem_group_importance'] = Category('Importance', '#workitem_group_importance', True, "## Summary\nInfo\n\nDetails: [http://google.com](http://google.com)", wg, now)
+    gr['#workitem_group_importance_critical'] = Category('Critical', '#workitem_group_importance_critical', True, "Info", gr, now)
+    gr['#workitem_group_importance_important'] = Category('Important', '#workitem_group_importance_important', True, "Info", gr, now)
+    gr['#workitem_group_importance_unimportant'] = Category('Unimportant', '#workitem_group_importance_unimportant', True, "Info", gr, now)
 
-    gr = wg['#workitem_group_feasibility'] = Category('Feasibility', '#workitem_group_feasibility', True, wg, now)
+    gr = wg['#workitem_group_feasibility'] = Category('Feasibility', '#workitem_group_feasibility', True, "Info", wg, now)
 
-    root['#workitem_shares'] = Category('Workitem Shares', '#workitem_shares', True, root, now)
-    root['#workitem_integrations'] = Category('Workitem Integrations', '#workitem_integrations', True, root, now)
-    root['#workitem_tags'] = Category('Workitem Tags', '#workitem_tags', True, root, now)
+    root['#workitem_shares'] = Category('Workitem Shares', '#workitem_shares', True, "Info", root, now)
+    root['#workitem_integrations'] = Category('Workitem Integrations', '#workitem_integrations', True, "Info", root, now)
+    root['#workitem_tags'] = Category('Workitem Tags', '#workitem_tags', True, "Info", root, now)
 
-    root['#backlog_groups'] = Category('Backlog Groups', '#backlog_groups', True, root, now)
-    root['#backlog_shares'] = Category('Backlog Shares', '#backlog_shares', True, root, now)
-    root['#backlog_integrations'] = Category('Backlog Integrations', '#backlog_integrations', True, root, now)
-    root['#backlog_tags'] = Category('Backlog Tags', '#backlog_tags', True, root, now)
+    root['#backlog_groups'] = Category('Backlog Groups', '#backlog_groups', True, "Info", root, now)
+    root['#backlog_shares'] = Category('Backlog Shares', '#backlog_shares', True, "Info", root, now)
+    root['#backlog_integrations'] = Category('Backlog Integrations', '#backlog_integrations', True, "Info", root, now)
+    root['#backlog_tags'] = Category('Backlog Tags', '#backlog_tags', True, "Info", root, now)
 
 
 # TODO: Do not allow delimiters in category names
 class Category(AbstractDataContainer['Category', 'Category|User']):
     _is_system: bool
+    _info: str
 
     def __init__(self,
                  name: str,
                  uid: str,
                  is_system: bool,
+                 info: str,
                  parent: 'Category|User',
                  create_date: datetime.datetime):
         super().__init__(name=name,
@@ -58,6 +60,7 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
                          parent=parent,
                          create_date=create_date)
         self._is_system = is_system
+        self._info = info
 
     def __str__(self):
         return f'Category {self.get_uid()} - {self._name}{" (system)" if self._is_system else ""}'
@@ -71,6 +74,9 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
     def dump(self, indent: str = '', mask_uid: bool = False, mask_last_modified: bool = False) -> str:
         return f'{super().dump(indent, mask_uid, mask_last_modified)}\n' \
                f'{indent}  System: {self._is_system}'
+
+    def get_info(self):
+        return self._info
 
     def to_dict(self) -> dict:
         d = super().to_dict()

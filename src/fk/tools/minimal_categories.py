@@ -24,7 +24,8 @@ categories_table: CategoryTableView = CategoryTableView(
     mc.get_app(),
     mc.get_app().get_source_holder(),
     mc.get_actions(),
-    '#root')
+    '#root',
+    99)
 mc.get_actions().bind('categories_table', categories_table)
 
 mc.get_window().setCentralWidget(categories_table)

@@ -53,7 +53,8 @@ class CategoriesWindow(QObject):
             app,
             source_holder,
             actions,
-            '#workitem_groups')
+            '#workitem_groups',
+            1)
         actions.bind('categories_table', categories_table_left.get_table())
         layout.addWidget(categories_table_left)
 

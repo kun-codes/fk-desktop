@@ -19,7 +19,7 @@ import logging
 
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QStandardItem
+from PySide6.QtGui import QStandardItem, QIcon
 
 from fk.core import events
 from fk.core.abstract_event_source import AbstractEventSource
@@ -30,13 +30,13 @@ from fk.qt.abstract_drop_model import AbstractDropModel
 
 logger = logging.getLogger(__name__)
 font_user = QtGui.QFont()
+font_user.setItalic(True)
 font_back = QtGui.QFont()
 font_back.setBold(True)
 font_system = QtGui.QFont()
-font_system.setItalic(True)
 
 
-class CategoryItem(QStandardItem):
+class CategoryTitle(QStandardItem):
     _category: Category
     _is_back: bool
 
@@ -73,6 +73,26 @@ class CategoryItem(QStandardItem):
         self.setData(font, Qt.ItemDataRole.FontRole)
 
 
+class CategoryInfo(QStandardItem):
+    _category: Category
+
+    def __init__(self, category: Category):
+        super().__init__()
+        self._category = category
+        self.setData(category, 500)
+        self.setData('info', 501)
+        default_flags = (Qt.ItemFlag.ItemIsSelectable |
+                         Qt.ItemFlag.ItemIsEnabled)
+        self.setFlags(default_flags)
+        self.update_display()
+
+    def update_display(self):
+        if self._category.get_info() is not None:
+            # Has info
+            self.setIcon(QIcon((f':/icons/info.png')))
+            self.setToolTip("More...")
+
+
 class CategoryModel(AbstractDropModel):
     _parent_category: Category
 
@@ -94,7 +114,10 @@ class CategoryModel(AbstractDropModel):
         source.on(events.AfterCategoryReorder, self._category_reordered)
 
     def _category_added(self, category: Category, **kwargs) -> None:
-        self.insertRow(0, CategoryItem(category))
+        self.insertRow(0, [
+            CategoryTitle(category),
+            CategoryInfo(category)
+        ])
 
     def _category_removed(self, category: Category, **kwargs) -> None:
         for i in range(self.rowCount()):
@@ -130,14 +153,18 @@ class CategoryModel(AbstractDropModel):
             # if not parent_category.is_root():
             #     self.appendRow(CategoryItem(None, True))
             for category in reversed(parent_category.values()):
-                self.appendRow(CategoryItem(category))
+                self.appendRow([
+                    CategoryTitle(category),
+                    CategoryInfo(category)
+                ])
         self.setHorizontalHeaderItem(0, QStandardItem(''))
+        self.setHorizontalHeaderItem(1, QStandardItem(''))
 
     def get_primary_type(self) -> str:
         return 'application/flowkeeper.category.id'
 
     def item_for_object(self, category: Category) -> list[QStandardItem]:
-        return [CategoryItem(category)]
+        return [CategoryTitle(category)]
     
     def reorder(self, to_index: int, raw_index: int, uid: str):
         self._source_holder.get_source().execute(ReorderCategoryStrategy,

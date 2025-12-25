@@ -38,13 +38,15 @@ class CategoryTableView(AbstractTableView[User, Category]):
     _application: 'Application'
     _menu: QMenu
     _root_category_id: str
+    _max_depth: int
 
     def __init__(self,
                  parent: QWidget,
                  application: 'Application',
                  source_holder: EventSourceHolder,
                  actions: Actions,
-                 root_category_id: str):
+                 root_category_id: str,
+                 max_depth: int):
         super().__init__(parent,
                          source_holder,
                          CategoryModel(parent, source_holder),
@@ -55,6 +57,7 @@ class CategoryTableView(AbstractTableView[User, Category]):
                          "You haven't got any categories yet. Create the first one by pressing Ctrl+N.",
                          0)
         self._root_category_id = root_category_id
+        self._max_depth = max_depth
         self._menu = self._init_menu(actions)
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         self._application = application
@@ -64,6 +67,17 @@ class CategoryTableView(AbstractTableView[User, Category]):
             self._on_messages(None, source_holder.get_source())
             self._on_data_loaded(None, source_holder.get_source())
             self._unlock_ui(None, 0)
+        self.clicked.connect(self._on_info_clicked)
+
+    def _on_info_clicked(self, index: QModelIndex):
+        if index.column() == 1:
+            category: Category = index.data(500)
+            m = QMessageBox(self)
+            m.setTextFormat(Qt.TextFormat.MarkdownText)
+            m.setText(category.get_info())
+            m.setWindowTitle(category.get_name())
+            m.setIcon(QMessageBox.Icon.Information)
+            m.show()
 
     def _lock_ui(self, event, after: int, last_received: datetime.datetime) -> None:
         self.update_actions(self.get_current())
@@ -106,6 +120,8 @@ class CategoryTableView(AbstractTableView[User, Category]):
         print(f'Upstream selected {category}')
         self._actions['categories_table.newCategory'].setEnabled(category is not None)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().resizeSection(1, 24)
 
         # Auto-select the first subcategory, if any
         if category is not None:
@@ -130,11 +146,21 @@ class CategoryTableView(AbstractTableView[User, Category]):
 
         heartbeat = self._application.get_heartbeat()
         source = self._application.get_source_holder().get_source()
-        is_online = heartbeat.is_online() or source is None or not source.can_connect()
+        is_online = heartbeat.is_offline() or source is None or not source.can_connect()
         parent_category: Category = self.model().get_parent_category()
         logger.debug(f' - Online: {is_online}')
         logger.debug(f' - Category selected: {is_category_selected}')
         logger.debug(f' - Heartbeat: {heartbeat}')
+
+        def get_depth():
+            d = 0
+            c: Category = parent_category
+            while c is not None and not c.is_root() and not c.get_uid() == self._root_category_id:
+                c = c.get_parent()
+                d += 1
+            return d
+
+        depth = get_depth()     # 0 means we are at the root category
 
         def set_active(name: str, state: bool) -> None:
             self._actions[name].setEnabled(state)
@@ -143,8 +169,8 @@ class CategoryTableView(AbstractTableView[User, Category]):
         set_active('categories_table.newCategory', is_online)
         set_active('categories_table.renameCategory', is_category_selected and is_online)
         set_active('categories_table.deleteCategory', is_category_selected and is_online)
-        set_active('categories_table.openSubCategory', is_category_selected)
-        set_active('categories_table.openParentCategory', parent_category is not None and not parent_category.is_root())
+        set_active('categories_table.openSubCategory', is_category_selected and depth < self._max_depth)
+        set_active('categories_table.openParentCategory', depth > 0)
         set_active('categories_table.dumpCategory', is_category_selected)
 
         # TODO: Double-clicking the category name doesn't use those

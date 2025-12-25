@@ -28,18 +28,21 @@ class CategoryWidget(QWidget):
     _category_table: CategoryTableView
     _breadcrumbs: QLabel
     _source_holder: EventSourceHolder
+    _max_depth: int
 
     def __init__(self,
                  parent: QWidget,
                  application: 'Application',
                  source_holder: EventSourceHolder,
                  actions: Actions,
-                 root_category_id: str):
+                 root_category_id: str,
+                 max_depth: int):
         super().__init__(parent)
         self.setObjectName('categories_widget')
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
 
         self._source_holder = source_holder
+        self._max_depth = max_depth
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -57,7 +60,7 @@ class CategoryWidget(QWidget):
         self._breadcrumbs.setObjectName('categories_breadcrumbs')
         layout.addWidget(self._breadcrumbs)
 
-        self._category_table = CategoryTableView(self, application, source_holder, actions, root_category_id)
+        self._category_table = CategoryTableView(self, application, source_holder, actions, root_category_id, self._max_depth)
         self._category_table.on(AfterUpstreamSelected, self._update_breadcrumbs)
         layout.addWidget(self._category_table)
 

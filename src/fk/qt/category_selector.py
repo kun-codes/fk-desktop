@@ -52,7 +52,6 @@ class CategorySelector(QMenu):
         source.get_settings().set({'Application.selected_category': ''})
 
     def _create_action(self, cat: Category, selected_category_uid: str, source: AbstractEventSource) -> QAction:
-        print('create_action', cat, selected_category_uid, source)
         cat_uid = cat.get_uid()
         action = QAction(cat.get_name(), self)
         action.setCheckable(True)

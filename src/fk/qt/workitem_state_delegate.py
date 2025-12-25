@@ -53,7 +53,7 @@ class WorkitemStateDelegate(AbstractItemDelegate):
             painter.save()
 
             txt = index.data(503)
-            st = QStaticText(f'<strong style="color: white;">Category: {txt}</strong>')
+            st = QStaticText(f'<strong style="color: white;">{txt}</strong>')
             st.setTextOption(Qt.AlignmentFlag.AlignLeft)
 
             st.setTextWidth(option.rect.width())

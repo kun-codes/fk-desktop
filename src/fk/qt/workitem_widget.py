@@ -67,7 +67,7 @@ class WorkitemWidget(QWidget):
         cm = QToolButton(self)
         cm.setMenu(CategorySelector(self, source_holder))
         cm.setDefaultAction(QAction(parent=self, icon=QIcon.fromTheme('tool-note')))
-        cm.triggered.connect(cm.showMenu)
+        cm.triggered.connect(lambda action: cm.showMenu() if action == cm.defaultAction() else None)
         tb.addWidget(cm)
 
         layout.addWidget(tb)

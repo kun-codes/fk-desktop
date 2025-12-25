@@ -40,7 +40,7 @@ class User(AbstractDataContainer[Backlog, 'Tenant']):
         super().__init__(name, data, identity, create_date)
         self._is_system_user = is_system_user
         self._tags = Tags(self)
-        self._root_category = Category('Root category', '#root', True, self, create_date)
+        self._root_category = Category('Root category', '#root', True, "Info", self, create_date)
         create_system_categories(self._root_category, create_date)
         self._timer = TimerData(self, create_date)
 

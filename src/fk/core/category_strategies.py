@@ -72,7 +72,7 @@ class CreateCategoryStrategy(AbstractStrategy[Tenant]):
             'parent_category': parent_category,
             'category_uid': self._category_uid,
         }, self._carry)
-        category = Category(self._category_name, self._category_uid, False, parent_category, self._when)
+        category = Category(self._category_name, self._category_uid, False, None, parent_category, self._when)
         parent_category[self._category_uid] = category
         category.item_updated(self._when)    # This will also update parent Category and User
         print('Emitting')
