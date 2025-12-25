@@ -260,7 +260,19 @@ class WorkitemModel(AbstractDropModel):
                 type(self._backlog_or_tag) is Tag and self._backlog_or_tag.get_uid() in workitem.get_tags())
 
     def _add_workitem(self, workitem: Workitem) -> None:
-        self.appendRow(self.item_for_object(workitem))
+        item = self.item_for_object(workitem)
+        if self.is_category_selected():
+            # Insert at the last uncategorized row
+            i = self._get_first_category_index()
+            self.insertRow(i, item)
+        else:
+            self.appendRow(item)
+
+    def _get_first_category_index(self) -> int:
+        for i in range(self.rowCount()):
+            if self.item(i).data(501) == 'category':
+                return i
+        return -1
 
     def _find_workitem(self, workitem: Workitem) -> int:
         for i in range(self.rowCount()):
@@ -343,7 +355,7 @@ class WorkitemModel(AbstractDropModel):
             return self._backlog_or_tag.get_parent().find_category_by_id(self._selected_category_uid)
 
     def is_category_selected(self) -> bool:
-        return self._selected_category_uid is not None
+        return self._selected_category_uid is not None and self._selected_category_uid != ''
 
     def group_by_category(self, workitems: list[Workitem], parent_category: Category) -> (dict[Category, list[Workitem]], list[Workitem]):
         res: dict[Category|None, list[Workitem]] = dict()
