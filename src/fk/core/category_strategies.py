@@ -75,7 +75,6 @@ class CreateCategoryStrategy(AbstractStrategy[Tenant]):
         category = Category(self._category_name, self._category_uid, False, None, parent_category, self._when)
         parent_category[self._category_uid] = category
         category.item_updated(self._when)    # This will also update parent Category and User
-        print('Emitting')
         emit(events.AfterCategoryCreate, {
             'category': category
         }, self._carry)
@@ -120,6 +119,10 @@ class DeleteCategoryStrategy(AbstractStrategy[Tenant]):
                                  DeleteCategoryStrategy,
                                  [child.get_uid()])
         category.item_updated(self._when)    # This will also update parent Category and User
+
+        # Remove this category from all related AbstractCategorizedDataContainer objects like Workitems
+        for usage in category.get_uses():
+            usage.remove_category(category)
 
         # Now we can delete the category itself
         del category.get_parent()[self._category_uid]

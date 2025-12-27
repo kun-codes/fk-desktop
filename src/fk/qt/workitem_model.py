@@ -26,7 +26,8 @@ from fk.core.backlog import Backlog
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.events import AfterWorkitemRename, AfterWorkitemComplete, AfterWorkitemStart, AfterWorkitemCreate, \
-    AfterWorkitemDelete, AfterSettingsChanged, AfterWorkitemReorder, AfterWorkitemMove, AfterWorkitemRestore
+    AfterWorkitemDelete, AfterSettingsChanged, AfterWorkitemReorder, AfterWorkitemMove, AfterWorkitemRestore, \
+    AfterCategoryCreate, AfterCategoryDelete, AfterCategoryRename, AfterCategoryReorder
 from fk.core.pomodoro import POMODORO_TYPE_TRACKER, Pomodoro
 from fk.core.tag import Tag
 from fk.core.workitem import Workitem
@@ -178,13 +179,16 @@ class CategoryItem(QStandardItem):
         self.setData('category', 501)
         uid = category.get_uid()
         self.setData(uid, 502)
-        name = category.get_name()
-        self.setData(name, 503)
         self.setFlags(Qt.ItemFlag.NoItemFlags)
+        self.setForeground(QBrush('white'))
+        self.update_display()
+        self.update_font(font)
+
+    def update_display(self):
+        name = self._category.get_name()
+        self.setData(name, 503)
         self.setData(name, Qt.ItemDataRole.DisplayRole)
         self.setData(name, Qt.ItemDataRole.ToolTipRole)
-        self.setForeground(QBrush('white'))
-        self.update_font(font)
 
     def update_font(self, font: QtGui.QFont):
         self.setData(font, Qt.ItemDataRole.FontRole)
@@ -249,6 +253,10 @@ class WorkitemModel(AbstractDropModel):
         source.on(AfterWorkitemComplete, self._workitem_changed)
         source.on(AfterWorkitemRestore, self._workitem_changed)
         source.on(AfterWorkitemStart, self._workitem_changed)
+        source.on(AfterCategoryCreate, self._category_created)
+        source.on(AfterCategoryDelete, self._category_deleted)
+        source.on(AfterCategoryRename, self._category_renamed)
+        source.on(AfterCategoryReorder, self._category_reordered)
         source.on('AfterPomodoro*',
                   lambda **kwargs: self._workitem_changed(
                       kwargs['workitem'] if 'workitem' in kwargs else kwargs['pomodoro'].get_parent()
@@ -259,6 +267,12 @@ class WorkitemModel(AbstractDropModel):
                 or
                 type(self._backlog_or_tag) is Tag and self._backlog_or_tag.get_uid() in workitem.get_tags())
 
+    def _category_belongs_here(self, category: Category) -> bool:
+        return (type(self._backlog_or_tag) is Backlog and
+                category is not None and
+                self._selected_category_uid is not None and
+                category.get_parent().get_uid() == self._selected_category_uid)
+
     def _add_workitem(self, workitem: Workitem) -> None:
         item = self.item_for_object(workitem)
         if self.is_category_selected():
@@ -267,6 +281,12 @@ class WorkitemModel(AbstractDropModel):
             self.insertRow(i, item)
         else:
             self.appendRow(item)
+
+    def _add_category(self, category: Category) -> None:
+        item = self.item_for_category(category)
+        self.appendRow(item)
+        # Fire dataChanged manually, so that the spans are updated and the table is repainted
+        self.dataChanged.emit(None, None, None)
 
     def _get_first_category_index(self) -> int:
         for i in range(self.rowCount()):
@@ -316,6 +336,28 @@ class WorkitemModel(AbstractDropModel):
                 row = self.takeRow(old_index)
                 self.insertRow(new_index, row)
 
+    def _category_created(self, category: Category, **kwargs) -> None:
+        if self._category_belongs_here(category):
+            self._add_category(category)
+
+    def _category_deleted(self, category: Category, **kwargs) -> None:
+        if self._category_belongs_here(category):
+            # Not the most efficient solution, but it will take care of reordering workitems correctly
+            # It's a rare event anyway
+            self.load(self._backlog_or_tag)
+        elif self._selected_category_uid == category.get_uid():
+            self._source_holder.get_settings().set({'Application.selected_category': ''})
+
+    def _category_renamed(self, category: Category, old_name: str, new_name: str, **kwargs) -> None:
+        if self._category_belongs_here(category):
+            self._category_changed(category)
+
+    def _category_reordered(self, category: Category, new_index: int, carry: str, **kwargs) -> None:
+        if self._category_belongs_here(category):
+            # Not the most efficient solution, but it will take care of moving all child workitems correctly
+            # It's a rare event anyway
+            self.load(self._backlog_or_tag)
+
     def _workitem_moved(self, workitem: Workitem, old_backlog: Backlog, new_backlog: Backlog, **kwargs) -> None:
         if old_backlog == self._backlog_or_tag or self._backlog_or_tag.get_uid() in workitem.get_tags():
             # Moved from here
@@ -326,24 +368,32 @@ class WorkitemModel(AbstractDropModel):
 
     def _workitem_changed(self, workitem: Workitem, **kwargs) -> None:
         for i in range(self.rowCount()):
-            item0: WorkitemPlanned = self.item(i, 0)
-            wi = item0.data(500)
-            if wi == workitem:
-                if self._hide_completed and workitem.is_sealed():
-                    self.removeRow(i)
-                else:
-                    font = self._get_font(workitem)
-                    item0.update_font(font)
-                    item0.update_planned()
+            item0: WorkitemPlanned | CategoryItem = self.item(i, 0)
+            if type(item0) is WorkitemPlanned:
+                if item0.data(500) == workitem:
+                    if self._hide_completed and workitem.is_sealed():
+                        self.removeRow(i)
+                    else:
+                        font = self._get_font(workitem)
+                        item0.update_font(font)
+                        item0.update_planned()
 
-                    item1: WorkitemTitle = self.item(i, 1)
-                    item1.update_font(font)
-                    item1.update_display()
-                    item1.update_flags()
+                        item1: WorkitemTitle = self.item(i, 1)
+                        item1.update_font(font)
+                        item1.update_display()
+                        item1.update_flags()
 
-                    item2: WorkitemPomodoro = self.item(i, 2)
-                    item2.update_display()
-                return
+                        item2: WorkitemPomodoro = self.item(i, 2)
+                        item2.update_display()
+                    return
+
+    def _category_changed(self, category: Category, **kwargs) -> None:
+        for i in range(self.rowCount()):
+            item0: WorkitemPlanned | CategoryItem = self.item(i, 0)
+            if type(item0) is CategoryItem:
+                if item0.data(502) == category.get_uid():
+                    item0.update_display()
+                    return
 
     def get_row_height(self):
         return self._row_height
@@ -404,11 +454,7 @@ class WorkitemModel(AbstractDropModel):
 
                 # Then all categories below
                 for category in grouped.keys():
-                    self.appendRow([
-                        CategoryItem(category, self._font_category),
-                        StubItem(),
-                        StubItem(),
-                    ])
+                    self.appendRow(self.item_for_category(category))
                     for workitem in grouped[category]:
                         if not self._hide_completed or not workitem.is_sealed():
                             self.appendRow(self.item_for_object(workitem))
@@ -442,6 +488,13 @@ class WorkitemModel(AbstractDropModel):
             WorkitemPomodoro(workitem, self._row_height)
         ]
 
+    def item_for_category(self, category: Category) -> list[QStandardItem]:
+        return [
+            CategoryItem(category, self._font_category),
+            StubItem(),
+            StubItem(),
+        ]
+
     def _get_category_for_index(self, raw_index: int) -> Category | None:
         for i in range(raw_index, -1, -1):
             item = self.item(i, 0)
@@ -454,7 +507,7 @@ class WorkitemModel(AbstractDropModel):
         category: Category | None = self._get_category_for_index(raw_index)
 
         if category is not None and workitem.has_category(category):
-            print(f'Already has category {category}, nothing to do')
+            logger.debug(f'Already has category {category}, nothing to do')
             return
 
         to_add: str = category.get_uid() if category is not None else ''
@@ -465,7 +518,7 @@ class WorkitemModel(AbstractDropModel):
             if existing.get_parent() == parent_category:
                 to_remove.add(existing.get_uid())
 
-        print(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
+        logger.debug(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
         self._source_holder.get_source().execute(UpdateWorkitemCategoriesStrategy,
                                                  [workitem.get_uid(), ";".join(to_remove), to_add])
 

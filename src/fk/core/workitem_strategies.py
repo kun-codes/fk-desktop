@@ -506,4 +506,10 @@ class UpdateWorkitemCategoriesStrategy(AbstractStrategy[Tenant]):
 
         workitem.set_categories(existing.difference(to_remove).union(to_add))
 
-        # TODO: Flesh it out
+        for c in to_add:
+            c.add_usage(workitem)
+
+        for c in to_remove:
+            c.remove_usage(workitem)
+
+        # TODO: Fire some events

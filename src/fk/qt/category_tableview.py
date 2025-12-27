@@ -89,7 +89,6 @@ class CategoryTableView(AbstractTableView[User, Category]):
         super()._on_source_changed(event, source)
         self.selectionModel().clear()
         self.upstream_selected(None)
-        print('_on_source_changed')
         source.on(AfterCategoryCreate, self._on_new_category)
         source.on(SourceMessagesProcessed, self._on_messages)
 
@@ -117,7 +116,6 @@ class CategoryTableView(AbstractTableView[User, Category]):
 
     def upstream_selected(self, category: Category) -> None:
         super().upstream_selected(category)
-        print(f'Upstream selected {category}')
         self._actions['categories_table.newCategory'].setEnabled(category is not None)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)

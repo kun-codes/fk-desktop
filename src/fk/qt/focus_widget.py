@@ -183,7 +183,6 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
             layout.addWidget(w)
             
             w = self._create_button("focus.muteAudio")
-            print("Icon path:", w.icon().isNull())
             self._added.append(w)
             layout.addWidget(w)
             if "window.pinWindow" in self._actions:
@@ -338,10 +337,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
     def _void_pomodoro(self) -> None:
         for backlog in self._source_holder.get_source().backlogs():
             workitem, _ = backlog.get_running_workitem()
-            print('Workitem', workitem)
             if workitem is not None:
-                good = workitem
-                print('Entering', workitem)
                 dlg = InterruptionDialog(
                     self.parent(),
                     self._source_holder.get_source(),
@@ -350,7 +346,6 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                     'Reason (optional)')
 
                 def ok(w):
-                    print('When firing', w)
                     reason = f': {sanitize_user_input(dlg.get_reason())}' if dlg.get_reason() else ''
                     self._source_holder.get_source().execute(
                         AddInterruptionStrategy, [
@@ -359,7 +354,6 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                     self._source_holder.get_source().execute(
                         StopTimerStrategy,
                         [])
-                print('When connecting:', workitem)
                 dlg.accepted.connect(lambda: ok(workitem))
                 dlg.open()
 

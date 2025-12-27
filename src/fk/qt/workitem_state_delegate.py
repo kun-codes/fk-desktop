@@ -53,7 +53,8 @@ class WorkitemStateDelegate(AbstractItemDelegate):
             painter.save()
 
             txt = index.data(503)
-            st = QStaticText(f'<strong style="color: white;">{txt}</strong>')
+            txt = txt.replace('(', '</strong><span style="color: silver;">(').replace(')', ')</span><strong>')
+            st = QStaticText(f'<span style="color: white;"><strong>{txt}</strong></span>')
             st.setTextOption(Qt.AlignmentFlag.AlignLeft)
 
             st.setTextWidth(option.rect.width())

@@ -52,18 +52,11 @@ class WorkitemTextDelegate(AbstractItemDelegate):
             return
 
         is_placeholder = index.data(501) == 'drop'
-        is_category = index.data(501) == 'category'
         painter.save()
 
-        if is_category:
-            self.paint_background(painter, option, False)
-            txt = index.data(503)
-            st = QStaticText(f'<strong style="color: white; text-align: right;">{txt}</strong>')
-            st.setTextOption(Qt.AlignmentFlag.AlignLeft)
-        else:
-            workitem: Workitem = index.data(500)
-            self.paint_background(painter, option, workitem.is_sealed())
-            st = QStaticText(self._format_html(workitem, is_placeholder))
+        workitem: Workitem = index.data(500)
+        self.paint_background(painter, option, workitem.is_sealed())
+        st = QStaticText(self._format_html(workitem, is_placeholder))
 
         st.setTextWidth(option.rect.width())
         painter.drawStaticText(option.rect.left(),

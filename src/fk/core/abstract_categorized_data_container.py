@@ -45,6 +45,9 @@ class AbstractCategorizedDataContainer(AbstractDataContainer[TChild, TParent], G
     def set_categories(self, categories: set[Category]) -> None:
         self._categories = categories
 
+    def remove_category(self, category: Category) -> None:
+        self._categories.remove(category)
+
     def dump(self, indent: str = '', mask_uid: bool = False, mask_last_modified: bool = False) -> str:
         if len(self._categories) > 0:
             cats = f'\n'.join(cat.dump(indent + '  ', mask_uid, mask_last_modified) for cat in self._categories)

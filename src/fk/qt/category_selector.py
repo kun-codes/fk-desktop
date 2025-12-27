@@ -61,7 +61,6 @@ class CategorySelector(QMenu):
         return action
 
     def reload_actions(self, source: AbstractEventSource) -> None:
-        print('reloading actions')
         self.clear()
         self._actions.clear()
 
