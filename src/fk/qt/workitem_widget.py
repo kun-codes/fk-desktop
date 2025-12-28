@@ -16,7 +16,7 @@
 import logging
 
 from PySide6.QtGui import Qt, QAction, QIcon
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolButton, QMenu
 
 from fk.core.backlog import Backlog
 from fk.core.event_source_holder import EventSourceHolder
@@ -65,9 +65,14 @@ class WorkitemWidget(QWidget):
 
         # Category menu
         cm = QToolButton(self)
-        cm.setMenu(CategorySelector(self, source_holder))
         cm.setDefaultAction(QAction(parent=self, icon=QIcon.fromTheme('tool-categories')))
-        cm.triggered.connect(lambda action: cm.showMenu() if action == cm.defaultAction() else None)
+        cm.setMenu(QMenu(cm))     # Stub for lazy loading
+        def trigger(action):
+            if len(cm.menu().actions()) == 0:
+                cm.setMenu(CategorySelector(self, source_holder))
+            if action == cm.defaultAction():
+                cm.showMenu()
+        cm.triggered.connect(trigger)
         tb.addWidget(cm)
 
         layout.addWidget(tb)

@@ -25,7 +25,6 @@ from fk.core.abstract_event_source import AbstractEventSource
 from fk.core.category import Category
 from fk.core.category_strategies import CreateCategoryStrategy, DeleteCategoryStrategy
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
-from fk.core.events import AfterCategoryCreate, SourceMessagesProcessed
 from fk.core.user import User
 from fk.qt.abstract_tableview import AbstractTableView
 from fk.qt.actions import Actions
@@ -89,8 +88,9 @@ class CategoryTableView(AbstractTableView[User, Category]):
         super()._on_source_changed(event, source)
         self.selectionModel().clear()
         self.upstream_selected(None)
-        source.on(AfterCategoryCreate, self._on_new_category)
-        source.on(SourceMessagesProcessed, self._on_messages)
+        source.on(events.AfterCategoryCreate, self._on_new_category)
+        source.on(events.AfterCategoryDelete, self._category_removed)
+        source.on(events.SourceMessagesProcessed, self._on_messages)
 
         source.on("AfterCategory*",
                   lambda category, **kwargs: self._update_actions_if_needed(category))
@@ -180,6 +180,10 @@ class CategoryTableView(AbstractTableView[User, Category]):
         elif carry == 'select':
             self.select(category)
 
+    def _category_removed(self, category: Category, **kwargs) -> None:
+        if category == self.model().get_parent_category():
+            self.open_parent_category(False)
+
     def _on_messages(self, event: str, source: AbstractEventSource) -> None:
         user = source.get_data().get_current_user()
         self.upstream_selected(user.find_category_by_id(self._root_category_id))
@@ -258,7 +262,7 @@ class CategoryTableView(AbstractTableView[User, Category]):
             raise Exception("Trying to open a category, while there's none selected")
         self.upstream_selected(selected)
 
-    def open_parent_category(self) -> None:
+    def open_parent_category(self, select: bool = True) -> None:
         current: Category = self.model().get_parent_category()
         if current is None:
             raise Exception("No category loaded")
@@ -266,7 +270,8 @@ class CategoryTableView(AbstractTableView[User, Category]):
         if parent is None or not isinstance(parent, Category):
             raise Exception("Trying to open parent category, while we are already at the root")
         self.upstream_selected(parent)
-        self.select(current)
+        if select:
+            self.select(current)
 
     def dump_selected_category(self) -> None:
         selected: Category = self.get_current()

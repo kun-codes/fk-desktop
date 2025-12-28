@@ -250,11 +250,7 @@ class AbstractEventSource(AbstractEventEmitter, ABC, Generic[TRoot]):
             yield user
 
     def find_category(self, uid: str) -> Category | None:
-        for user in self.users():
-            found = user.find_category_by_id(uid)
-            if found is not None:
-                return found
-        return None
+        return self.get_data().get_current_user().find_category_by_id(uid)
 
     def backlogs(self) -> Iterable[Backlog]:
         for user in self.get_data().values():

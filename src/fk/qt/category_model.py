@@ -103,29 +103,37 @@ class CategoryModel(AbstractDropModel):
         source.on(events.AfterCategoryRename, self._category_renamed)
         source.on(events.AfterCategoryReorder, self._category_reordered)
 
+    def _category_belongs_here(self, category: Category) -> bool:
+        return (category is not None
+                and self._parent_category is not None and
+                category.get_parent() == self._parent_category)
+
     def _category_added(self, category: Category, **kwargs) -> None:
-        self.insertRow(0, [
-            CategoryTitle(category),
-            CategoryInfo(category)
-        ])
+        if self._category_belongs_here(category):
+            self.insertRow(0, [
+                CategoryTitle(category),
+                CategoryInfo(category)
+            ])
 
     def _category_removed(self, category: Category, **kwargs) -> None:
-        for i in range(self.rowCount()):
-            cat = self.item(i).data(500)
-            if cat == category:
-                self.removeRow(i)
-                return
+        if self._category_belongs_here(category):
+            # The case where we delete the parent category is handled in the TableView, where we then select parent
+            for i in range(self.rowCount()):
+                cat = self.item(i).data(500)
+                if cat == category:
+                    self.removeRow(i)
+                    return
 
     def _category_renamed(self, category: Category, **kwargs) -> None:
-        for i in range(self.rowCount()):
-            cat = self.item(i).data(500)
-            if cat == category:
-                print(f'_category_renamed({category}')
-                self.item(i).update_display()
-                return
+        if self._category_belongs_here(category):
+            for i in range(self.rowCount()):
+                cat = self.item(i).data(500)
+                if cat == category:
+                    self.item(i).update_display()
+                    return
 
     def _category_reordered(self, category: Category, new_index: int, carry: str, **kwargs) -> None:
-        if carry != 'ui':
+        if carry != 'ui' and self._category_belongs_here(category):
             for old_index in range(self.rowCount()):
                 cat = self.item(old_index).data(500)
                 if cat == category:
@@ -156,7 +164,7 @@ class CategoryModel(AbstractDropModel):
 
     def item_for_object(self, category: Category) -> list[QStandardItem]:
         return [CategoryTitle(category)]
-    
+
     def reorder(self, to_index: int, raw_index: int, uid: str):
         self._source_holder.get_source().execute(ReorderCategoryStrategy,
                                                  # We display categories in reverse order, so need to subtract here
