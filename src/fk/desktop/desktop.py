@@ -214,7 +214,7 @@ class MainWindow:
         settings.set({'Application.always_on_top': str(is_checked)})
 
     @staticmethod
-    def toggle_main_window():
+    def toggle_main_window(_):
         if window.isVisible():
             # If main window is visible, then focus widget must be in it,
             # then it's enough to just hide the main window

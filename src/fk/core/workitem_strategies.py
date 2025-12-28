@@ -513,3 +513,4 @@ class UpdateWorkitemCategoriesStrategy(AbstractStrategy[Tenant]):
             c.remove_usage(workitem)
 
         # TODO: Fire some events
+        # TODO: Listen to those events in the workitem model + carry = ui

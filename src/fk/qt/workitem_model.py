@@ -73,6 +73,7 @@ class WorkitemTitle(QStandardItem):
         self.update_flags()
 
     def update_display(self):
+        # It is important to update display role first, otherwise this might lead to infinite loops
         self.setData(self._workitem.get_name(), Qt.ItemDataRole.DisplayRole)
         self.setData(self._workitem.get_name(), Qt.ItemDataRole.ToolTipRole)
 
@@ -379,8 +380,8 @@ class WorkitemModel(AbstractDropModel):
                         item0.update_planned()
 
                         item1: WorkitemTitle = self.item(i, 1)
-                        item1.update_font(font)
                         item1.update_display()
+                        item1.update_font(font)
                         item1.update_flags()
 
                         item2: WorkitemPomodoro = self.item(i, 2)

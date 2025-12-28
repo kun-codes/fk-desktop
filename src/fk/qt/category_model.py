@@ -31,42 +31,32 @@ from fk.qt.abstract_drop_model import AbstractDropModel
 logger = logging.getLogger(__name__)
 font_user = QtGui.QFont()
 font_user.setItalic(True)
-font_back = QtGui.QFont()
-font_back.setBold(True)
 font_system = QtGui.QFont()
 
 
 class CategoryTitle(QStandardItem):
     _category: Category
-    _is_back: bool
 
-    def __init__(self, category: Category, is_back: bool = False):
+    def __init__(self, category: Category):
         super().__init__()
         self._category = category
-        self._is_back = is_back
         self.setData(category, 500)
         self.setData('title', 501)
-        self.setData(is_back, 502)
         default_flags = (Qt.ItemFlag.ItemIsSelectable |
                          Qt.ItemFlag.ItemIsEnabled |
-                         Qt.ItemFlag.ItemIsDragEnabled |
+                          Qt.ItemFlag.ItemIsDragEnabled |
                          Qt.ItemFlag.ItemIsEditable)
         self.setFlags(default_flags)
         self.update_display()
         self.update_font()
 
     def update_display(self):
-        if self._is_back:
-            self.setData('Go back', Qt.ItemDataRole.ToolTipRole)
-            self.setData('[..]', Qt.ItemDataRole.DisplayRole)
-        else:
-            self.setData(self._category.get_name(), Qt.ItemDataRole.ToolTipRole)
-            self.setData(self._category.get_name(), Qt.ItemDataRole.DisplayRole)
+        # It is important to update display role first, otherwise this might lead to infinite loops
+        self.setData(self._category.get_name(), Qt.ItemDataRole.DisplayRole)
+        self.setData(self._category.get_name(), Qt.ItemDataRole.ToolTipRole)
 
     def update_font(self):
-        if self._is_back:
-            font = font_back
-        elif self._category.is_system():
+        if self._category.is_system():
             font = font_system
         else:
             font = font_user
@@ -130,6 +120,7 @@ class CategoryModel(AbstractDropModel):
         for i in range(self.rowCount()):
             cat = self.item(i).data(500)
             if cat == category:
+                print(f'_category_renamed({category}')
                 self.item(i).update_display()
                 return
 

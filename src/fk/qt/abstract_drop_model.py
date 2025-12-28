@@ -143,10 +143,12 @@ class AbstractDropModel(QStandardItemModel):
         return False
 
     def handle_rename(self, item: QStandardItem, strategy_class: type[AbstractStrategy]) -> None:
+        print('handle_rename', item.data(501))
         if item.data(501) == 'title':
             entity: AbstractDataContainer = item.data(500)
             old_name = entity.get_name()
             new_name = sanitize_user_input(item.text())
+            print('handle_rename', old_name, new_name)
             if old_name != new_name:
                 try:
                     self._source_holder.get_source().execute(strategy_class, [entity.get_uid(), new_name])
