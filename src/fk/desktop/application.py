@@ -656,7 +656,7 @@ class Application(QApplication, AbstractEventEmitter):
         actions.add('application.stats', "Pomodoro health", 'F9', None, Application.show_stats)
         actions.add('application.workSummary', "Work summary", 'F3', None, Application.show_work_summary)
         actions.add('application.manageCategories',
-                    "Manage categories",
+                    "Manage Groups",
                     'F5',
                     None,
                     Application.show_categories)
