@@ -110,7 +110,7 @@ class CategoryModel(AbstractDropModel):
 
     def _category_added(self, category: Category, **kwargs) -> None:
         if self._category_belongs_here(category):
-            self.insertRow(0, [
+            self.appendRow([
                 CategoryTitle(category),
                 CategoryInfo(category)
             ])
@@ -151,7 +151,7 @@ class CategoryModel(AbstractDropModel):
             # This is a commander-like way to navigate through the categories
             # if not parent_category.is_root():
             #     self.appendRow(CategoryItem(None, True))
-            for category in reversed(parent_category.values()):
+            for category in parent_category.values():
                 self.appendRow([
                     CategoryTitle(category),
                     CategoryInfo(category)

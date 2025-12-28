@@ -280,7 +280,7 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
         self._uses.add(usage)
 
     def remove_usage(self, usage: 'AbstractCategorizedDataContainer'):
-        self._uses.delete(usage)
+        self._uses.remove(usage)
 
     def get_uses(self):
         return self._uses
