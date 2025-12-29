@@ -2,15 +2,14 @@
 
 - Full-screen rest notifications (#67).
 - Mute button for the focus mode (#151).
-- Undo item completion (#xxx).
+- Undo item completion (#55).
+- Notification about approaching rest.
 
-- Sections in the task list (#112, #177).
-- Hide and pin backlogs (#123).
+- Configurable sections in the task list (#112, #177).
+- Sections for some of the popular productivity methods.
 - Main window is showed when another instance is launched (#89).
-- Pause before completing an item, allowing to undo (#55).
 - Another tutorial for first-time installations (#168).
-- Why and How To menus (#100).
-- Minor branding enhancements (new icon, description).
+- New branding (new icon, description).
 
 Integrations:
 
@@ -24,12 +23,6 @@ Installer improvements:
 - "Fat" and "minimal" RPM packages (#127).
 - Flowkeeper is added to startup on openSUSE (#184).
 - Debian, Ubuntu and Fedora repos in OBS (#124).
-
-Technical:
-
-- Statistics refactoring (#96).
-- Work Summary refactoring (#97).
-- E2e tests in the CI/CD pipeline.
 
 ### v1.0.1 (30 August 2025)
 
