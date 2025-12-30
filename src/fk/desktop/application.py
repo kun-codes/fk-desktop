@@ -155,6 +155,7 @@ class Application(QApplication, AbstractEventEmitter):
                     'Application.play_alarm_sound': 'False',
                     'Application.play_rest_sound': 'False',
                     'Application.play_tick_sound': 'False',
+                    'Application.play_notification_sound': 'False',
                     'Logger.filename': str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.CacheLocation)) / 'flowkeeper-testing.log'),
                     'Logger.level': 'DEBUG',
                     'Source.encryption_key!': 'test key',

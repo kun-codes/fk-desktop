@@ -320,6 +320,7 @@ if __name__ == "__main__":
 
         pomodoro_timer = PomodoroTimer(QtTimer("Pomodoro Tick"),
                                        QtTimer("Pomodoro Transition"),
+                                       QtTimer("Pomodoro Notification"),
                                        app.get_settings(),
                                        app.get_source_holder())
 

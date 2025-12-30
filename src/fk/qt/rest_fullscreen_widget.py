@@ -145,9 +145,9 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._header_text.setFont(self._application.get_header_font())
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'RestScreen.enabled' in new_values:
+        if 'Application.full_screen_notifications' in new_values:
             # If disabled while showing, hide the window
-            if new_values['RestScreen.enabled'] == 'False' and self._window.isVisible():
+            if new_values['Application.full_screen_notifications'] == 'False' and self._window.isVisible():
                 self._window.hide()
         if 'Application.focus_flavor' in new_values:
             self.set_flavor(new_values['Application.focus_flavor'])
@@ -163,7 +163,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
             self._header_text.setText(state_text)
 
     def mode_changed(self, old_mode: str, new_mode: str) -> None:
-        if self._settings.get('RestScreen.enabled') != 'True':
+        if self._settings.get('Application.full_screen_notifications') != 'True':
             return
 
         if new_mode in ('resting', 'long-resting'):
@@ -198,7 +198,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
             self._window.close()
 
     def _disable_rest_screen(self):
-        self._settings.set({'RestScreen.enabled': 'False'})
+        self._settings.set({'Application.full_screen_notifications': 'False'})
         self._window.close()
 
     def resizeEvent(self, event):

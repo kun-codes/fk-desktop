@@ -181,7 +181,6 @@ class CategoryItem(QStandardItem):
         uid = category.get_uid()
         self.setData(uid, 502)
         self.setFlags(Qt.ItemFlag.NoItemFlags)
-        self.setForeground(QBrush('white'))
         self.update_display()
         self.update_font(font)
 

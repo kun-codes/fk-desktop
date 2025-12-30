@@ -24,16 +24,19 @@ from fk.qt.abstract_item_delegate import AbstractItemDelegate, get_padding
 
 class WorkitemStateDelegate(AbstractItemDelegate):
     _svg_renderer: QSvgRenderer
+    _text_color: str
 
     def __init__(self,
                  parent: QObject = None,
                  theme: str = 'mixed',
+                 text_color: str = '#000',
                  selection_color: str = '#555',
                  crossout_color: str = '#777'):
         AbstractItemDelegate.__init__(self, parent, theme, selection_color, crossout_color)
         self._svg_renderer = QSvgRenderer(
             f':/icons/{self._theme}/24x24/workitem-unplanned.svg',
             aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
+        self._text_color = text_color
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
         if index.data(501) == 'planned':  # We can also get a drop placeholder here, which we don't want to paint
@@ -53,8 +56,8 @@ class WorkitemStateDelegate(AbstractItemDelegate):
             painter.save()
 
             txt = index.data(503)
-            txt = txt.replace('(', '</strong><span style="color: silver;">(').replace(')', ')</span><strong>')
-            st = QStaticText(f'<span style="color: white;"><strong>{txt}</strong></span>')
+            txt = txt.replace('(', '</strong><span style="color: gray;">(').replace(')', ')</span><strong>')
+            st = QStaticText(f'<span style="color: {self._text_color};"><strong>{txt}</strong></span>')
             st.setTextOption(Qt.AlignmentFlag.AlignLeft)
 
             st.setTextWidth(option.rect.width())

@@ -31,6 +31,7 @@ class BacklogE2eTest(AbstractE2eTest):
             'Application.play_alarm_sound': 'False',
             'Application.play_rest_sound': 'False',
             'Application.play_tick_sound': 'False',
+            'Application.play_notification_sound': 'False',
             'Logger.filename': 'backlog-e2e.log',
             'Logger.level': 'DEBUG',
             'Application.last_version': self.get_application()._current_version,

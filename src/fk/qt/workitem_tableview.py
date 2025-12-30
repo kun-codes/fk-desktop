@@ -101,6 +101,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
                 WorkitemStateDelegate(
                     self,
                     self._application.get_icon_theme(),
+                    self._application.get_theme_variables()['TABLE_TEXT_COLOR'],
                     self._application.get_theme_variables()['SELECTION_BG_COLOR'],
                     self._application.get_theme_variables()['TABLE_CROSSOUT_COLOR']))
         else:

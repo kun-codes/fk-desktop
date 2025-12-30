@@ -96,6 +96,10 @@ def _show_if_play_alarm_enabled(values: dict[str, str]) -> bool:
     return values['Application.play_alarm_sound'] == 'True'
 
 
+def _show_if_end_of_work_notifications_are_enabled(values: dict[str, str]) -> bool:
+    return values['Pomodoro.end_of_work_notifications'] == 'True'
+
+
 def _show_if_signed_in(values: dict[str, str]) -> bool:
     return _show_for_google_auth(values) and values['WebsocketEventSource.username'] != 'user@local.host'
 
@@ -114,6 +118,10 @@ def _show_if_madelene(values: dict[str, str]) -> bool:
 
 def _show_if_play_tick_enabled(values: dict[str, str]) -> bool:
     return values['Application.play_tick_sound'] == 'True'
+
+
+def _show_if_play_notification_enabled(values: dict[str, str]) -> bool:
+    return values['Application.play_notification_sound'] == 'True'
 
 
 def _show_for_flatpak(values: dict[str, str]) -> bool:
@@ -158,6 +166,8 @@ class AbstractSettings(AbstractEventEmitter, ABC):
             'General': [
                 ('Pomodoro.default_work_duration', 'duration', 'Default work duration', str(25 * 60), [1, 120 * 60], _always_show),
                 ('Pomodoro.default_rest_duration', 'duration', 'Default rest duration', str(5 * 60), [1, 60 * 60], _always_show),
+                ('Pomodoro.end_of_work_notifications', 'bool', 'Notify about end of work', 'True', [], _always_show),
+                ('Pomodoro.end_of_work_notification_duration', 'duration', 'Notification lead time', str(1 * 60), [1, 120 * 60], _show_if_end_of_work_notifications_are_enabled),
                 ('Application.hide_completed', 'bool', 'Hide completed items', 'False', [], _never_show),
                 ('', 'separator', '', '', [], _always_show),
                 ('Application.feature_tags', 'bool', 'Display #tags', 'True', [], _always_show),
@@ -183,7 +193,7 @@ class AbstractSettings(AbstractEventEmitter, ABC):
                 ('Application.feature_keyring', 'bool', 'Enable Keyring feature', 'False', [], _never_show),
                 ('Application.work_summary_settings', 'str', 'Work Summary UI settings', '{}', [], _never_show),
                 ('Application.last_version', 'str', 'Last Flowkeeper version', '0.0.1', [], _never_show),
-                ('Application.selected_category', 'str', 'Selected workitem group category', '', [], _always_show),
+                ('Application.selected_category', 'str', 'Selected workitem group category', '', [], _never_show),
             ],
             'Series and breaks': [
                 ('Pomodoro.long_break_algorithm', 'choice', 'Take a long break', 'simple', [
@@ -293,7 +303,7 @@ class AbstractSettings(AbstractEventEmitter, ABC):
                 ('Application.last_selected_backlog', 'str', 'Last selected backlog', '', [], _never_show),
                 ('Application.table_row_height', 'int', 'Table row height', '30', [0, 5000], _never_show),
                 ('Application.show_click_here_hint', 'bool', 'Show "Click here" hint', 'True', [], _never_show),
-                ('RestScreen.enabled', 'bool', 'Full-screen rest notifications', 'True', [], _always_show),
+                ('Application.full_screen_notifications', 'bool', 'Full-screen rest notifications', 'True', [], _always_show),
             ],
             'Fonts': [
                 ('Application.font_main_family', 'font', 'Main font family', 'Noto Sans', [], _always_show),
@@ -315,6 +325,10 @@ class AbstractSettings(AbstractEventEmitter, ABC):
                 ('Application.play_tick_sound', 'bool', 'Play ticking sound', 'True', [], _always_show),
                 ('Application.tick_sound_file', 'file', 'Ticking sound file', 'qrc:/sound/tick.wav', ['*.wav;*.mp3;*.m4a'], _show_if_play_tick_enabled),
                 ('Application.tick_sound_volume', 'int', 'Ticking volume %', '50', [0, 100], _show_if_play_tick_enabled),
+                ('separator', 'separator', '', '', [], _always_show),
+                ('Application.play_notification_sound', 'bool', 'Play notification sound', 'True', [], _always_show),
+                ('Application.notification_sound_file', 'file', 'Notification sound file', 'qrc:/sound/wood_knock.mp3', ['*.wav;*.mp3;*.m4a'], _show_if_play_notification_enabled),
+                ('Application.notification_sound_volume', 'int', 'Notification volume %', '100', [0, 100], _show_if_play_notification_enabled),
                 ('separator', 'separator', '', '', [], _always_show),
                 ('Application.audio_output', 'choice', 'Output device', '#none', ['#none:No audio outputs detected'], _always_show),
             ],

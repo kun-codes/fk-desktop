@@ -113,6 +113,7 @@ class AbstractEventSource(AbstractEventEmitter, ABC, Generic[TRoot]):
             events.TimerWorkStart,
             events.TimerRestComplete,
             events.TimerWorkComplete,
+            events.TimerNotification,
             events.BeforeCategoryCreate,
             events.AfterCategoryCreate,
             events.BeforeCategoryRename,

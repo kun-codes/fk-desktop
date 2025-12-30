@@ -22,7 +22,11 @@ from fk.tools.minimal_common import MinimalCommon
 
 mc = MinimalCommon()
 
-pomodoro_timer = PomodoroTimer(QtTimer("Pomodoro Tick"), QtTimer("Pomodoro Transition"), mc.get_settings(), mc.get_app().get_source_holder())
+pomodoro_timer = PomodoroTimer(QtTimer("Pomodoro Tick"),
+                               QtTimer("Pomodoro Transition"),
+                               QtTimer("Pomodoro Notification"),
+                               mc.get_settings(),
+                               mc.get_app().get_source_holder())
 FocusWidget.define_actions(mc.get_actions())
 
 action = mc.get_actions()['focus.voidPomodoro']

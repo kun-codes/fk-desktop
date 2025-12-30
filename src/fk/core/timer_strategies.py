@@ -246,6 +246,34 @@ class TimerRingInternalStrategy(AbstractStrategy[Tenant]):
             emit(events.AfterPomodoroComplete, params, self._carry)
 
 
+class TimerNotifyInternalStrategy(AbstractStrategy[Tenant]):
+    def __init__(self,
+                 seq: int,
+                 when: datetime.datetime,
+                 user_identity: str,
+                 params: list[str],
+                 settings: AbstractSettings,
+                 carry: any = None):
+        super().__init__(seq, when, user_identity, params, settings, carry)
+
+    def execute(self,
+                emit: Callable[[str, dict[str, any], any], None],
+                data: Tenant) -> None:
+        timer: TimerData = self.get_user(data).get_timer()
+        if not timer.is_working():
+            raise Exception(f'The timer is about to ring at {self.get_sequence()}, but it was not running')
+
+        pomodoro: Pomodoro = timer.get_running_pomodoro()
+        if pomodoro.get_type() == POMODORO_TYPE_NORMAL:
+            emit(events.TimerNotification, {
+                'timer': timer,
+                'pomodoro': pomodoro,
+                'remaining_duration': pomodoro.remaining_time_in_current_state(when=self._when),
+            }, self._carry)
+        else:
+            raise Exception(f'The timer should not be about to ring at {self.get_sequence()} for a tracker pomodoro')
+
+
 ######################################################
 ################## DEPRECATED STUFF ##################
 ######################################################

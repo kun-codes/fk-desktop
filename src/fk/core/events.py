@@ -100,6 +100,7 @@ WentOnline = "WentOnline"
 WentOffline = "WentOffline"
 
 TimerWorkStart = "TimerWorkStart"
+TimerNotification = "TimerNotification"
 TimerWorkComplete = "TimerWorkComplete"
 TimerRestComplete = "TimerRestComplete"
 

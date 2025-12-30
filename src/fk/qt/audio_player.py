@@ -16,7 +16,7 @@
 import datetime
 import logging
 
-from PySide6.QtCore import QObject, QTimer
+from PySide6.QtCore import QObject
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer, QMediaDevices, QAudioDevice
 from PySide6.QtWidgets import QWidget
 
@@ -50,14 +50,12 @@ class AudioPlayer(QObject):
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         settings.on(AfterSettingsChanged, self._on_setting_changed)
 
-        if timer is not None:
-            timer.on(PomodoroTimer.TimerTick, self._play_wood_knock)
-
     def _on_source_changed(self, event: str, source: AbstractEventSource):
         if self._audio_player is not None and self._audio_player.isPlaying():
             self._audio_player.stop()
         source.on(SourceMessagesProcessed, lambda **kwargs: self._start_what_is_needed())
-        source.on("Timer*Complete", self._play_audio)
+        source.on("Timer*Complete", self._play_completion_audio)
+        source.on("TimerNotification", self._play_notification_audio)
         source.on(TimerWorkStart, self._start_ticking)
         self._source = source
 
@@ -67,6 +65,7 @@ class AudioPlayer(QObject):
             if key in ['Application.play_alarm_sound', 'Application.alarm_sound_file', 'Application.alarm_sound_volume',
                        'Application.play_rest_sound', 'Application.rest_sound_file', 'Application.rest_sound_volume',
                        'Application.play_tick_sound', 'Application.tick_sound_file', 'Application.tick_sound_volume',
+                       'Application.play_notification_sound', 'Application.notification_sound_file', 'Application.notification_sound_volume',
                        'Application.audio_output']:
                 needs_reset = True
         if needs_reset:
@@ -111,7 +110,35 @@ class AudioPlayer(QObject):
             self._audio_output.setVolume(volume)
             logger.debug(f'Volume is set to {int(volume * 100)}%')
 
-    def _play_audio(self, event: str, pomodoro: Pomodoro, timer: TimerData) -> None:
+    def _play_notification_audio(self, event: str, pomodoro: Pomodoro, timer: TimerData, remaining_duration: float) -> None:
+        # We'll be here if the rest has almost started while Flowkeeper was open
+        if (self._audio_player is not None
+                and pomodoro.get_type() == POMODORO_TYPE_NORMAL
+                and pomodoro.get_rest_duration() > 0    # Normal break
+                and self._settings.get('Application.play_notification_sound') == 'True'):
+
+            self._audio_player.stop()  # don't overlap tick sound and wood knock sound
+            self._reset()
+
+            self._set_volume('Application.notification_sound_volume')
+            self._audio_player.setSource(self._settings.get('Application.notification_sound_file'))
+            self._audio_player.setLoops(1)
+
+            # Start ticking after notification
+            connection = None
+            def continue_ticking(status: QMediaPlayer.MediaStatus):
+                if (self._audio_player is not None and
+                        connection is not None and
+                        status == QMediaPlayer.MediaStatus.EndOfMedia):
+                    self._audio_player.mediaStatusChanged.disconnect(connection)
+                    # Double-check if we are still working. Might have voided the pomodoro during the notification...
+                    if self._source.get_data().get_current_user().get_timer().is_working():
+                        self._start_ticking()
+            connection = self._audio_player.mediaStatusChanged.connect(continue_ticking)
+
+            self._audio_player.play()
+
+    def _play_completion_audio(self, event: str, pomodoro: Pomodoro, timer: TimerData) -> None:
         if self._audio_player is not None:
             self._audio_player.stop()  # In case it was ticking or playing rest music
 
@@ -142,32 +169,6 @@ class AudioPlayer(QObject):
                     and pomodoro.get_rest_duration() > 0):  # Normal break
                 # We'll be here if the rest started while Flowkeeper was open
                 self._start_rest_sound(pomodoro)
-
-    def _play_wood_knock(self, event: str, timer: TimerData, **kwargs):
-        if not timer.is_working():
-            return
-
-        rest_screen_enabled = self._settings.get('RestScreen.enabled') == 'True'
-        play_tick_sound = self._settings.get('Application.play_tick_sound') == 'True'
-
-        if not (rest_screen_enabled and play_tick_sound):  # conditions to play wood knock sound
-            return
-
-        time_left = timer.format_remaining_duration()
-        if not time_left.strip().endswith('01:00'):  # play only when 60 seconds left
-            return
-
-        if self._audio_player is not None:
-            self._audio_player.stop()  # don't overlap tick sound and wood knock sound
-            self._reset()
-
-            if self._audio_player is not None:
-                self._set_volume('Application.tick_sound_volume')
-                self._audio_player.setSource("qrc:/sound/wood_knock.mp3")
-                self._audio_player.setLoops(1)
-                self._audio_player.play()
-
-                QTimer.singleShot(1000, self._start_ticking)  # wood knock sound effect is 0.75 seconds long
 
     def _start_ticking(self, event: str = None, **kwargs) -> None:
         if self._audio_player is not None:

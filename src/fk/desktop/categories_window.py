@@ -22,7 +22,6 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
 from fk.core.abstract_event_source import AbstractEventSource
 from fk.core.event_source_holder import EventSourceHolder
-from fk.qt.abstract_tableview import AfterSelectionChanged
 from fk.qt.actions import Actions
 from fk.qt.category_widget import CategoryWidget
 
@@ -48,28 +47,16 @@ class CategoriesWindow(QObject):
 
         layout: QHBoxLayout = self._categories_window.findChild(QtWidgets.QHBoxLayout, "layout")
 
-        categories_table_left: CategoryWidget = CategoryWidget(
+        categories_table: CategoryWidget = CategoryWidget(
             self._categories_window,
             app,
             source_holder,
             actions,
             '#workitem_groups',
             1)
-        actions.bind('categories_table', categories_table_left.get_table())
-        layout.addWidget(categories_table_left)
-
-        # categories_table_right: CategoryWidget = CategoryWidget(
-        #     self._categories_window,
-        #     app,
-        #     source_holder,
-        #     actions,
-        #     '')
-        # # actions.bind('categories_table_right', categories_table_right)
-        # layout.addWidget(categories_table_right)
-
-        # categories_table_left.get_table().on(
-        #     AfterSelectionChanged,
-        #     lambda event, before, after: categories_table_right.get_table().upstream_selected(after))
+        actions.bind('categories_table', categories_table.get_table())
+        # TODO: Enable actions. Disable by default, and every time the window is closed.
+        layout.addWidget(categories_table)
 
         close_action = QAction(self._categories_window, 'Close')
         close_action.triggered.connect(self._categories_window.close)
