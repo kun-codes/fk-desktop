@@ -49,13 +49,14 @@ class AudioPlayer(QObject):
         self._reset()
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         settings.on(AfterSettingsChanged, self._on_setting_changed)
+        if timer is not None:
+            timer.on(PomodoroTimer.TimerNotification, self._play_notification_audio)
 
     def _on_source_changed(self, event: str, source: AbstractEventSource):
         if self._audio_player is not None and self._audio_player.isPlaying():
             self._audio_player.stop()
         source.on(SourceMessagesProcessed, lambda **kwargs: self._start_what_is_needed())
         source.on("Timer*Complete", self._play_completion_audio)
-        source.on("TimerNotification", self._play_notification_audio)
         source.on(TimerWorkStart, self._start_ticking)
         self._source = source
 
@@ -110,9 +111,11 @@ class AudioPlayer(QObject):
             self._audio_output.setVolume(volume)
             logger.debug(f'Volume is set to {int(volume * 100)}%')
 
-    def _play_notification_audio(self, event: str, pomodoro: Pomodoro, timer: TimerData, remaining_duration: float) -> None:
+    def _play_notification_audio(self, event: str, timer: PomodoroTimer) -> None:
         # We'll be here if the rest has almost started while Flowkeeper was open
+        pomodoro = self._source.get_data().get_current_user().get_timer().get_running_pomodoro()
         if (self._audio_player is not None
+                and pomodoro is not None
                 and pomodoro.get_type() == POMODORO_TYPE_NORMAL
                 and pomodoro.get_rest_duration() > 0    # Normal break
                 and self._settings.get('Application.play_notification_sound') == 'True'):

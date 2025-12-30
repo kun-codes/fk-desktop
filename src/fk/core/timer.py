@@ -24,7 +24,7 @@ from fk.core.abstract_timer import AbstractTimer
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.pomodoro import Pomodoro, POMODORO_TYPE_NORMAL, POMODORO_TYPE_TRACKER
 from fk.core.timer_data import TimerData
-from fk.core.timer_strategies import TimerRingInternalStrategy, TimerNotifyInternalStrategy
+from fk.core.timer_strategies import TimerRingInternalStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ class PomodoroTimer(AbstractEventEmitter):
 
     # Emitted events
     TimerTick = "TimerTick"
+    TimerNotification = "TimerNotification"
 
     def __init__(self,
                  tick_timer: AbstractTimer,
@@ -49,7 +50,7 @@ class PomodoroTimer(AbstractEventEmitter):
                  notification_timer: AbstractTimer,
                  settings: AbstractSettings,
                  source_holder: EventSourceHolder):
-        super().__init__([self.TimerTick],
+        super().__init__([self.TimerTick, self.TimerNotification],
                          settings.invoke_callback)
         logger.debug('PomodoroTimer: Initializing')
         self._tick_timer = tick_timer
@@ -139,12 +140,10 @@ class PomodoroTimer(AbstractEventEmitter):
                 logger.debug(f'PomodoroTimer: Did not schedule notification timer at {notify_ms}s, because there is only {round(ms / 1000)}s left')
 
     def _handle_notification(self, params: dict | None, when: datetime.datetime | None) -> None:
-        self._source_holder.get_source().execute(
-            TimerNotifyInternalStrategy,
-            [],
-            persist=False,
-            when=when)
-        logger.debug(f"PomodoroTimer: Executed TimerNotifyInternalStrategy")
+        self._emit(PomodoroTimer.TimerNotification, {
+            'timer': self,
+        }, None)
+        logger.debug(f"PomodoroTimer: Emitted TimerNotification")
 
     def _handle_transition(self, params: dict | None, when: datetime.datetime | None) -> None:
         timer = self.timer
