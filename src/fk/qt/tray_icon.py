@@ -122,19 +122,18 @@ class TrayIcon(QSystemTrayIcon, AbstractTimerDisplay):
         self.setIcon(pixmap)
 
     def tick(self, pomodoro: Pomodoro, state_text: str, my_value: float, my_max: float, mode: str) -> None:
-        if pomodoro.get_state() == 'work':
-            state_text_split = state_text.split(' ')
-            time_left = state_text_split[1]
-            if time_left.strip() == '01:00' and self._settings.get('Application.full_screen_notifications') == 'True':
-                self.showMessage(
-                    "60 seconds left to finish this pomodoro",
-                    "Time to wrap up.",
-                    self._default_icon
-                )
-
         self.setToolTip(f"{state_text} ({pomodoro.get_parent().get_name()})")
         self._timer_renderer.set_values(my_value, my_max, None, None, mode)
         self.paint()
+
+    def work_ending(self, pomodoro: Pomodoro) -> None:
+        if pomodoro.is_working() and self._settings.get('Pomodoro.end_of_work_notifications') == 'True':
+            remaining = pomodoro.get_timer().format_remaining_duration()
+            self.showMessage(
+                f"You have {remaining} to finish this pomodoro",
+                "Time to wrap up.",
+                self._default_icon
+            )
 
     def mode_changed(self, old_mode: str, new_mode: str) -> None:
         if new_mode == 'undefined' or new_mode == 'idle':

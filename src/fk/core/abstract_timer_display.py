@@ -104,8 +104,7 @@ class AbstractTimerDisplay:
             self._set_mode('idle')
 
     def _on_notification(self, **kwargs) -> None:
-        timer = self.timer
-        pomodoro = timer.get_running_pomodoro()
+        self.work_ending(self.timer.get_running_pomodoro())
 
     def _on_tick(self, **kwargs) -> None:
         timer = self.timer
@@ -173,7 +172,7 @@ class AbstractTimerDisplay:
     def tick(self, pomodoro: Pomodoro, state_text: str, my_value: float, my_max: float, mode: str) -> None:
         pass
 
-    def work_ending(self, pomodoro: Pomodoro, state_text: str, my_value: float, my_max: float, mode: str) -> None:
+    def work_ending(self, pomodoro: Pomodoro) -> None:
         pass
 
     def mode_changed(self, old_mode: str, new_mode: str) -> None:
