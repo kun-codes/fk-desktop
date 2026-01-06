@@ -234,11 +234,11 @@ class MainWindow:
                     raise Exception("Focus widget is detached, this should never happen. Please open a bug in GitHub.")
 
     @staticmethod
-    def show_search():
+    def show_search(_):
         search.show()
 
     @staticmethod
-    def show_tutorial():
+    def show_tutorial(_):
         global tutorial
         tutorial = Tutorial(app.get_source_holder(), settings, window, focus_window)
 

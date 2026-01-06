@@ -14,11 +14,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder
-from fk.qt.abstract_tableview import AfterSelectionChanged, AfterUpstreamSelected
+from fk.qt.ElidedLabel import ElidedLabel
+from fk.qt.abstract_tableview import AfterUpstreamSelected
 from fk.qt.actions import Actions
 from fk.qt.category_tableview import CategoryTableView
 from fk.qt.configurable_toolbar import ConfigurableToolBar
@@ -26,7 +27,7 @@ from fk.qt.configurable_toolbar import ConfigurableToolBar
 
 class CategoryWidget(QWidget):
     _category_table: CategoryTableView
-    _breadcrumbs: QLabel
+    _breadcrumbs: ElidedLabel
     _source_holder: EventSourceHolder
     _max_depth: int
 
@@ -56,7 +57,7 @@ class CategoryWidget(QWidget):
         tb.addAction(actions['categories_table.openSubCategory'])
         layout.addWidget(tb)
 
-        self._breadcrumbs = QLabel(self)
+        self._breadcrumbs = ElidedLabel(self)
         self._breadcrumbs.setObjectName('categories_breadcrumbs')
         layout.addWidget(self._breadcrumbs)
 
