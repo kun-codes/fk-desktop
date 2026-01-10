@@ -31,7 +31,7 @@ from fk.core.pomodoro import POMODORO_TYPE_NORMAL
 from fk.core.pomodoro_strategies import AddPomodoroStrategy
 from fk.core.user import User
 from fk.core.workitem import Workitem
-from fk.core.workitem_strategies import CreateWorkitemStrategy
+from fk.core.workitem_strategies import CreateWorkitemStrategy, UpdateWorkitemCategoriesStrategy
 from fk.desktop.application import Application
 from fk.qt.abstract_tableview import AbstractTableView, AfterSelectionChanged
 from fk.qt.actions import Actions
@@ -209,6 +209,10 @@ class BacklogTableView(AbstractTableView[User, Backlog]):
             self._source.execute(CreateWorkitemStrategy,
                                  [new_workitem_uid, new_backlog_uid, workitem.get_name()],
                                  carry="")  # Note that we don't carry "edit" in this case
+            if len(workitem.get_categories()) > 0:
+                categories = ';'. join([c.get_uid() for c in workitem.get_categories()])
+                self._source.execute(UpdateWorkitemCategoriesStrategy,
+                                     [new_workitem_uid, "", categories])
             added_workitems += 1
             incomplete_pomodoros = list(workitem.get_incomplete_pomodoros())
             pomodoros_to_add = len(incomplete_pomodoros)
