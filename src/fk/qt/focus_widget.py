@@ -387,7 +387,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
             raise Exception('Cannot start next pomodoro on non-existent work item')
         start_workitem(self._continue_workitem, self._source_holder.get_source())
         
-    def _mute_audio(self, is_checked=None) -> None:
+    def _mute_audio(self, domain, state) -> None:
         is_checked = self._actions['focus.muteAudio'].isChecked()
         self._settings.set({
             'Application.play_alarm_sound': str(is_checked),
