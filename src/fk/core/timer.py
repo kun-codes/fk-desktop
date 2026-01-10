@@ -127,17 +127,18 @@ class PomodoroTimer(AbstractEventEmitter):
         }, True)
         logger.debug(f'PomodoroTimer: Done - Scheduled transition to {target_state} in {ms / 1000} seconds')
 
-        settings = self._source_holder.get_settings()
-        if settings.get('Pomodoro.end_of_work_notifications') == 'True':
-            notify_ms = float(settings.get('Pomodoro.end_of_work_notification_duration')) * 1000
-            if ms > notify_ms + 1000:
-                self._notification_timer.schedule(ms - notify_ms,
-                                                  self._handle_notification,
-                                                  None,
-                                                  True)
-                logger.debug(f'PomodoroTimer: Scheduled notification timer in {round((ms - notify_ms) / 1000)}s')
-            else:
-                logger.debug(f'PomodoroTimer: Did not schedule notification timer at {notify_ms}s, because there is only {round(ms / 1000)}s left')
+        if target_state == 'rest':
+            settings = self._source_holder.get_settings()
+            if settings.get('Pomodoro.end_of_work_notifications') == 'True':
+                notify_ms = float(settings.get('Pomodoro.end_of_work_notification_duration')) * 1000
+                if ms > notify_ms + 1000:
+                    self._notification_timer.schedule(ms - notify_ms,
+                                                      self._handle_notification,
+                                                      None,
+                                                      True)
+                    logger.debug(f'PomodoroTimer: Scheduled notification timer in {round((ms - notify_ms) / 1000)}s')
+                else:
+                    logger.debug(f'PomodoroTimer: Did not schedule notification timer at {notify_ms}s, because there is only {round(ms / 1000)}s left')
 
     def _handle_notification(self, params: dict | None, when: datetime.datetime | None) -> None:
         self._emit(PomodoroTimer.TimerNotification, {

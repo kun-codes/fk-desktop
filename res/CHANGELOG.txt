@@ -11,6 +11,8 @@
 - Another tutorial for first-time installations (#168).
 - New branding (new icon, description).
 
+- RPM builds and Fedora repos
+
 Integrations:
 
 - Import from Microsoft To Do (#150).

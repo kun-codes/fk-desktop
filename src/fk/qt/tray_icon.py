@@ -130,8 +130,8 @@ class TrayIcon(QSystemTrayIcon, AbstractTimerDisplay):
         if pomodoro.is_working() and self._settings.get('Pomodoro.end_of_work_notifications') == 'True':
             remaining = pomodoro.get_timer().format_remaining_duration()
             self.showMessage(
+                "Time to wrap up",
                 f"You have {remaining} to finish this pomodoro",
-                "Time to wrap up.",
                 self._default_icon
             )
 
