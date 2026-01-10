@@ -399,7 +399,7 @@ class WorkitemModel(AbstractDropModel):
         return self._row_height
 
     def _get_selected_category(self) -> Category|None:
-        if self._backlog_or_tag is None or not self._selected_category_uid:
+        if self._backlog_or_tag is None or type(self._backlog_or_tag) is Tag or not self._selected_category_uid:
             return None
         else:
             return self._backlog_or_tag.get_parent().find_category_by_id(self._selected_category_uid)
