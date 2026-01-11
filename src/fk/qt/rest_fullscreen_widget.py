@@ -51,10 +51,8 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
                  timer: PomodoroTimer,
                  source_holder: EventSourceHolder,
                  settings: AbstractSettings,
-                 flavor: str = 'minimal'
-                 ):
+                 flavor: str = 'minimal'):
         super().__init__(parent, timer=timer, source_holder=source_holder)
-
         self._added = []
 
         self._settings = settings
@@ -67,7 +65,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._window.setCentralWidget(self)
 
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
         layout.setSpacing(20)
         self.setLayout(layout)
 
@@ -77,12 +75,10 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
 
         self._header_text = QLabel(self)
         self._header_text.setObjectName("headerText")
-        self._header_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._header_text.setText("")
 
         self._hint_text = QLabel(self)
         self._hint_text.setObjectName("hintText")
-        self._hint_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._hint_text.setText("Click to dismiss")
 
         self._do_not_show_again_button = QPushButton("Do not show this screen again", self)
