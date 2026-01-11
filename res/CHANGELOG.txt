@@ -12,6 +12,7 @@
 - New branding (new icon, description).
 
 - RPM builds and Fedora repos
+- Fixed a few issues when launching Flowkeeper during a long break
 
 Integrations:
 

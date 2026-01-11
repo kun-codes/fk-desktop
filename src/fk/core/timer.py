@@ -80,7 +80,9 @@ class PomodoroTimer(AbstractEventEmitter):
             self._notification_timer.cancel()
         elif pomodoro is not None:
             self._transition_timer.cancel()
-            if pomodoro.get_type() == POMODORO_TYPE_NORMAL:
+            if pomodoro.is_long_break() or pomodoro.get_type() == POMODORO_TYPE_TRACKER:
+                self._schedule_tick()
+            elif pomodoro.get_type() == POMODORO_TYPE_NORMAL:
                 timer.update_remaining_duration(None)
                 if timer.get_remaining_duration() > 0:
                     self._schedule_tick()
@@ -98,12 +100,11 @@ class PomodoroTimer(AbstractEventEmitter):
                             'finished')
                     else:
                         raise Exception(f'Unexpected running state: {pomodoro.get_state()}')
-            elif pomodoro.get_type() == POMODORO_TYPE_TRACKER or pomodoro.is_long_break():
-                self._schedule_tick()
+
 
     def _schedule_tick(self) -> None:
         self._tick_counter = 0
-        self._tick_timer.schedule(990, self._handle_tick, None)
+        self._tick_timer.schedule(1000, self._handle_tick, None)
 
     def _handle_tick(self, params: dict | None, when: datetime.datetime | None = None) -> None:
         timer = self.timer

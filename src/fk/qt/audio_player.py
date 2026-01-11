@@ -227,8 +227,11 @@ class AudioPlayer(QObject):
     def _start_what_is_needed(self) -> None:
         if self._source is not None:
             timer = self._source.get_data().get_current_user().get_timer()
+            pomodoro = timer.get_running_pomodoro()
             if timer.is_working():
                 self._start_ticking()
-            elif timer.is_resting() and timer.get_running_pomodoro().get_type() == POMODORO_TYPE_NORMAL:
-                # We'll be here if we started Flowkeeper while the timer is resting
-                self._start_rest_sound(timer.get_running_pomodoro())
+            elif (timer.is_resting()
+                  and pomodoro.get_type() == POMODORO_TYPE_NORMAL
+                  and pomodoro.get_rest_duration() > 0):
+                # We'll be here if we started Flowkeeper while the timer is resting, of if Audio settings changed
+                self._start_rest_sound(pomodoro)
