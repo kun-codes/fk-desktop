@@ -19,8 +19,9 @@ import datetime
 
 from fk.core.abstract_data_container import AbstractDataContainer
 from fk.core.backlog import Backlog
-from fk.core.category import Category, create_system_categories
+from fk.core.category import Category
 from fk.core.pomodoro import POMODORO_TYPE_NORMAL, POMODORO_TYPE_TRACKER
+from fk.core.standard_categories import create_system_categories
 from fk.core.tags import Tags
 from fk.core.timer_data import TimerData
 
