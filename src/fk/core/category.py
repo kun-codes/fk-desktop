@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import textwrap
 
 from fk.core.abstract_data_container import AbstractDataContainer
 
@@ -270,6 +271,14 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
 
     def get_info(self):
         return self._info
+
+    def get_plaintext_info(self):
+        txt = self._info if self._info else self._name
+        paragraphs = filter(
+            lambda p: not p.startswith('Details:'),
+            txt.strip().replace('**', '').split('\n\n')
+        )
+        return "\n\n".join([textwrap.fill(s, 80) for s in paragraphs])
 
     def to_dict(self) -> dict:
         d = super().to_dict()

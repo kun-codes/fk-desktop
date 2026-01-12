@@ -291,9 +291,9 @@ class AbstractSettings(AbstractEventEmitter, ABC):
                     "gradient:Gradient",
                 ], _always_show),
                 # UC-3: Setting "Background image" is only shown if "Header background" = "Image"
-                ('Application.eyecandy_image', 'file', 'Background image', ':/img/bg.jpg', ['*.png;*.jpg'], _show_for_image_eyecandy),
+                ('Application.eyecandy_image', 'file', 'Background image', ':/img/bg.svg', ['*.png;*.jpg;*.svg'], _show_for_image_eyecandy),
                 # UC-3: Setting "Color scheme" and button "Surprise me!" are only shown if "Header background" = "Gradient"
-                ('Application.eyecandy_gradient', 'choice', 'Color scheme', 'NorseBeauty', ['NorseBeauty:NorseBeauty'], _show_for_gradient_eyecandy),
+                ('Application.eyecandy_gradient', 'choice', 'Color scheme', 'StarWine', ['StarWine:StarWine'], _show_for_gradient_eyecandy),
                 ('Application.eyecandy_gradient_generate', 'button', 'Surprise me!', '', [], _show_for_gradient_eyecandy),
                 ('Application.window_width', 'int', 'Main window width', '700', [5, 5000], _never_show),
                 ('Application.window_height', 'int', 'Main window height', '500', [5, 5000], _never_show),

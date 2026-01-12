@@ -188,7 +188,7 @@ class CategoryItem(QStandardItem):
         name = self._category.get_name()
         self.setData(name, 503)
         self.setData(name, Qt.ItemDataRole.DisplayRole)
-        self.setData(name, Qt.ItemDataRole.ToolTipRole)
+        self.setData(self._category.get_plaintext_info(), Qt.ItemDataRole.ToolTipRole)
 
     def update_font(self, font: QtGui.QFont):
         self.setData(font, Qt.ItemDataRole.FontRole)
