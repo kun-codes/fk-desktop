@@ -187,7 +187,7 @@ def get_standard_workitem_categories(root: Category, now: datetime.datetime) -> 
             category = Category(name, uid, True, "Info", wg, now)
             wg[uid] = category
         elif l.startswith('## '):
-            txt = "\n".join(info)
+            txt = "\n".join(info).strip()
             if subcategory is None:
                 category._info = txt
             else:
@@ -198,7 +198,7 @@ def get_standard_workitem_categories(root: Category, now: datetime.datetime) -> 
             category[uid] = subcategory
             info.clear()
         elif l.startswith('---'):
-            txt = "\n".join(info)
+            txt = "\n".join(info).strip()
             if subcategory is None:
                 category._info = txt
             else:

@@ -232,7 +232,8 @@ class PageConfigIcons(QWizardPage):
         workitem = Workitem('N/A',
                             '1',
                             None,
-                            datetime.datetime.now())
+                            datetime.datetime.now(),
+                            [])
         pomodoro = Pomodoro(1,
                             True,
                             'new',

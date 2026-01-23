@@ -38,7 +38,7 @@ tray = TrayIcon(window, pomodoro_timer, app.get_source_holder(), actions, 48, Mi
 
 tray.setVisible(True)
 tray.mode_changed('idle', 'working')
-wi = Workitem('Test', '123', None, None)
+wi = Workitem('Test', '123', None, None, [])
 
 value = 0
 pomodoro_timer._state = 'work'

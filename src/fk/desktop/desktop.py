@@ -238,7 +238,7 @@ class MainWindow:
         search.show()
 
     @staticmethod
-    def show_tutorial(_):
+    def show_tutorial():
         global tutorial
         tutorial = Tutorial(app.get_source_holder(), settings, window, focus_window)
 

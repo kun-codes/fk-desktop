@@ -485,7 +485,7 @@ class ScreenshotE2eTest(AbstractE2eTest):
             if b.get_name() == '2024-03-13, Wednesday':
                 now = datetime.datetime.now(datetime.timezone.utc)
                 uid = generate_uid()
-                workitem = Workitem('Huge', uid, b, now)
+                workitem = Workitem('Huge', uid, b, now, [])
                 b[uid] = workitem
                 self._emulate_year(workitem, now - datetime.timedelta(days=365))
 
