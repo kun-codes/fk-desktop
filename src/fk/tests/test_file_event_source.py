@@ -124,7 +124,6 @@ class TestFileEventSource(TestCase):
         original = _create_filtered_source()
 
         def check_after_repair(src: FileEventSource):
-            user: User = src.get_data().get_current_user()
             orphans_list = list(filter(lambda b: b.get_name() == '[Repaired] Orphan workitems', src.backlogs()))
             self.assertEqual(1, len(orphans_list))
             orphans = orphans_list[0]

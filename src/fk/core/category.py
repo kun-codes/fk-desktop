@@ -57,7 +57,7 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
     def dump(self, indent: str = '', mask_uid: bool = False, mask_last_modified: bool = False) -> str:
         return f'{super().dump(indent, mask_uid, mask_last_modified)}\n' \
                f'{indent}  System: {self._is_system}' \
-               f'{indent}  Info: {("<" + len(self._info) + "> characters") if self._info is not None else "None"}' \
+               f'{indent}  Info: {("<" + str(len(self._info)) + "> characters") if self._info is not None else "None"}' \
                f'{indent}  Uses: <{len(self._uses)}>'
 
     def get_info(self):

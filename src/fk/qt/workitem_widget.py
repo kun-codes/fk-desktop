@@ -101,10 +101,14 @@ class WorkitemWidget(QWidget):
 
     def _update_category_name_in_selector(self, uid):
         if uid == '':
-            self._category_selector.setText('No Grouping')
+            self._category_selector.setText('No Grouping   ')
         else:
             category = self._source_holder.get_source().find_category(uid)
-            self._category_selector.setText(category.get_name())
+            if category is None:
+                logger.warning(f'Category {uid} not found')
+                self._category_selector.setText('No Grouping   ')
+            else:
+                self._category_selector.setText(category.get_name() + '   ')
 
     def on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.show_toolbar' in new_values:
