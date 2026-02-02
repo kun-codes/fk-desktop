@@ -76,9 +76,9 @@ def emulate(days: int, user: str) -> Iterable[AbstractStrategy]:
 
         if seq == 1:
             yield CreateUserStrategy(seq,
-                                     now,
+                                     datetime.datetime.fromisocalendar(2000, 1, 1).astimezone(datetime.timezone.utc),
                                      ADMIN_USER,
-                                     [user, user],
+                                     [user, 'Local User'],
                                      settings)
 
         seq += 1

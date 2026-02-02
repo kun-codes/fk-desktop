@@ -107,7 +107,7 @@ class TestImportExport(TestCase):
 
         self.assertIn('user@local.host', self.data_rand)
         user_rand = self.data_rand['user@local.host']
-        self.assertEqual(36, len(user_rand))
+        self.assertEqual(38, len(user_rand))
 
         dump = user_rand.dump()
         # with open(RAND_DUMP_FILENAME + '-new', 'w', encoding='UTF-8') as f:
@@ -174,12 +174,12 @@ class TestImportExport(TestCase):
     def test_import_classic_ok(self):
         total_start, total_end = self._execute_import(False, False)
         self.assertEqual(total_start, total_end)
-        self.assertEqual(2493, total_end)    # That's how many strategies are in random.txt
+        self.assertEqual(2614, total_end)    # That's how many strategies are in random.txt
 
         dump_imported = _remove_volatile_timestamps(self.data_temp['user@local.host'].dump())
-        print(dump_imported)
+        # print(dump_imported)
         dump_original = _remove_volatile_timestamps(self.data_rand['user@local.host'].dump())
-        # print(dump_original)
+        print(dump_original)
         self.assertEqual(dump_imported, dump_original)
 
     def test_import_classic_twice_error(self):
@@ -253,7 +253,7 @@ class TestImportExport(TestCase):
 
     def test_export_simple_ok(self):
         total_start, total_end = self._execute_export(False, EXPORTED_FILENAME)
-        self.assertEqual(2494, total_start)
+        self.assertEqual(2615, total_start)
         self.assertEqual(total_end, total_start)
 
         self._execute_import(False, False, filename=EXPORTED_FILENAME)
@@ -264,7 +264,7 @@ class TestImportExport(TestCase):
 
     def test_export_compressed_ok(self):
         total_start, total_end = self._execute_export(True, EXPORTED_FILENAME)
-        self.assertEqual(2494, total_start)
+        self.assertEqual(2615, total_start)
         self.assertEqual(total_end, total_start)
 
         self._execute_import(False, False, filename=EXPORTED_FILENAME)

@@ -325,7 +325,7 @@ class AbstractEventSource(AbstractEventEmitter, ABC, Generic[TRoot]):
 
     def get_init_strategy(self, emit: Callable[[str, dict[str, any], any], None]) -> AbstractStrategy[TRoot]:
         return CreateUserStrategy(1,
-                                  datetime.datetime.now(datetime.timezone.utc),
+                                  datetime.datetime.fromisocalendar(2000, 1, 1).astimezone(datetime.timezone.utc),
                                   ADMIN_USER,
                                   [self._settings.get_username(), self._settings.get_fullname()],
                                   self._settings)
