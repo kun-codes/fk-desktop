@@ -106,7 +106,7 @@ class WorkitemWidget(QWidget):
             category = self._source_holder.get_source().find_category(uid)
             if category is None:
                 logger.warning(f'Category {uid} not found')
-                self._category_selector.setText('No Grouping   ')
+                self._source_holder.get_settings().set({'Application.selected_category': ''})
             else:
                 self._category_selector.setText(category.get_name() + '   ')
 
