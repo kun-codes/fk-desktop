@@ -22,6 +22,11 @@ TChild = TypeVar('TChild', bound=AbstractDataItem)
 TParent = TypeVar('TParent', bound=AbstractDataItem)
 
 
+def move_child(lst: list[TChild], child: TChild, index_to: int) -> None:
+    index_from = lst.index(child)
+    lst.insert(index_to if index_to <= index_from else index_to - 1, lst.pop(index_from))
+
+
 class AbstractDataContainer(AbstractDataItem[TParent], Generic[TChild, TParent]):
     _name: str
     _children: dict[str, TChild]
@@ -80,9 +85,7 @@ class AbstractDataContainer(AbstractDataItem[TParent], Generic[TChild, TParent])
         self._name = new_name
 
     def move_child(self, child: TChild, index_to: int) -> None:
-        index_from = self._children_with_order.index(child)
-        self._children_with_order.insert(index_to if index_to <= index_from else index_to - 1,
-                                         self._children_with_order.pop(index_from))
+        move_child(self._children_with_order, child, index_to)
 
     def get(self, key: str, default: TChild = None) -> TChild:
         if key in self._children:
