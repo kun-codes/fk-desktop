@@ -14,7 +14,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
-from typing import Callable
+from typing import Callable, Iterable
 
 from fk.core import events
 from fk.core.abstract_settings import AbstractSettings
@@ -33,6 +33,15 @@ def parse_categories(param: str) -> set[str]:
 
 def resolve_categories(param: str, user: User) -> set[Category]:
     return set([user.find_category_by_id(s, raise_if_not_found=True) for s in parse_categories(param)])
+
+
+def get_custom_categories(root_category: Category) -> Iterable[Category]:
+    for child in root_category.values():
+        if not child.is_system():
+            yield child
+        # A recursive generator
+        for grandchild in get_custom_categories(child):
+            yield grandchild
 
 
 # CreateCategory("123-456-789", "234-567-890", "Important")

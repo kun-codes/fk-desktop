@@ -24,10 +24,12 @@ from fk.core.abstract_event_source import AbstractEventSource
 from fk.core.abstract_serializer import AbstractSerializer
 from fk.core.abstract_strategy import AbstractStrategy
 from fk.core.backlog import Backlog
-from fk.core.backlog_strategies import CreateBacklogStrategy, RenameBacklogStrategy
+from fk.core.backlog_strategies import CreateBacklogStrategy, RenameBacklogStrategy, ReorderBacklogStrategy
+from fk.core.category_strategies import get_custom_categories, CreateCategoryStrategy
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.mock_settings import MockSettings
 from fk.core.no_cryptograph import NoCryptograph
+from fk.core.ordering import get_reordering_strategies
 from fk.core.pomodoro_strategies import AddPomodoroStrategy, AddInterruptionStrategy
 from fk.core.simple_serializer import SimpleSerializer
 from fk.core.tags import sanitize_tag
@@ -36,7 +38,8 @@ from fk.core.timer_strategies import StopTimerStrategy, StartTimerStrategy
 from fk.core.user import User
 from fk.core.user_strategies import CreateUserStrategy, RenameUserStrategy
 from fk.core.workitem import Workitem
-from fk.core.workitem_strategies import CreateWorkitemStrategy, CompleteWorkitemStrategy, RenameWorkitemStrategy
+from fk.core.workitem_strategies import CreateWorkitemStrategy, CompleteWorkitemStrategy, RenameWorkitemStrategy, \
+    ReorderWorkitemStrategy, UpdateWorkitemCategoriesStrategy
 
 logger = logging.getLogger(__name__)
 TRoot = TypeVar('TRoot')
@@ -82,6 +85,15 @@ def compressed_strategies(source: AbstractEventSource[TRoot]) -> Iterable[Abstra
                                  [user.get_identity(), user.get_name()],
                                  source.get_settings()))
 
+        # Create custom categories. Note that this won't delete any of the standard ones.
+        for cat in get_custom_categories(user.get_root_category()):
+            strategies.append(
+                CreateCategoryStrategy(0,
+                                       cat.get_create_date(),
+                                       user.get_identity(),
+                                       [cat.get_uid(), cat.get_parent().get_uid(), cat.get_name()],
+                                       source.get_settings()))
+
         for backlog in user.values():
             strategies.append(
                 CreateBacklogStrategy(0,
@@ -97,6 +109,15 @@ def compressed_strategies(source: AbstractEventSource[TRoot]) -> Iterable[Abstra
                                            user.get_identity(),
                                              [workitem.get_uid(), backlog.get_uid(), workitem.get_name()],
                                              source.get_settings()))
+
+                if len(workitem.get_categories()) > 0:
+                    cats_to_add: str = ';'.join([cat.get_uid() for cat in workitem.get_categories()])
+                    strategies.append(
+                        UpdateWorkitemCategoriesStrategy(0,
+                                                         workitem.get_create_date(),
+                                                         user.get_identity(),
+                                                         [workitem.get_uid(), '', cats_to_add],
+                                                         source.get_settings()))
 
                 for pomodoro in workitem.values():
                     # We could create all at once, but then we'd lose the information about unplanned pomodoros
@@ -146,6 +167,30 @@ def compressed_strategies(source: AbstractEventSource[TRoot]) -> Iterable[Abstra
                                                      workitem.get_uid(),
                                                      'finished'],
                                                  source.get_settings()))
+
+            # Reorder workitems in the backlog
+            target_order = backlog.values()
+            source_order = backlog.values().copy()
+            source_order.sort(key=lambda x: x.get_create_date())
+            for params in get_reordering_strategies(source_order, target_order):
+                strategies.append(
+                    ReorderWorkitemStrategy(0,
+                                             backlog.get_last_modified_date(),
+                                             user.get_identity(),
+                                             params,
+                                             source.get_settings()))
+
+        # Reorder backlogs
+        target_order = user.values()
+        source_order = user.values().copy()
+        source_order.sort(key=lambda x: x.get_create_date())
+        for params in get_reordering_strategies(source_order, target_order):
+            strategies.append(
+                ReorderBacklogStrategy(0,
+                                       user.get_last_modified_date(),
+                                       user.get_identity(),
+                                       params,
+                                       source.get_settings()))
 
     strategies.sort(key=lambda x: x.get_when())
     seq = 1
