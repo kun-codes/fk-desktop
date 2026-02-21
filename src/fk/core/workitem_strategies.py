@@ -162,6 +162,10 @@ class DeleteWorkitemStrategy(AbstractStrategy[Tenant]):
             del user.get_tags()[tag_to_delete.get_uid()]
             emit(events.TagDeleted, {"tag": tag_to_delete}, self._carry)
 
+        # Update categories
+        for category in workitem.get_categories():
+            category.remove_usage(workitem)
+
         del workitem.get_parent()[self._workitem_uid]
 
         emit(events.AfterWorkitemDelete, params, self._carry)
