@@ -210,11 +210,19 @@ class TestImportExport(TestCase):
     def _compare_imported_and_original_dumps(self):
         dump_imported = _remove_volatile_timestamps(self.data_temp['user@local.host'].dump(mask_last_modified=True))
         dump_original = _remove_volatile_timestamps(self.data_rand['user@local.host'].dump(mask_last_modified=True))
+
+        # Use this for troubleshooting
+        if True:
+            with open('di.txt', 'w') as fdi:
+                fdi.write(dump_imported)
+            with open('do.txt', 'w') as fdo:
+                fdo.write(dump_original)
+
         self.assertEqual(dump_imported, dump_original)
 
     def test_import_smart_ok(self):
         total_start, total_end = self._execute_import(False, True)
-        self.assertEqual(total_end, 827)
+        self.assertEqual(total_end, 1636)
         self._compare_imported_and_original_dumps()
 
     def test_import_smart_twice_ok(self):

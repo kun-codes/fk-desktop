@@ -210,6 +210,7 @@ def merge_strategies(source: AbstractEventSource[TRoot],
     existing_backlogs = dict[str, Backlog]()
     for backlog in source.backlogs():
         existing_backlogs[backlog.get_uid()] = backlog
+
     existing_workitems = dict[str, Workitem]()
     for workitem in source.workitems():
         existing_workitems[workitem.get_uid()] = workitem
@@ -235,6 +236,18 @@ def merge_strategies(source: AbstractEventSource[TRoot],
                                              source.get_settings())
                     seq += 1
 
+        # Create custom categories, if needed
+        if existing_user:
+            existing_categories = get_custom_categories(user.get_root_category())
+
+        for cat in get_custom_categories(user.get_root_category()):
+            strategies.append(
+                CreateCategoryStrategy(0,
+                                       cat.get_create_date(),
+                                       user.get_identity(),
+                                       [cat.get_uid(), cat.get_parent().get_uid(), cat.get_name()],
+                                       source.get_settings()))
+
         for backlog in user.values():
             if backlog.get_uid() not in existing_backlogs:
                 yield CreateBacklogStrategy(seq, backlog.get_create_date(), user.get_identity(),
@@ -253,20 +266,47 @@ def merge_strategies(source: AbstractEventSource[TRoot],
 
             for workitem in backlog.values():
                 if workitem.get_uid() not in existing_workitems:
-                    yield CreateWorkitemStrategy(seq, workitem.get_create_date(), user.get_identity(),
+                    yield CreateWorkitemStrategy(seq,
+                                                 workitem.get_create_date(),
+                                                 user.get_identity(),
                                                  [workitem.get_uid(), backlog.get_uid(), workitem.get_name()],
                                                  source.get_settings())
                     seq += 1
                     existing_workitem = source.find_workitem(workitem.get_uid())
+
+                    # Assign categories, if any
+                    if len(workitem.get_categories()) > 0:
+                        cats_to_add: str = ';'.join([cat.get_uid() for cat in workitem.get_categories()])
+                        yield UpdateWorkitemCategoriesStrategy(seq,
+                                                               workitem.get_create_date(),
+                                                               user.get_identity(),
+                                                               [workitem.get_uid(), '', cats_to_add],
+                                                               source.get_settings()))
+                        seq += 1
                 else:
-                    # Check if it was renamed
                     existing_workitem = existing_workitems[workitem.get_uid()]
+
+                    # Check if it was renamed
                     if workitem.get_name() != existing_workitem.get_name():
                         if workitem.get_last_modified_date() > existing_workitem.get_last_modified_date():
                             # UC-3: Smart import will rename any named data objects if their last modification date is later in the imported file
-                            yield RenameWorkitemStrategy(seq, workitem.get_last_modified_date(), user.get_identity(),
+                            yield RenameWorkitemStrategy(seq,
+                                                         workitem.get_last_modified_date(),
+                                                         user.get_identity(),
                                                          [workitem.get_uid(), workitem.get_name()],
                                                          source.get_settings())
+                            seq += 1
+
+                    # Check if we need to add any categories
+                    if len(workitem.get_categories()) > 0:
+                        # TODO: Check if we can use "in" here:
+                        cats_to_add: str = ';'.join([cat.get_uid() for cat in workitem.get_categories() if not existing_workitem.has_category(cat)])
+                        if cats_to_add:
+                            yield UpdateWorkitemCategoriesStrategy(seq,
+                                                                   workitem.get_last_modified_date(),
+                                                                   user.get_identity(),
+                                                                   [workitem.get_uid(), '', cats_to_add],
+                                                                   source.get_settings()))
                             seq += 1
 
                 # Merge pomodoros by adding the new ones and completing some, if needed
@@ -333,12 +373,36 @@ def merge_strategies(source: AbstractEventSource[TRoot],
                 if workitem.is_sealed() and (existing_workitem is None or not existing_workitem.is_sealed()):
                     strategies.append(
                         CompleteWorkitemStrategy(0,
-                                                 workitem.get_last_modified_date(),
+                                                 workitem.get_work_end_date(),
                                                  user.get_identity(),
                                                  [
                                                      workitem.get_uid(),
                                                      'finished'],
                                                  source.get_settings()))
+
+            # Reorder workitems
+            target_order = backlog.values()
+            source_order = backlog.values().copy()
+            source_order.sort(key=lambda x: x.get_create_date())
+            for params in get_reordering_strategies(source_order, target_order):
+                strategies.append(
+                    ReorderWorkitemStrategy(0,
+                                            backlog.get_last_modified_date(),
+                                            user.get_identity(),
+                                            params,
+                                            source.get_settings()))
+
+        # Reorder backlogs
+        target_order = user.values()
+        source_order = user.values().copy()
+        source_order.sort(key=lambda x: x.get_create_date())
+        for params in get_reordering_strategies(source_order, target_order):
+            strategies.append(
+                ReorderBacklogStrategy(0,
+                                       user.get_last_modified_date(),
+                                       user.get_identity(),
+                                       params,
+                                       source.get_settings()))
 
         strategies.sort(key=lambda x: x.get_when())
         for s in strategies:
