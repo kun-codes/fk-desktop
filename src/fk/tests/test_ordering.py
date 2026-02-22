@@ -76,7 +76,6 @@ class TestEvents(AbstractTestCase):
             self._internal_test(list(src), trg)
             for src in permutations(trg)
         ])
-        print(f'Average number of strategies for backlog of size {size}: {avg}')
         return avg
 
     def test_1(self):

@@ -119,8 +119,6 @@ def emulate(days: int, user: str) -> Iterable[AbstractStrategy]:
         else:
             top_level_cat = list(one_of(categories).keys())
 
-        #print(f'Top-level cat: {top_level_cat}')
-
         pomodoros = list[tuple[str, str]]()
         incomplete_workitems = set[str]()
         all_workitems = set[str]()

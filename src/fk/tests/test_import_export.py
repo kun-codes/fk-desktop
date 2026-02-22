@@ -177,9 +177,7 @@ class TestImportExport(TestCase):
         self.assertEqual(2614, total_end)    # That's how many strategies are in random.txt
 
         dump_imported = _remove_volatile_timestamps(self.data_temp['user@local.host'].dump())
-        # print(dump_imported)
         dump_original = _remove_volatile_timestamps(self.data_rand['user@local.host'].dump())
-        print(dump_original)
         self.assertEqual(dump_imported, dump_original)
 
     def test_import_classic_twice_error(self):
