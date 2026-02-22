@@ -28,7 +28,7 @@ from fk.core.file_event_source import FileEventSource
 from fk.core.mock_settings import MockSettings
 from fk.core.tenant import Tenant
 from fk.core.user import User
-from fk.core.workitem_strategies import CreateWorkitemStrategy
+from fk.core.workitem_strategies import CreateWorkitemStrategy, MoveWorkitemStrategy
 
 TEMP_FILENAME = 'src/fk/tests/fixtures/flowkeeper-data-TEMP.txt'
 RAND_FILENAME = 'src/fk/tests/fixtures/random.txt'
@@ -138,7 +138,7 @@ class TestFileEventSource(TestCase):
                 self.assertIn(w.get_uid(), orphans)
                 self.assertEqual(len(w), len(orphans[w.get_uid()])) # All pomodoros are still there
 
-        _test_repair(lambda s: not isinstance(s, CreateWorkitemStrategy),
+        _test_repair(lambda s: not isinstance(s, CreateWorkitemStrategy) and not isinstance(s, MoveWorkitemStrategy),
                      lambda src: self.assertEqual(len(list(original.backlogs())), len(list(src.backlogs()))),
                      check_after_repair)
 

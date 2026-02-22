@@ -37,7 +37,8 @@ from fk.core.tenant import Tenant, ADMIN_USER
 from fk.core.timer_strategies import StartWorkStrategy, StartTimerStrategy
 from fk.core.user_strategies import DeleteUserStrategy, CreateUserStrategy, RenameUserStrategy
 from fk.core.workitem_strategies import CreateWorkitemStrategy, DeleteWorkitemStrategy, RenameWorkitemStrategy, \
-    CompleteWorkitemStrategy, ReorderWorkitemStrategy, MoveWorkitemStrategy, RestoreWorkitemStrategy
+    CompleteWorkitemStrategy, ReorderWorkitemStrategy, MoveWorkitemStrategy, RestoreWorkitemStrategy, \
+    UpdateWorkitemCategoriesStrategy
 
 logger = logging.getLogger(__name__)
 TRoot = TypeVar('TRoot')
@@ -334,7 +335,8 @@ class FileEventSource(AbstractEventSource[TRoot]):
                         all_workitems.remove(workitem_uid)
                 del all_backlogs[uid]
 
-            elif t is RenameBacklogStrategy or t is CreateWorkitemStrategy:
+            elif t is RenameBacklogStrategy or \
+                    t is CreateWorkitemStrategy:
                 cast: RenameBacklogStrategy | CreateWorkitemStrategy = s
                 uid = cast.get_backlog_uid()
                 if uid not in all_backlogs:
@@ -372,6 +374,7 @@ class FileEventSource(AbstractEventSource[TRoot]):
                     t is RestoreWorkitemStrategy or \
                     t is MoveWorkitemStrategy or \
                     t is ReorderWorkitemStrategy or \
+                    t is UpdateWorkitemCategoriesStrategy or \
                     t is StartWorkStrategy or \
                     t is StartTimerStrategy or \
                     t is AddInterruptionStrategy or \

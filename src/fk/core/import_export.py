@@ -25,7 +25,8 @@ from fk.core.abstract_serializer import AbstractSerializer
 from fk.core.abstract_strategy import AbstractStrategy
 from fk.core.backlog import Backlog
 from fk.core.backlog_strategies import CreateBacklogStrategy, RenameBacklogStrategy, ReorderBacklogStrategy
-from fk.core.category_strategies import get_custom_categories, CreateCategoryStrategy
+from fk.core.category import Category
+from fk.core.category_strategies import get_custom_categories, CreateCategoryStrategy, RenameCategoryStrategy
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.mock_settings import MockSettings
 from fk.core.no_cryptograph import NoCryptograph
@@ -221,6 +222,8 @@ def merge_strategies(source: AbstractEventSource[TRoot],
     for user in data.values():
         if user.is_system_user():
             continue
+
+        existing_user: User | None = None
         if user.get_identity() not in source.get_data():
             yield CreateUserStrategy(seq, user.get_create_date(), ADMIN_USER,
                                      [user.get_identity(), user.get_name()],
@@ -228,7 +231,7 @@ def merge_strategies(source: AbstractEventSource[TRoot],
             seq += 1
         else:
             # Check if it was renamed
-            existing_user: User = source.get_data()[user.get_identity()]
+            existing_user = source.get_data()[user.get_identity()]
             if user.get_name() != existing_user.get_name():
                 if user.get_last_modified_date() > existing_user.get_last_modified_date():
                     yield RenameUserStrategy(seq, user.get_last_modified_date(), ADMIN_USER,
@@ -236,17 +239,34 @@ def merge_strategies(source: AbstractEventSource[TRoot],
                                              source.get_settings())
                     seq += 1
 
-        # Create custom categories, if needed
-        if existing_user:
-            existing_categories = get_custom_categories(user.get_root_category())
+        # Merge custom categories
+        existing_categories = dict[str, Category]()
+        if existing_user is not None:
+            for cat in get_custom_categories(existing_user.get_root_category()):
+                existing_categories[cat.get_uid()] = cat
 
-        for cat in get_custom_categories(user.get_root_category()):
-            strategies.append(
-                CreateCategoryStrategy(0,
-                                       cat.get_create_date(),
-                                       user.get_identity(),
-                                       [cat.get_uid(), cat.get_parent().get_uid(), cat.get_name()],
-                                       source.get_settings()))
+        for new_cat in get_custom_categories(user.get_root_category()):
+            existing_cat: Category | None = existing_categories.get(new_cat.get_uid())
+            if existing_cat is None:
+                yield CreateCategoryStrategy(seq,
+                                             new_cat.get_create_date(),
+                                             user.get_identity(),
+                                             # get_custom_categories() traverses parents first
+                                             [new_cat.get_uid(), new_cat.get_parent().get_uid(), new_cat.get_name()],
+                                             source.get_settings())
+                seq += 1
+            else:
+                # Check if it was renamed
+                if (new_cat.get_name() != existing_cat.get_name() and
+                        new_cat.get_last_modified_date() > existing_cat.get_last_modified_date()):
+                        yield RenameCategoryStrategy(seq,
+                                                     new_cat.get_last_modified_date(),
+                                                     user.get_identity(),
+                                                     [new_cat.get_uid(), new_cat.get_name()],
+                                                     source.get_settings())
+                        seq += 1
+
+        # TODO: Add support for existing category reordering
 
         for backlog in user.values():
             if backlog.get_uid() not in existing_backlogs:
@@ -281,7 +301,7 @@ def merge_strategies(source: AbstractEventSource[TRoot],
                                                                workitem.get_create_date(),
                                                                user.get_identity(),
                                                                [workitem.get_uid(), '', cats_to_add],
-                                                               source.get_settings()))
+                                                               source.get_settings())
                         seq += 1
                 else:
                     existing_workitem = existing_workitems[workitem.get_uid()]
@@ -306,7 +326,7 @@ def merge_strategies(source: AbstractEventSource[TRoot],
                                                                    workitem.get_last_modified_date(),
                                                                    user.get_identity(),
                                                                    [workitem.get_uid(), '', cats_to_add],
-                                                                   source.get_settings()))
+                                                                   source.get_settings())
                             seq += 1
 
                 # Merge pomodoros by adding the new ones and completing some, if needed

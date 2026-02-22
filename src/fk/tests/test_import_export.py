@@ -110,8 +110,12 @@ class TestImportExport(TestCase):
         self.assertEqual(38, len(user_rand))
 
         dump = user_rand.dump()
-        # with open(RAND_DUMP_FILENAME + '-new', 'w', encoding='UTF-8') as f:
-        #     f.write(dump)
+
+        # Use this for troubleshooting
+        if False:
+            with open(RAND_DUMP_FILENAME + '-new', 'w', encoding='UTF-8') as f:
+                f.write(dump)
+
         with open(RAND_DUMP_FILENAME, encoding='UTF-8') as f:
             self.assertEqual(f.read(), dump)
 
@@ -212,7 +216,7 @@ class TestImportExport(TestCase):
         dump_original = _remove_volatile_timestamps(self.data_rand['user@local.host'].dump(mask_last_modified=True))
 
         # Use this for troubleshooting
-        if True:
+        if False:
             with open('di.txt', 'w') as fdi:
                 fdi.write(dump_imported)
             with open('do.txt', 'w') as fdo:
@@ -222,7 +226,7 @@ class TestImportExport(TestCase):
 
     def test_import_smart_ok(self):
         total_start, total_end = self._execute_import(False, True)
-        self.assertEqual(total_end, 1636)
+        self.assertEqual(total_end, 1764)
         self._compare_imported_and_original_dumps()
 
     def test_import_smart_twice_ok(self):
