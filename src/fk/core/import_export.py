@@ -161,7 +161,7 @@ def compressed_strategies(source: AbstractEventSource[TRoot]) -> Iterable[Abstra
                 if workitem.is_sealed():
                     strategies.append(
                         CompleteWorkitemStrategy(0,
-                                                 workitem.get_last_modified_date(),
+                                                 workitem.get_work_end_date(),
                                                  user.get_identity(),
                                                  [
                                                      workitem.get_uid(),

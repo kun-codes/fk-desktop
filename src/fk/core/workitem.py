@@ -193,6 +193,9 @@ class Workitem(AbstractCategorizedDataContainer[Pomodoro, 'Backlog']):
     def get_work_start_date(self) -> datetime.datetime:
         return self._date_work_started
 
+    def get_work_end_date(self) -> datetime.datetime:
+        return self._date_work_ended
+
     def get_incomplete_pomodoros(self) -> Iterable[Pomodoro]:
         for pomodoro in self.values():
             if pomodoro.is_startable():
