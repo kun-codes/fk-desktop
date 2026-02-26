@@ -24,7 +24,7 @@ from fk.core.abstract_event_source import AbstractEventSource, start_workitem
 from fk.core.backlog import Backlog
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
-from fk.core.events import AfterWorkitemCreate, AfterSettingsChanged
+from fk.core.events import AfterWorkitemCreate, AfterSettingsChanged, AfterWorkitemCategoryChange
 from fk.core.pomodoro import POMODORO_TYPE_NORMAL, Pomodoro, POMODORO_TYPE_TRACKER
 from fk.core.pomodoro_strategies import AddPomodoroStrategy, RemovePomodoroStrategy
 from fk.core.tag import Tag
@@ -141,6 +141,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
     def _on_source_changed(self, event: str, source: AbstractEventSource) -> None:
         super()._on_source_changed(event, source)
         source.on(AfterWorkitemCreate, self._on_new_workitem)
+        source.on(AfterWorkitemCategoryChange, self._on_new_workitem)   # This will edit it, too
         source.on("AfterWorkitem*",
                   lambda workitem, **kwargs: self._update_actions_if_needed(workitem))
         source.on('AfterPomodoro*',
@@ -249,11 +250,13 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         backlog: Backlog = backlog_or_tag
         new_name = generate_unique_name("Do something", backlog.names())
         new_uid = generate_uid()
+        will_move = category_uid is not None
+
         self._source.execute(CreateWorkitemStrategy,
                              [new_uid, backlog.get_uid(), new_name],
-                             carry="edit")
+                             carry=None if will_move else "edit")   # We'll edit after moving to another category
 
-        if category_uid is not None:
+        if will_move:
             self._source.execute(UpdateWorkitemCategoriesStrategy,
                                  [new_uid, '', category_uid],
                                  carry="edit")

@@ -359,7 +359,6 @@ class WorkitemModel(AbstractDropModel):
             if parent_category is not None:
                 for c in added:
                     if c.get_parent() == parent_category:
-                        print(f'New category -- will move workitem to {c}')
                         new_index = self._get_category_insertion_index(c)
                         if new_index >= 0:
                             self._move_row(workitem, new_index)
@@ -368,7 +367,6 @@ class WorkitemModel(AbstractDropModel):
                 # We didn't add anything, so let's see if we need to remove instead
                 for c in removed:
                     if c.get_parent() == parent_category:
-                        print(f'Removing category -- will move workitem to ungrouped')
                         new_index = self._get_category_insertion_index(None)
                         if new_index >= 0:
                             self._move_row(workitem, new_index)
