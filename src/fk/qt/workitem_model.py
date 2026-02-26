@@ -18,7 +18,7 @@ import logging
 
 from PySide6 import QtGui, QtWidgets
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QFontMetrics, QStandardItem, QBrush
+from PySide6.QtGui import QFontMetrics, QStandardItem
 from PySide6.QtWidgets import QApplication
 
 from fk.core.abstract_event_source import AbstractEventSource
@@ -27,7 +27,7 @@ from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.events import AfterWorkitemRename, AfterWorkitemComplete, AfterWorkitemStart, AfterWorkitemCreate, \
     AfterWorkitemDelete, AfterSettingsChanged, AfterWorkitemReorder, AfterWorkitemMove, AfterWorkitemRestore, \
-    AfterCategoryCreate, AfterCategoryDelete, AfterCategoryRename, AfterCategoryReorder
+    AfterCategoryCreate, AfterCategoryDelete, AfterCategoryRename, AfterCategoryReorder, AfterWorkitemCategoryChange
 from fk.core.pomodoro import POMODORO_TYPE_TRACKER, Pomodoro
 from fk.core.tag import Tag
 from fk.core.workitem import Workitem
@@ -250,6 +250,7 @@ class WorkitemModel(AbstractDropModel):
         source.on(AfterWorkitemRename, self._workitem_renamed)
         source.on(AfterWorkitemReorder, self._workitem_reordered)
         source.on(AfterWorkitemMove, self._workitem_moved)
+        source.on(AfterWorkitemCategoryChange, self._workitem_category_changed)
         source.on(AfterWorkitemComplete, self._workitem_changed)
         source.on(AfterWorkitemRestore, self._workitem_changed)
         source.on(AfterWorkitemStart, self._workitem_changed)
@@ -277,7 +278,7 @@ class WorkitemModel(AbstractDropModel):
         item = self.item_for_object(workitem)
         if self.is_category_selected():
             # Insert at the last uncategorized row
-            i = self._get_first_category_index()
+            i = self._get_category_insertion_index(None)
             self.insertRow(i, item)
         else:
             self.appendRow(item)
@@ -288,10 +289,21 @@ class WorkitemModel(AbstractDropModel):
         # Fire dataChanged manually, so that the spans are updated and the table is repainted
         self.dataChanged.emit(None, None, None)
 
-    def _get_first_category_index(self) -> int:
-        for i in range(self.rowCount()):
-            if self.item(i).data(501) == 'category':
-                return i
+    def _get_category_insertion_index(self, category: Category | None) -> int:
+        if category is None:
+            for i in range(self.rowCount()):
+                if self.item(i).data(501) == 'category':
+                    return i
+        else:
+            for i in range(self.rowCount()):
+                if self.item(i).data(501) == 'category' and self.item(i).data(502) == category.get_uid():
+                    if i == self.rowCount() - 1:
+                        return self.rowCount()
+                    else:
+                        for j in range(i + 1, self.rowCount()):
+                            if self.item(j).data(501) == 'category':
+                                return j
+                        return self.rowCount()
         return -1
 
     def _find_workitem(self, workitem: Workitem) -> int:
@@ -325,16 +337,42 @@ class WorkitemModel(AbstractDropModel):
                 self._remove_if_found(workitem)
         self._workitem_changed(workitem)
 
+    def _move_row(self, workitem: Workitem, new_index: int):
+        old_index = self._find_workitem(workitem)
+        if old_index >= 0:
+            if new_index > old_index:
+                new_index -= 1
+            row = self.takeRow(old_index)
+            self.insertRow(new_index, row)
+
     def _workitem_reordered(self, workitem: Workitem, new_index: int, carry: str, **kwargs) -> None:
         if (carry != 'ui' and
                 type(self._backlog_or_tag) is Backlog and
                 self._workitem_belongs_here(workitem)):
-            old_index = self._find_workitem(workitem)
-            if old_index >= 0:
-                if new_index > old_index:
-                    new_index -= 1
-                row = self.takeRow(old_index)
-                self.insertRow(new_index, row)
+            self._move_row(workitem, new_index)
+
+    def _workitem_category_changed(self, workitem: Workitem, added: set[Category], removed: set[Category], carry: str, **kwargs) -> None:
+        if (carry != 'ui' and
+                type(self._backlog_or_tag) is Backlog and
+                self._workitem_belongs_here(workitem)):
+            parent_category: Category = self.get_selected_category()
+            if parent_category is not None:
+                for c in added:
+                    if c.get_parent() == parent_category:
+                        print(f'New category -- will move workitem to {c}')
+                        new_index = self._get_category_insertion_index(c)
+                        if new_index >= 0:
+                            self._move_row(workitem, new_index)
+                            return
+
+                # We didn't add anything, so let's see if we need to remove instead
+                for c in removed:
+                    if c.get_parent() == parent_category:
+                        print(f'Removing category -- will move workitem to ungrouped')
+                        new_index = self._get_category_insertion_index(None)
+                        if new_index >= 0:
+                            self._move_row(workitem, new_index)
+                            return
 
     def _category_created(self, category: Category, **kwargs) -> None:
         if self._category_belongs_here(category):
@@ -520,7 +558,8 @@ class WorkitemModel(AbstractDropModel):
 
         logger.debug(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
         self._source_holder.get_source().execute(UpdateWorkitemCategoriesStrategy,
-                                                 [workitem.get_uid(), ";".join(to_remove), to_add])
+                                                 [workitem.get_uid(), ";".join(to_remove), to_add],
+                                                 carry='ui')
 
     def reorder(self, to_index: int, raw_index: int, uid: str):
         # Convert to_index into the "item index".

@@ -508,7 +508,15 @@ class UpdateWorkitemCategoriesStrategy(AbstractStrategy[Tenant]):
         if len(to_remove.difference(existing)) > 0:
             raise Exception(f'Trying to remove non-existing categories from workitem "{self._workitem_uid}"')
 
+        params = {
+            'workitem': workitem,
+            'removed': to_remove,
+            'added': to_add,
+        }
+        emit(events.BeforeWorkitemCategoryChange, params, self._carry)
         workitem.set_categories(existing.difference(to_remove).union(to_add))
+        workitem.item_updated(self._when)
+        emit(events.AfterWorkitemCategoryChange, params, self._carry)
 
         for c in to_add:
             c.add_usage(workitem)
