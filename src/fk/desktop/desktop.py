@@ -354,6 +354,7 @@ if __name__ == "__main__":
         menu_file.addAction(actions['application.stats'])
         menu_file.addAction(actions['application.workSummary'])
         menu_file.addAction(actions['application.manageCategories'])
+        menu_file.addAction(actions['application.helpChooseCategories'])
         menu_file.addSeparator()
 
         menu_contact = QtWidgets.QMenu("Contact us", window)

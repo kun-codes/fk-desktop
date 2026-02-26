@@ -398,7 +398,7 @@ class WorkitemModel(AbstractDropModel):
     def get_row_height(self):
         return self._row_height
 
-    def _get_selected_category(self) -> Category|None:
+    def get_selected_category(self) -> Category | None:
         if self._backlog_or_tag is None or type(self._backlog_or_tag) is Tag or not self._selected_category_uid:
             return None
         else:
@@ -438,7 +438,7 @@ class WorkitemModel(AbstractDropModel):
                 workitems = sorted(backlog_or_tag.get_workitems(),
                                    key=lambda a: a.get_last_modified_date())
 
-            parent_category: Category = self._get_selected_category()
+            parent_category: Category = self.get_selected_category()
             if parent_category is None:
                 for workitem in workitems:
                     if self._hide_completed and workitem.is_sealed():
@@ -513,7 +513,7 @@ class WorkitemModel(AbstractDropModel):
         to_add: str = category.get_uid() if category is not None else ''
         to_remove: set[str] = set()
 
-        parent_category: Category = self._get_selected_category()
+        parent_category: Category = self.get_selected_category()
         for existing in workitem.get_categories():
             if existing.get_parent() == parent_category:
                 to_remove.add(existing.get_uid())

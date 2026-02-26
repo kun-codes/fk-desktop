@@ -661,6 +661,11 @@ class Application(QApplication, AbstractEventEmitter):
                     'F5',
                     None,
                     Application.show_categories)
+        actions.add('application.helpChooseCategories',
+                    "Help me Choose...",
+                    None,
+                    None,
+                    Application.show_categories)
 
         def contact(url: str) -> Callable:
             return lambda _: open_url(url)

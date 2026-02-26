@@ -15,12 +15,14 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
 
-from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtCore import Qt, QModelIndex, QPoint, QSize
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QWidget, QHeaderView, QMenu, QMessageBox
 
 from fk.core.abstract_data_item import generate_unique_name, generate_uid
 from fk.core.abstract_event_source import AbstractEventSource, start_workitem
 from fk.core.backlog import Backlog
+from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.events import AfterWorkitemCreate, AfterSettingsChanged
 from fk.core.pomodoro import POMODORO_TYPE_NORMAL, Pomodoro, POMODORO_TYPE_TRACKER
@@ -29,7 +31,8 @@ from fk.core.tag import Tag
 from fk.core.timer import PomodoroTimer
 from fk.core.timer_data import TimerData
 from fk.core.workitem import Workitem
-from fk.core.workitem_strategies import DeleteWorkitemStrategy, CreateWorkitemStrategy, RestoreWorkitemStrategy
+from fk.core.workitem_strategies import DeleteWorkitemStrategy, CreateWorkitemStrategy, RestoreWorkitemStrategy, \
+    UpdateWorkitemCategoriesStrategy
 from fk.desktop.application import Application
 from fk.qt.abstract_tableview import AbstractTableView
 from fk.qt.actions import Actions
@@ -213,6 +216,26 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
 
     # Actions
 
+    def get_category_for_new_item(self) -> str | None:
+        if self._source.get_settings().get('Application.default_workitem_category') == 'ask':
+            parent_category: Category|None = self.model().get_selected_category()
+            if parent_category is not None:
+                context_menu = QMenu(self)
+                for i, child in enumerate(parent_category.values()):
+                    action = QAction(f'&{i + 1} {child.get_short_name()}', self)
+                    action.setData(child.get_uid())
+                    context_menu.addAction(action)
+                context_menu.show() # To get correct size on the next line
+                menu_size: QSize = context_menu.geometry().size()
+                my_center: QPoint = self.geometry().center()
+                my_center.setX(int(my_center.x() - menu_size.width() / 2))
+                my_center.setY(int(my_center.y() - menu_size.height() / 2))
+                selected: QAction = context_menu.exec(self.parent().mapToGlobal(my_center))
+                if selected is not None:
+                    return selected.data()
+
+        return None
+
     def create_workitem(self) -> None:
         model = self.model()
         backlog_or_tag: Backlog | Tag = model.get_backlog_or_tag()
@@ -220,11 +243,20 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
             raise Exception("Trying to create a workitem while there's no backlog nor tag selected")
         if type(backlog_or_tag) is Tag:
             raise Exception("Trying to create a workitem directly in a tag -- shouldn't be possible")
+
+        category_uid = self.get_category_for_new_item()
+
         backlog: Backlog = backlog_or_tag
         new_name = generate_unique_name("Do something", backlog.names())
+        new_uid = generate_uid()
         self._source.execute(CreateWorkitemStrategy,
-                             [generate_uid(), backlog.get_uid(), new_name],
+                             [new_uid, backlog.get_uid(), new_name],
                              carry="edit")
+
+        if category_uid is not None:
+            self._source.execute(UpdateWorkitemCategoriesStrategy,
+                                 [new_uid, '', category_uid],
+                                 carry="edit")
 
         # A simpler, more efficient, but a bit uglier single-step alternative
         # (new_name, ok) = QInputDialog.getText(self,

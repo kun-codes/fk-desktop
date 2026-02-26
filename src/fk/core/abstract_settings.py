@@ -171,6 +171,8 @@ class AbstractSettings(AbstractEventEmitter, ABC):
                 ('Application.hide_completed', 'bool', 'Hide completed items', 'False', [], _never_show),
                 ('', 'separator', '', '', [], _always_show),
                 ('Application.feature_tags', 'bool', 'Display #tags', 'True', [], _always_show),
+                ('Application.default_workitem_category', 'choice', 'For new work items', 'ask', ['ask:Ask for a group', 'none:Create as uncategorized'], _always_show),
+                ('Application.default_backlog_category', 'choice', 'For new backlogs', 'last', ['last:Use the last grouping method', 'none:Do not use grouping'], _always_show),
                 ('', 'separator', '', '', [], _always_show),
                 ('Application.check_updates', 'bool', 'Check for updates', 'True', [], _hide_for_sandbox),
                 ('Application.ignored_updates', 'str', 'Ignored updates', '', [], _never_show),

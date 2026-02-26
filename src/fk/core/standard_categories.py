@@ -88,30 +88,108 @@ After all, you can only get your time under control if you stop doing things tha
 
 # Eisenhower: Eisenhower Matrix
 
-Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf](https://sps.columbia.edu/sites/
-default/files/2023-08/Eisenhower%20Matrix.pdf)
+***"I have two kinds of problems: the urgent and the important. The urgent are not important, and the important are never 
+urgent."***
+
+**Key points**
+
+\* People instinctively tend to prioritize urgent items, which is rarely the right thing to do
+
+\* Eisenhower Matrix aims at distinguishing between the two
+
+\* Try it if you feel that you do too much fire fighting
+
+**Non-obvious stuff**
+
+We tend to give our attention to urgent tasks at the expense of important tasks. Urgent tasks come in hot into our 
+inboxes and scream loudly for resolution. They are almost always someone else's problem, given to us on a short time 
+frame that amplifies their volume. It becomes a serious problem when we are *only* dealing with the urgent and not 
+giving adequate time to the important things that sit there, quietly and patiently.
+
+Being at the mercy of the latest-and-loudest is no way to live --- you're constantly putting out fires but never 
+building anything, constantly dealing with other people's problems but never developing your professional self, slowly 
+burning out from all the stress and never doing the things you know will be fulfilling.
+
+**Source**
+
+[The urgent and the important](https://www.rtalbert.org/blog-archive/index.php/2019/10/14/the-urgent-and-the-important)
+
+(C) Robert Talbert, Ph.D.
 
 ## UI: Urgent and Important (with deadlines or consequences)
 
-## UNI: Urgent and Not Important (require your attention, but do not have deadlines or consequences)
+Tasks that are urgent and important are the highest priority and should be done ASAP. They are automatic candidates for 
+the Most Important Thing (MIT) list for a given day.
+
+Example: The professor's unit recommendation for Promotion happens to be due on Friday, so this is both urgent and 
+important --- that's an MIT on my list for tomorrow and has a two-hour block in my calendar tomorrow morning all by 
+itself.
 
 ## NUI: Not Urgent and Important (with unclear deadlines that contribute to long-term success)
 
+Tasks that are important but not urgent come second. These need to be done; schedule time during the week to do them.
+
+Example: Reading the article about the course redesign is important, but not urgent --- schedule one pomodoro during the 
+week to read and take notes on it, and get it done this week.
+
+## UNI: Urgent and Not Important (require your attention, but do not have deadlines or consequences)
+
+Tasks that are urgent but not important are third. Delegate these if possible. Otherwise schedule time for them, but 
+not at the expense of the important stuff.
+
+For example, suppose I get an email from a student who's having trouble with their professor and wants an appointment 
+this week. I need to act on this, but it is not something I would categorize as strategically important in the sense of 
+serving a long-term goal. So it's "urgent but not important". I'll probably delegate this by telling the student to set 
+up an appointment with me through our office staff.
+
 ## NUNI: Not Urgent and Not Important (unnecessary, distractions, and time-wasters)
+
+Tasks that are neither urgent nor important get whatever time is left over. 
 
 -----------------------------------------------------------------------------------------------------------------------
 
 # Pareto: Pareto Principle
 
-Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf](https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf)
+***"If we double our time on our top 20 percent of activities, we can work a two-day week and achieve 60 percent more 
+than now."***
+
+**Key points**
+
+\* Focus on the 20 percent of activities that generate 80 percent of your successes.
+
+\* The 80/20 principle allows you to work less, live more, and be more effective.
+
+\* A shocking 80 percent of our activities at work are probably a waste of our energy and time.
+
+**Non-obvious stuff**
+
+When we act less, we think more. And we think better. Most valuable creative ideas come to us when we are not hyper-busy 
+or stressed, but in a calmer, more contemplative and receptive frame of mind.
+
+The time we save by applying the 80/20 principle to our work tasks should NOT be reinvested in work. The point of this 
+exercise is precisely to work less but smarter. The point is to free ourselves up to take breaks, to relax, to think, 
+to just be, to connect with others, and to do more nourishing, energising, soul-soothing things – all the things that 
+makes us feel alive and connected to our deeper purpose.
+
+**Source**
+
+[How to Work Less, Live More, and Be More Effective](https://www.psychologytoday.com/gb/blog/the-art-of-self-improvement/202312/work-less-live-more-and-be-more-effective)
+
+(C) Anna Katharina Schaffner Ph.D.
+
+## 20: 20% Effort, 80% Outcomes
+
+Which of my work activities matters most? What are the 20 percent that leads to my successes?
 
 ## 80: 80% Effort, 20% Outcomes
 
-## 20: 20% Effort, 80% Outcomes
+Which of the non-generative activities can I minimize? Which activities can I say no to in the future?
 
 -----------------------------------------------------------------------------------------------------------------------
 
 # Buffett: Warren Buffett's 5/25 Rule
+
+Same as Pareto Principle, but prescribes the number of tasks.
 
 Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf](https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf)
 
@@ -123,11 +201,43 @@ Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matr
 
 # 333: 3-3-3 Method
 
+***"You almost certainly can't consistently do the kind of work that demands serious mental focus for more than about 
+three or four hours a day."***
+
+**Key points**
+
+\- It creates a structure for your workday and helps you decide when to do what. In the morning, spend 3 hours working 
+on your most important task. Then in the afternoon, do the shorter tasks and the maintenance tasks. 
+
+\- It keeps us from falling behind on maintenance tasks.
+
+\- It works best if you can allocate 3 -- 4 hours of uninterrupted focused time in your day, ideally in the morning.
+
+**Non-obvious stuff**
+
+This is not just a prioritization technique, but a method to structure your day.
+
+**Source**
+
+[The three-or-four-hours rule for getting creative work done](https://www.oliverburkeman.com/fourhours)
+
 ## 1: Most Important Thing (spend 3 hours on this)
 
 ## 2: Short Tasks (maximum 3)
 
 ## 3: Maintenance Activities (maximum 3)
+
+-----------------------------------------------------------------------------------------------------------------------
+
+# 135: 1-3-5 Rule
+
+## 1: One large task (important, big-win task you must complete)
+
+## 3: Three medium tasks (relatively important tasks you need to complete)
+
+## 5: Five small tasks (tasks you’d like to complete)
+
+Details: https://activecollab.com/blog/productivity/1-3-5-rule
 
 -----------------------------------------------------------------------------------------------------------------------
 

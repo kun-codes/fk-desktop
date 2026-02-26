@@ -63,6 +63,13 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
     def get_info(self):
         return self._info
 
+    def get_short_name(self) -> str:
+        name = self.get_name()
+        if '(' in name:
+            return name[:name.index('(')].strip()
+        else:
+            return name
+
     def get_plaintext_info(self):
         txt = self._info if self._info else self._name
         paragraphs = filter(

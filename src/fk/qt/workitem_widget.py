@@ -65,7 +65,7 @@ class WorkitemWidget(QWidget):
         tb.addAction(actions['workitems_table.completeItem'])
         tb.addAction(actions['workitems_table.restoreItem'])
 
-        # Category menu
+        # Category menu -- see how to implement it via our actions framework
         cm = QToolButton(self)
         self._category_selector = cm
         cm.setDefaultAction(QAction(parent=self))
