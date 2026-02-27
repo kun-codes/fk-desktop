@@ -42,6 +42,12 @@ class AbstractCategorizedDataContainer(AbstractDataContainer[TChild, TParent], G
     def has_category(self, category: Category) -> bool:
         return category in self._categories
 
+    def is_uncategorized(self, parent_category: Category) -> bool:
+        for category in self._categories:
+            if category.get_parent() == parent_category:
+                return False
+        return True
+
     def set_categories(self, categories: set[Category]) -> None:
         self._categories = categories
 

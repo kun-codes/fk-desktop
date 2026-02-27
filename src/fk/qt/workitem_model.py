@@ -306,6 +306,14 @@ class WorkitemModel(AbstractDropModel):
                         return self.rowCount()
         return -1
 
+    def _get_category_start_index(self, category: Category | None) -> int:
+        if category is None:
+            return 0
+        for i in range(self.rowCount()):
+            if self.item(i).data(501) == 'category' and self.item(i).data(502) == category.get_uid():
+                return i
+        return -1
+
     def _find_workitem(self, workitem: Workitem) -> int:
         for i in range(self.rowCount()):
             wi = self.item(i).data(500)  # 500 ~ Qt.UserRole + 1
@@ -337,19 +345,51 @@ class WorkitemModel(AbstractDropModel):
                 self._remove_if_found(workitem)
         self._workitem_changed(workitem)
 
-    def _move_row(self, workitem: Workitem, new_index: int):
+    def _move_row(self, workitem: Workitem, new_index: int, simple: bool = False):
         old_index = self._find_workitem(workitem)
-        if old_index >= 0:
-            if new_index > old_index:
+        if old_index >= 0:  # It might be -1 for example if we hide completed items
+            if not simple and new_index > old_index:
                 new_index -= 1
             row = self.takeRow(old_index)
             self.insertRow(new_index, row)
+
+    def _get_workitem_group(self, workitem: Workitem) -> Category | None:
+        parent_category: Category = self.get_selected_category()
+        if parent_category is not None:
+            for existing in workitem.get_categories():
+                if existing.get_parent() == parent_category:
+                    return existing
+        return None
 
     def _workitem_reordered(self, workitem: Workitem, new_index: int, carry: str, **kwargs) -> None:
         if (carry != 'ui' and
                 type(self._backlog_or_tag) is Backlog and
                 self._workitem_belongs_here(workitem)):
-            self._move_row(workitem, new_index)
+
+            logger.debug(f'Moving the row to {new_index} because workitem was reordered externally')
+
+            visible_index: int = 0
+            parent_category: Category = self.get_selected_category()
+            if parent_category is None:
+                # Only account for the hidden workitems
+                for wi in workitem.get_parent().values():
+                    if not self._hide_completed or not wi.is_sealed():
+                        if wi == workitem:
+                            break
+                        visible_index += 1
+            else:
+                # Constraint it to current group
+                group: Category | None = self._get_workitem_group(workitem)
+                visible_index = self._get_category_start_index(group)
+                for wi in workitem.get_parent().values():
+                    if ((group is None and wi.is_uncategorized() or wi.has_category(group))
+                            and (not self._hide_completed or not wi.is_sealed())):
+                        visible_index += 1
+                        if wi == workitem:
+                            break
+
+            logger.debug(f'Final visible index: {visible_index}')
+            self._move_row(workitem, visible_index, True)
 
     def _workitem_category_changed(self, workitem: Workitem, added: set[Category], removed: set[Category], carry: str, **kwargs) -> None:
         if (carry != 'ui' and
@@ -361,6 +401,7 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(c)
                         if new_index >= 0:
+                            print('Moving the row because workitem category changed')
                             self._move_row(workitem, new_index)
                             return
 
@@ -369,6 +410,7 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(None)
                         if new_index >= 0:
+                            print('Moving the row because workitem category is removed')
                             self._move_row(workitem, new_index)
                             return
 
@@ -554,10 +596,11 @@ class WorkitemModel(AbstractDropModel):
             if existing.get_parent() == parent_category:
                 to_remove.add(existing.get_uid())
 
-        logger.debug(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
-        self._source_holder.get_source().execute(UpdateWorkitemCategoriesStrategy,
-                                                 [workitem.get_uid(), ";".join(to_remove), to_add],
-                                                 carry='ui')
+        if len(to_remove) > 0 or len(to_add) > 0:
+            logger.debug(f'Updating categories on workitem {workitem}: will remove "{";".join(to_remove)}", will add "{to_add}"')
+            self._source_holder.get_source().execute(UpdateWorkitemCategoriesStrategy,
+                                                     [workitem.get_uid(), ";".join(to_remove), to_add],
+                                                     carry='ui')
 
     def reorder(self, to_index: int, raw_index: int, uid: str):
         # Convert to_index into the "item index".
@@ -572,12 +615,22 @@ class WorkitemModel(AbstractDropModel):
                     visible_index += 1
                     if visible_index >= to_index:
                         break
-        logger.debug(f'When reordering {uid} having to add {to_add} items before our target index {to_index}')
-        self._source_holder.get_source().execute(ReorderWorkitemStrategy,
-                                                 [uid, str(to_index + to_add)],
-                                                 carry='ui')
+        logger.debug(f'When reordering {uid} having to add {to_add} items before our target index {to_index} (hide completed)')
 
+        # Now skip the category headers, if categorization is enabled
+        to_remove = 0
+        if self.is_category_selected():
+            for i in range(raw_index):
+                if self.item(i).data(501) == 'category':
+                    to_remove += 1
+        logger.debug(f'When reordering {uid} having to remove {to_remove} items before our target index {to_index} (category headers)')
+
+        # First update category, then reorder. This will help us to constraint reordering to the same category.
         self._update_category(self._backlog_or_tag[uid], raw_index)
+
+        self._source_holder.get_source().execute(ReorderWorkitemStrategy,
+                                                 [uid, str(to_index + to_add - to_remove)],
+                                                 carry='ui')
 
     def repaint_workitem(self, workitem: Workitem):
         for i in range(self.rowCount()):
