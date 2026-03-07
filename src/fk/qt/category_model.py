@@ -168,7 +168,7 @@ class CategoryModel(AbstractDropModel):
     def reorder(self, to_index: int, raw_index: int, uid: str):
         self._source_holder.get_source().execute(ReorderCategoryStrategy,
                                                  # We display categories in reverse order, so need to subtract here
-                                                 [uid, str(self.rowCount() - to_index)],
+                                                 [uid, str(to_index)],
                                                  carry='ui')
 
     def get_parent_category(self):
