@@ -93,11 +93,11 @@ urgent."***
 
 **Key points**
 
-\* People instinctively tend to prioritize urgent items, which is rarely the right thing to do
+\\* People instinctively tend to prioritize urgent items, which is rarely the right thing to do
 
-\* Eisenhower Matrix aims at distinguishing between the two
+\\* Eisenhower Matrix aims at distinguishing between the two
 
-\* Try it if you feel that you do too much fire fighting
+\\* Try it if you feel that you do too much fire fighting
 
 **Non-obvious stuff**
 
@@ -155,11 +155,11 @@ than now."***
 
 **Key points**
 
-\* Focus on the 20 percent of activities that generate 80 percent of your successes.
+\\* Focus on the 20 percent of activities that generate 80 percent of your successes.
 
-\* The 80/20 principle allows you to work less, live more, and be more effective.
+\\* The 80/20 principle allows you to work less, live more, and be more effective.
 
-\* A shocking 80 percent of our activities at work are probably a waste of our energy and time.
+\\* A shocking 80 percent of our activities at work are probably a waste of our energy and time.
 
 **Non-obvious stuff**
 
@@ -206,12 +206,12 @@ three or four hours a day."***
 
 **Key points**
 
-\- It creates a structure for your workday and helps you decide when to do what. In the morning, spend 3 hours working 
+\\- It creates a structure for your workday and helps you decide when to do what. In the morning, spend 3 hours working 
 on your most important task. Then in the afternoon, do the shorter tasks and the maintenance tasks. 
 
-\- It keeps us from falling behind on maintenance tasks.
+\\- It keeps us from falling behind on maintenance tasks.
 
-\- It works best if you can allocate 3 -- 4 hours of uninterrupted focused time in your day, ideally in the morning.
+\\- It works best if you can allocate 3 -- 4 hours of uninterrupted focused time in your day, ideally in the morning.
 
 **Non-obvious stuff**
 
@@ -231,13 +231,30 @@ This is not just a prioritization technique, but a method to structure your day.
 
 # 135: 1-3-5 Rule
 
+***"???"***
+
+**Key points**
+
+\\- There are 8 small tasks in a single day. This will work best if you can break your work down into small chunks.
+
+\\- Prefilling your backlog and dragging work items from there will save you time.
+
+\\- The big-win task must not be too big in order to allow for the remaining 8.
+
+**Non-obvious stuff**
+
+Similar to 3-3-3, but without telling you how much time you need to spend. Doing 9 tasks within a day might be really
+hard.
+
+**Source**
+
+???
+
 ## 1: One large task (important, big-win task you must complete)
 
 ## 3: Three medium tasks (relatively important tasks you need to complete)
 
 ## 5: Five small tasks (tasks you’d like to complete)
-
-Details: https://activecollab.com/blog/productivity/1-3-5-rule
 
 -----------------------------------------------------------------------------------------------------------------------
 
@@ -257,19 +274,72 @@ Details: [https://en.wikipedia.org/wiki/MoSCoW_method](https://en.wikipedia.org/
 
 # MSW: Must, Should, Want
 
-Details: [https://activecollab.com/blog/productivity/1-3-5-rule](https://activecollab.com/blog/productivity/1-3-5-rule)
+It's a simplified version of the MoSCoW method, which works brilliantly for personal backlogs.
+
+**Key points**
+
+\\- Unlike techniques focused on sizing the tasks, this one focuses on perceived importance, which might be easier to 
+evaluate in practice.
+
+\\- It doesn't tell you what to do once you categorized the tasks.
+
+**Non-obvious stuff**
+
+This method is the easiest to categorize your tasks in practice.
+
+It’s also helpful for budgeting. Before you get paid or go shopping, make a list of what you must buy, what you should 
+buy, and what you want to buy. Even seeing it written out like that will help you make better purchasing decisions.
+
+Spend a few minutes to review your previous day before planning the new one.
+
+Try with only one task in each category -- the results might surprise you.
+
+**Source**
+
+[Get the Best Start](https://web.archive.org/web/20140507073715/http://www.jayshirley.com/blog/2014/3/31/best-start-of-the-day)
+
+(C) Jay Shirley
 
 ## M: I must...
 
+What must I do to create the most impact today?
+
+Musts are your true non-negotiables. These include things with deadlines, commitments, and anything that would cause a 
+real problem tomorrow if it’s not done. 
+
+It is easy to put all your tasks in this list. Don't do it. The ideal number of tasks in this list is 1 -- 2.
+
 ## S: I should...
+
+What should I do to build a better future?
+
+Shoulds are important, useful, and responsible tasks. They make things better, smoother, or easier, but they aren’t an 
+immediate concern. 
 
 ## W: I want to...
 
+What do I want to do so that I may enjoy today and life more completely?
+
+Wants are things you actually want to do. Creative work. Personal projects. Nice-to-haves that tend to get pushed aside 
+when the day fills up.
+
+It's too easy to ignore this, especially when you work under stress. This leads to overfocus, which reduces productivity
+in the long term.
+
 -----------------------------------------------------------------------------------------------------------------------
 
-# Jar: Pickle Jar Method
+# Jar: Pickle Jar Theory
 
-Details: [https://en.wikipedia.org/wiki/MoSCoW_method](https://en.wikipedia.org/wiki/MoSCoW_method)
+***There’s something about a nice crunchy pickle, isn’t there?***
+
+It's a fun view on the same technique as 1-3-5. The analogy works well for some people. If you find it silly -- choose
+another prioritization technique.
+
+**Source**
+
+[Time Management: The Pickle Jar Theory](https://alistapart.com/article/pickle/)
+
+(C) Jeremy Wright
 
 ## Rocks: Rocks (big, important goals or tasks)
 
