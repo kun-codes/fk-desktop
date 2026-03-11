@@ -231,7 +231,8 @@ This is not just a prioritization technique, but a method to structure your day.
 
 # 135: 1-3-5 Rule
 
-***"???"***
+***"Forcing yourself to choose a 1-3-5 list means the things you get done will be the things you chose to do—rather than 
+what just happened to get done."***
 
 **Key points**
 
@@ -241,34 +242,99 @@ This is not just a prioritization technique, but a method to structure your day.
 
 \\- The big-win task must not be too big in order to allow for the remaining 8.
 
+\\- Complete the "big" task before lunch.
+
 **Non-obvious stuff**
 
 Similar to 3-3-3, but without telling you how much time you need to spend. Doing 9 tasks within a day might be really
 hard.
 
+The numbers are flexible. You can edit this template and specify your rules like 1-2-3 instead of 1-3-5. 
+
+Before leaving work, take a few minutes to define your 1-3-5 for the next day, so you're ready to hit the ground running 
+in the morning
+
+If your position is one where each day brings lots of unexpected tasks, try leaving one medium and two small tasks 
+blank, in preparation for the last-minute requests from your boss.
+
+Planning ahead like this also means you'll be able to have more informed conversations with your manager when he or she 
+drops something new on you that needs to be done right away—as well as the tools to re-prioritize your other work. For 
+example, when a surprise presentation falls on your lap, try: "Sure, I can get that to you by 3 PM, but the Q1 reports 
+won't be ready until tomorrow then, since I'd scheduled to work on that today."
+
+You will often merge 2 -- 3 small tasks into one
+
 **Source**
 
-???
+[Follow the 1-3-5 Rule](https://www.themuse.com/advice/why-you-never-finish-your-todo-lists-at-work-and-how-to-change-that)
+
+(C) Alex Cavoulacos / The Muse
 
 ## 1: One large task (important, big-win task you must complete)
 
+4 -- 8 pomodoros
+
 ## 3: Three medium tasks (relatively important tasks you need to complete)
 
+1 pomodoro each
+
 ## 5: Five small tasks (tasks you’d like to complete)
+
+1 -- 3 pomodoros for all five
 
 -----------------------------------------------------------------------------------------------------------------------
 
 # MSCW: MoSCoW Method
 
-Details: [https://en.wikipedia.org/wiki/MoSCoW_method](https://en.wikipedia.org/wiki/MoSCoW_method)
+This method works well for prioritizing tasks within a project. You'd use it for organizing bigger backlogs.
 
-## M: M - Must have (failure if at least one is not done)
+**Key points**
 
-## S: S - Should have (important but not necessary)
+\\- Relative priorities within "should have" and "could have" classes affect decisions on trade-in and trade-out.
 
-## C: C - Could have (desirable but not necessary)
+\\- It is important to distinguish between the "Must haves" and the rest, but less important to distinguish between 
+"Should haves" and "Could haves". It is important to order tasks in the two middle sections.
 
-## W: W - Won't have (least-critical or not appropriate)
+\\- Should re-evaluate the items regularly.
+
+**Non-obvious stuff**
+
+???
+
+**Source**
+
+[MoSCoW method (Wikipedia)](https://en.wikipedia.org/wiki/MoSCoW_method)
+
+[Fast-track: a RAD approach](https://archive.org/details/fasttrackradappr0000cleg/mode/2up)
+
+(C) Dai Clegg
+
+## M: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
+
+Requirements labelled as Must have are critical to the current delivery timebox in order for it to be a success. If even 
+one Must have requirement is not included, the project delivery should be considered a failure (note: requirements can 
+be downgraded from Must have, by agreement with all relevant stakeholders; for example, when new requirements are deemed 
+more important). MUST can also be considered an acronym for the Minimum Usable Subset.
+
+## S: S - Should have (important but not necessary / it is currently intended to deliver those as well)
+
+Requirements labelled as Should have are important but not necessary for delivery in the current delivery timebox. While 
+Should have requirements can be as important as Must have, they are often not as time-critical or there may be another 
+way to satisfy the requirement so that it can be held back until a future delivery timebox.
+
+## C: C - Could have (desirable but not necessary / if time allows some of thest may be delivered)
+
+Requirements labelled as Could have are desirable but not necessary and could improve the user experience or customer 
+satisfaction for a little development cost. These will typically be included if time and resources permit.
+
+## W: W - Won't have (least-critical or not appropriate / the project will not deliver these)
+
+Requirements labelled as Won't have, have been agreed by stakeholders as the least-critical, lowest-payback items, or 
+not appropriate at that time. As a result, Won't have requirements are not planned into the schedule for the next 
+delivery timebox. Won't have requirements are either dropped or reconsidered for inclusion in a later timebox. (Note: 
+occasionally the term Would like to have is used; however, that usage is incorrect, as this last priority is clearly 
+stating something is outside the scope of delivery). (The BCS in edition 3 & 4 of the Business Analysis Book describe 
+'W' as 'Want to have but not this time around')
 
 -----------------------------------------------------------------------------------------------------------------------
 
