@@ -1,0 +1,101 @@
+name: flowkeeper
+base: core24
+version: "1.1.0"
+license: GPL-3.0-only
+icon: snap-icon.png
+
+summary: Flowkeeper is a free Pomodoro Technique desktop timer for power users.
+description: |
+    Flowkeeper is a Pomodoro backlog and timer with a "classic" desktop-first UI paradigm.
+    With its keyboard shortcuts and advanced settings, it is optimized for power users.
+    It stays as close as possible to the Pomodoro Technique definition and format from
+    the original book by Francesco Cirillo.
+
+grade: devel
+confinement: devmode
+
+apps:
+    flowkeeper:
+        command: bin/run.sh
+        common-id: org.flowkeeper.Flowkeeper
+        desktop: usr/share/applications/org.flowkeeper.Flowkeeper.desktop
+        extensions:
+            - gnome
+        plugs:
+            - audio-playback
+            - desktop
+            - desktop-legacy
+            - network
+            - opengl
+            - wayland
+            - x11
+
+parts:
+    flowkeeper:
+        plugin: python
+        source: https://github.com/flowkeeper-org/fk-desktop/archive/refs/tags/v1.0.2.tar.gz
+        source-type: tar
+
+        python-requirements:
+            - requirements.txt
+
+        build-packages:
+            - libglib2.0-dev
+            - qt6-base-dev-tools
+
+        stage-packages:
+            - libglib2.0-0
+            - libxcb-cursor0
+            - libxcb-keysyms1
+            - libxcb-icccm4
+
+        override-build: |
+            # Run python plugin default behavior (installs requirements)
+            craftctl default
+
+            cd res
+            /usr/lib/qt6/libexec/rcc -g python --project -o "resources.qrc"
+            /usr/lib/qt6/libexec/rcc -g python "resources.qrc" -o "../src/fk/desktop/resources.py"
+            rm -f resources.qrc
+            cd ..
+
+            # Byte-compile Python sources
+            python3 -m compileall src
+
+            # Install application files
+            mkdir -p "$CRAFT_PART_INSTALL/flowkeeper"
+            cp -r src "$CRAFT_PART_INSTALL/flowkeeper/"
+
+            # Desktop file
+            install -Dm644 scripts/linux/common/org.flowkeeper.Flowkeeper.desktop \
+              "$CRAFT_PART_INSTALL/usr/share/applications/org.flowkeeper.Flowkeeper.desktop"
+
+            sed -i 's|^Exec=.*|Exec=flowkeeper|' \
+              "$CRAFT_PART_INSTALL/usr/share/applications/org.flowkeeper.Flowkeeper.desktop"
+
+            sed -i 's|^Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/512x512/apps/org.flowkeeper.Flowkeeper.png|' \
+              "$CRAFT_PART_INSTALL/usr/share/applications/org.flowkeeper.Flowkeeper.desktop"
+
+            # AppStream metadata
+            install -Dm644 scripts/linux/common/org.flowkeeper.Flowkeeper.metainfo.xml \
+              "$CRAFT_PART_INSTALL/usr/share/metainfo/org.flowkeeper.Flowkeeper.metainfo.xml"
+
+            # Icons
+            install -Dm644 flowkeeper-48x48.png \
+              "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/48x48/apps/org.flowkeeper.Flowkeeper.png"
+
+            install -Dm644 flowkeeper-512x512.png \
+              "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/org.flowkeeper.Flowkeeper.png"
+
+            install -Dm644 res/flowkeeper.png \
+              "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/1024x1024/apps/org.flowkeeper.Flowkeeper.png"
+
+            # Launcher script
+            mkdir -p "$CRAFT_PART_INSTALL/bin"
+            cat > "$CRAFT_PART_INSTALL/bin/run.sh" << 'EOF'
+            #!/bin/sh
+            export PYTHONPATH="$SNAP/flowkeeper/src:$PYTHONPATH"
+            exec python3 -m fk.desktop.desktop
+            EOF
+
+            chmod +x "$CRAFT_PART_INSTALL/bin/run.sh"
