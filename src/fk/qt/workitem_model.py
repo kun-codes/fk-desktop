@@ -401,7 +401,6 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(c)
                         if new_index >= 0:
-                            print('Moving the row because workitem category changed')
                             self._move_row(workitem, new_index)
                             return
 
@@ -410,7 +409,6 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(None)
                         if new_index >= 0:
-                            print('Moving the row because workitem category is removed')
                             self._move_row(workitem, new_index)
                             return
 
