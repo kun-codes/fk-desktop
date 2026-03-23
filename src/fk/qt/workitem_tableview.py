@@ -93,6 +93,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
                 index = model.index(i, 0)
                 if index.data(501) == 'category':
                     self.setSpan(i, 0, 1, 3)
+            self.horizontalHeader().resizeSections()
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.theme' in new_values or 'Application.feature_tags' in new_values:
@@ -197,6 +198,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         super().upstream_selected(backlog_or_tag)
         is_backlog = type(backlog_or_tag) is Backlog
         self._actions['workitems_table.newItem'].setEnabled(is_backlog)
+        self._on_data_changed()  # This will create correct spans for categories
 
     def _enable_action(self, name: str, is_enabled: bool) -> None:
         self._actions[name].setEnabled(is_enabled)
