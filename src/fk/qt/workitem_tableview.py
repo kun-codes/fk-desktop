@@ -77,6 +77,13 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         self.model().headerDataChanged.connect(self._on_data_changed)
         self.model().dataChanged.connect(self._on_data_changed)
 
+        # Set resizing policy
+        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.horizontalHeader().resizeSection(0, 16)
+        self._vertical_resizing()
+
     def _on_data_changed(self):
         self.clearSpans()
         if self.model().is_category_selected():
@@ -86,12 +93,11 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
                 index = model.index(i, 0)
                 if index.data(501) == 'category':
                     self.setSpan(i, 0, 1, 3)
-        self._resize()
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.theme' in new_values or 'Application.feature_tags' in new_values:
             self._configure_delegate()
-            self._resize()
+            self._vertical_resizing()
 
     def _is_tags_enabled(self) -> bool:
         return self._application.get_settings().get('Application.feature_tags') == 'True'
@@ -191,7 +197,6 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         super().upstream_selected(backlog_or_tag)
         is_backlog = type(backlog_or_tag) is Backlog
         self._actions['workitems_table.newItem'].setEnabled(is_backlog)
-        self._resize()
 
     def _enable_action(self, name: str, is_enabled: bool) -> None:
         self._actions[name].setEnabled(is_enabled)
@@ -330,15 +335,9 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
 
     def _toggle_hide_completed_workitems(self, checked: bool) -> None:
         self.model().hide_completed(checked)
-        self._resize()
         self._source.set_config_parameters({'Application.hide_completed': str(checked)})
 
-    def _resize(self) -> None:
-        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
-        self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
-        self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
-        self.horizontalHeader().resizeSection(0, 16)
-
+    def _vertical_resizing(self) -> None:
         # Resizing to contents results in visible blinking on Kubuntu 20.04, so cannot be enabled by default.
         self.verticalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.ResizeToContents if self._is_tags_enabled() else QHeaderView.ResizeMode.Fixed)

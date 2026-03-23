@@ -80,6 +80,7 @@ class BacklogModel(AbstractDropModel):
         self._schedule_at_midnight()
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         self.itemChanged.connect(lambda item: self.handle_rename(item, RenameBacklogStrategy))
+        self.setHorizontalHeaderItem(0, QStandardItem(''))
 
     def _on_source_changed(self, event: str, source: AbstractEventSource):
         self.load(None)
@@ -133,11 +134,10 @@ class BacklogModel(AbstractDropModel):
                     return
 
     def load(self, user: User | None) -> None:
-        self.clear()
+        self.removeRows(0, self.rowCount())
         if user is not None:
             for backlog in reversed(user.values()):
                 self.appendRow(BacklogItem(backlog))
-        self.setHorizontalHeaderItem(0, QStandardItem(''))
 
     def get_primary_type(self) -> str:
         return 'application/flowkeeper.backlog.id'

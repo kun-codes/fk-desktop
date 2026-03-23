@@ -65,6 +65,7 @@ class BacklogTableView(AbstractTableView[User, Backlog]):
         }))
         self._application = application
         self.update_actions(None)
+        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
     def _lock_ui(self, event, after: int, last_received: datetime.datetime) -> None:
         self.update_actions(self.get_current())
@@ -109,7 +110,6 @@ class BacklogTableView(AbstractTableView[User, Backlog]):
     def upstream_selected(self, user: User) -> None:
         super().upstream_selected(user)
         self._actions['backlogs_table.newBacklog'].setEnabled(user is not None)
-        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
 
     def _update_actions_if_needed(self, workitem: Workitem):
         if workitem is not None:

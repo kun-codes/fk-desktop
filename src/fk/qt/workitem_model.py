@@ -226,6 +226,11 @@ class WorkitemModel(AbstractDropModel):
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         settings.on(AfterSettingsChanged, self._on_setting_changed)
 
+        # Pre-create columns, so that we can define their resize policy in the view
+        self.setHorizontalHeaderItem(0, QStandardItem(''))
+        self.setHorizontalHeaderItem(1, QStandardItem(''))
+        self.setHorizontalHeaderItem(2, QStandardItem(''))
+
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         if 'Application.table_row_height' in new_values:
             self._update_row_height(int(new_values["Application.table_row_height"]))
@@ -505,7 +510,7 @@ class WorkitemModel(AbstractDropModel):
 
     def load(self, backlog_or_tag: Backlog | Tag) -> None:
         logger.debug(f'WorkitemModel.load({backlog_or_tag})')
-        self.clear()
+        self.removeRows(0, self.rowCount())
         self._backlog_or_tag = backlog_or_tag
         if backlog_or_tag is not None:
             if type(backlog_or_tag) is Backlog:
@@ -534,10 +539,6 @@ class WorkitemModel(AbstractDropModel):
                     for workitem in grouped[category]:
                         if not self._hide_completed or not workitem.is_sealed():
                             self.appendRow(self.item_for_object(workitem))
-
-        self.setHorizontalHeaderItem(0, QStandardItem(''))
-        self.setHorizontalHeaderItem(1, QStandardItem(''))
-        self.setHorizontalHeaderItem(2, QStandardItem(''))
 
     def hide_completed(self, hide: bool) -> None:
         self._hide_completed = hide

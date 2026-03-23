@@ -68,6 +68,10 @@ class CategoryTableView(AbstractTableView[User, Category]):
             self._unlock_ui(None, 0)
         self.clicked.connect(self._on_info_clicked)
 
+        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().resizeSection(1, 24)
+
     def _on_info_clicked(self, index: QModelIndex):
         if index.column() == 1:
             category: Category = index.data(500)
@@ -117,9 +121,6 @@ class CategoryTableView(AbstractTableView[User, Category]):
     def upstream_selected(self, category: Category) -> None:
         super().upstream_selected(category)
         self._actions['categories_table.newCategory'].setEnabled(category is not None)
-        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
-        self.horizontalHeader().resizeSection(1, 24)
 
         # Auto-select the first subcategory, if any
         if category is not None:

@@ -96,6 +96,9 @@ class CategoryModel(AbstractDropModel):
         if source_holder.get_source() is not None:
             self._on_source_changed(None, source_holder.get_source())
 
+        self.setHorizontalHeaderItem(0, QStandardItem(''))
+        self.setHorizontalHeaderItem(1, QStandardItem(''))
+
     def _on_source_changed(self, event: str, source: AbstractEventSource):
         self.load(None)
         source.on(events.AfterCategoryCreate, self._category_added)
@@ -146,7 +149,7 @@ class CategoryModel(AbstractDropModel):
 
     def load(self, parent_category: Category | None) -> None:
         self._parent_category = parent_category
-        self.clear()
+        self.removeRows(0, self.rowCount())
         if parent_category is not None:
             # This is a commander-like way to navigate through the categories
             # if not parent_category.is_root():
@@ -156,8 +159,6 @@ class CategoryModel(AbstractDropModel):
                     CategoryTitle(category),
                     CategoryInfo(category)
                 ])
-        self.setHorizontalHeaderItem(0, QStandardItem(''))
-        self.setHorizontalHeaderItem(1, QStandardItem(''))
 
     def get_primary_type(self) -> str:
         return 'application/flowkeeper.category.id'
