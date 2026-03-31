@@ -23,11 +23,6 @@ apps:
         command: usr/bin/flowkeeper
         common-id: org.flowkeeper.Flowkeeper
         desktop: usr/share/applications/org.flowkeeper.Flowkeeper.desktop
-        environment:
-            LD_LIBRARY_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib:$LD_LIBRARY_PATH
-            LIBGL_DRIVERS_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
-            QT_PLUGIN_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt6/plugins:$SNAP/usr/lib/qt6/plugins
-            QML2_IMPORT_PATH: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt6/qml:$SNAP/usr/lib/qt6/qml
 
 parts:
     flowkeeper:
