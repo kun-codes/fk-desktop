@@ -23,6 +23,17 @@ apps:
         command: usr/bin/flowkeeper
         common-id: org.flowkeeper.Flowkeeper
         desktop: usr/share/applications/org.flowkeeper.Flowkeeper.desktop
+        plugs:
+          - desktop
+          - desktop-legacy
+          - opengl
+          - wayland
+          - x11
+          - audio-playback
+          - unity7
+          - network
+          - network-bind
+
 
 parts:
     flowkeeper:
