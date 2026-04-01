@@ -41,12 +41,10 @@ parts:
             - on amd64: https://github.com/flowkeeper-org/fk-desktop/releases/download/v1.0.2/flowkeeper-1.0.2-ubuntu-22.04-nuitka-package.deb
             - on arm64: https://github.com/flowkeeper-org/fk-desktop/releases/download/v1.0.2/flowkeeper-1.0.2-ubuntu-22.04-arm-nuitka-package.deb
         source-type: deb
-
         stage-packages:
-            - libglib2.0-0
             - libxcb-cursor0
-            - libxcb-keysyms1
-            - libxcb-icccm4
+            - libgl1
+            - libpulse0
 
         override-prime: |
             craftctl default
