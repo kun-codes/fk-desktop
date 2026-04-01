@@ -2,7 +2,6 @@ name: flowkeeper
 base: core24
 version: "1.0.2"
 license: GPL-3.0-only
-icon: snap-icon.png
 
 summary: Flowkeeper is a free Pomodoro Technique desktop timer for power users.
 description: |
