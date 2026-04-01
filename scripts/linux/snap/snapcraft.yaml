@@ -38,7 +38,7 @@ parts:
     flowkeeper:
         plugin: dump
         source:
-            - on amd64: https://github.com/flowkeeper-org/fk-desktop/releases/download/v1.0.2/flowkeeper-1.0.2-ubuntu-22.04-pyinstaller-package.deb
+            - on amd64: https://github.com/flowkeeper-org/fk-desktop/releases/download/v1.0.2/flowkeeper-1.0.2-ubuntu-22.04-nuitka-package.deb
             - on arm64: https://github.com/flowkeeper-org/fk-desktop/releases/download/v1.0.2/flowkeeper-1.0.2-ubuntu-22.04-arm-nuitka-package.deb
         source-type: deb
 
