@@ -47,9 +47,28 @@ parts:
             - libxcb-cursor0
             - libgl1
             - libpulse0
+            # dependencies for Video Acceleration
             - libva2
             - libva-drm2
             - libva-x11-2
+            # missing dependencies as per linter
+            - libegl1 # libEGL.so.1
+            - libqt6opengl6t64 # libQt6EglFsKmsGbmSupport.so.6
+            - libxrandr2 # libXrandr.so.2
+            - libatk1.0-0t64 # libatk-1.0.so.0
+            - libatomic1 # libatomic.so.1
+            - libcairo-gobject2 # libcairo-gobject.so.2
+            - libcairo2 # libcairo.so.2
+            - libcups2t64 # libcups.so.2
+            - libfontconfig1 # libfontconfig.so.1
+            - libgtk-3-0t64 # libgdk-3.so.0
+            - libgdk-pixbuf-2.0-0 # libgdk_pixbuf-2.0.so.0
+            - libgtk-3-0t64 # libgtk-3.so.0
+            - libpango-1.0-0 # libpango-1.0.so.0
+            - libpangocairo-1.0-0 # libpangocairo-1.0.so.0
+            - libwayland-client0 # libwayland-client.so.0
+            - libwayland-cursor0 # libwayland-cursor.so.0
+            - libwayland-egl1 # libwayland-egl.so.1
 
         override-prime: |
             craftctl default
