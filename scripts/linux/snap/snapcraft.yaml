@@ -45,8 +45,6 @@ parts:
         source-type: deb
         stage-packages:
             - libxcb-cursor0
-            - libgl1
-            - libpulse0
             # dependencies for Video Acceleration
             - libva2
             - libva-drm2
