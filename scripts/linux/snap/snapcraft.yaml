@@ -20,6 +20,8 @@ platforms:
 apps:
     flowkeeper:
         command: usr/bin/flowkeeper
+        environment:
+            LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_ON:$SNAP/usr/lib:$LD_LIBRARY_PATH
         common-id: org.flowkeeper.Flowkeeper
         desktop: usr/share/applications/org.flowkeeper.Flowkeeper.desktop
         plugs:
@@ -45,6 +47,9 @@ parts:
             - libxcb-cursor0
             - libgl1
             - libpulse0
+            - libva2
+            - libva-drm2
+            - libva-x11-2
 
         override-prime: |
             craftctl default
