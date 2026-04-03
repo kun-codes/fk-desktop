@@ -17,7 +17,7 @@ import datetime
 import logging
 
 from PySide6 import QtGui, QtWidgets
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QFontMetrics, QStandardItem
 from PySide6.QtWidgets import QApplication
 
@@ -206,6 +206,8 @@ class WorkitemModel(AbstractDropModel):
     _row_height: int
     _hide_completed: bool
     _selected_category_uid: str
+
+    data_loaded = Signal(None)
 
     def __init__(self, parent: QtWidgets.QWidget, source_holder: EventSourceHolder):
         super().__init__(1, parent, source_holder)
@@ -539,6 +541,8 @@ class WorkitemModel(AbstractDropModel):
                     for workitem in grouped[category]:
                         if not self._hide_completed or not workitem.is_sealed():
                             self.appendRow(self.item_for_object(workitem))
+
+        self.data_loaded.emit()
 
     def hide_completed(self, hide: bool) -> None:
         self._hide_completed = hide

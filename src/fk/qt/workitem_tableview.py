@@ -74,8 +74,8 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
             timer.on(PomodoroTimer.TimerTick, self._on_tick)
         else:
             logger.debug('WorkitemTableView will not update automatically on timer ticks')
-        self.model().headerDataChanged.connect(self._on_data_changed)
-        self.model().dataChanged.connect(self._on_data_changed)
+
+        self.model().data_loaded.connect(self._create_category_spans)
 
         # Set resizing policy
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
@@ -84,7 +84,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         self.horizontalHeader().resizeSection(0, 16)
         self._vertical_resizing()
 
-    def _on_data_changed(self):
+    def _create_category_spans(self):
         self.clearSpans()
         if self.model().is_category_selected():
             # Create spans for categories
@@ -198,7 +198,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
         super().upstream_selected(backlog_or_tag)
         is_backlog = type(backlog_or_tag) is Backlog
         self._actions['workitems_table.newItem'].setEnabled(is_backlog)
-        self._on_data_changed()  # This will create correct spans for categories
+        self._create_category_spans()
 
     def _enable_action(self, name: str, is_enabled: bool) -> None:
         self._actions[name].setEnabled(is_enabled)
