@@ -2,31 +2,89 @@ import datetime
 
 from fk.core.category import Category
 
-STANDARD_WORKITEM_CATEGORIES = """
+
+def h3(text: str) -> str:
+    return f'#### <h3 style="font-family: Sans-serif; font-weight: 300;">{text.upper()}</h3>'
+
+
+STANDARD_WORKITEM_CATEGORIES = f"""
+# 123: 1-2-3 Rule
+
+> *"Forcing yourself to choose a 1-3-5 list means the things you get done will be the things you chose to do—rather than 
+what just happened to get done."*
+
+{h3('Key points')}
+
+- There are 5 small tasks in a single day. This will work best if you can break your work down into small chunks.
+
+- Prefilling your backlog and dragging work items from there will save you time.
+
+- The big-win task must not be too big in order to allow for the remaining 5.
+
+- Complete the "big" task before lunch.
+
+{h3('In practice')}
+
+Similar to 3-3-3, but without telling you how much time you need to spend. Doing 9 tasks within a day might be really
+hard.
+
+The numbers are flexible. You can edit this template and specify your rules like 1-3-5 instead of 1-2-3. 
+
+Before leaving work, take a few minutes to define your 1-2-3 for the next day, so you're ready to hit the ground running 
+in the morning
+
+If your position is one where each day brings lots of unexpected tasks, try leaving one medium and two small tasks 
+blank, in preparation for the last-minute requests from your boss.
+
+Planning ahead like this also means you'll be able to have more informed conversations with your manager when he or she 
+drops something new on you that needs to be done right away—as well as the tools to re-prioritize your other work. For 
+example, when a surprise presentation falls on your lap, try: "Sure, I can get that to you by 3 PM, but the Q1 reports 
+won't be ready until tomorrow then, since I'd scheduled to work on that today."
+
+You will often merge 2 -- 3 small tasks into one
+
+{h3('See also')}
+
+[Follow the 1-3-5 Rule](https://www.themuse.com/advice/why-you-never-finish-your-todo-lists-at-work-and-how-to-change-that)
+
+(C) Alex Cavoulacos / The Muse
+
+## 1: One large task (important, big-win task you must complete)
+
+5 -- 7 pomodoros
+
+## 2: Two medium tasks (relatively important tasks you need to complete)
+
+1 pomodoro each
+
+## 3: Three small tasks (tasks you’d like to complete)
+
+1 -- 2 pomodoros for all three
+
+-----------------------------------------------------------------------------------------------------------------------
+
 # ABCDE: ABCDE Method
 
-The ABCDE method is a time management and prioritisation technique designed to help individuals and teams organize tasks 
-based on their importance and urgency. By categorising tasks into five distinct groups, from most to least critical, 
-this method encourages a structured approach to tackling daily activities and projects.
+This can be seen as an extension of 1-2-3 rule. Here A, B and C are synonymous to 1, 2 and 3, while D and E help you 
+shed unneeded work.
 
-- **A - Most important**: Tasks that are critical for your goals and have significant consequences if not completed. 
-These are your top priorities.
-- **B - Important**: Tasks that are important but less critical than 'A' tasks. There are moderate consequences if these 
-are not completed.
-- **C - Nice to do**: Activities that have no significant consequence whether done or not. They are useful but not 
-critical.
-- **D - Delegate**: Tasks that can be assigned to someone else. They need to be done but not necessarily by you.
-- **E - Eliminate**: Tasks that offer no real value and can be removed from your list without impacting your goals or 
-productivity.
+{h3('Key points')}
 
-The key to making this ABCDE Method work is for you to now discipline yourself to start immediately on your "A-1" task. 
+The key to making this ABCDE Method work is for you to now discipline yourself to start immediately on your "A" task. 
 Stay at it until it is complete. Use your willpower to get going on this one job, the single most important task you 
 could possibly be doing.
 
 Eat the whole frog and don’t stop until it’s finished completely.
 
-Details: [https://www.briantracy.com/blog/time-management/the-abcde-list-technique-for-setting-priorities/](https://www.
-briantracy.com/blog/time-management/the-abcde-list-technique-for-setting-priorities/)
+{h3('In practice')}
+
+TO DO
+
+{h3('See also')}
+
+Details: [The ABCD List Technique for Setting Priorities](https://www.briantracy.com/blog/time-management/the-abcde-list-technique-for-setting-priorities/)
+
+(C) Brian Tracy.
 
 ## A: A - Most important (significant consequences if not completed)
 
@@ -38,9 +96,6 @@ This is a task for which there can be serious consequences if you fail to do it.
 customer or not finishing a report for your boss that she needs for an upcoming board meeting.
 
 These are the frogs of your life.
-
-If you have more than one "A" task, you prioritize these tasks by writing A-1, A-2, A-3, and so on in front of each 
-item. Your A-1 task is your biggest, ugliest frog of all.
 
 ## B: B - Important (moderate consequences if not completed)
 
@@ -88,18 +143,18 @@ After all, you can only get your time under control if you stop doing things tha
 
 # Eisenhower: Eisenhower Matrix
 
-***"I have two kinds of problems: the urgent and the important. The urgent are not important, and the important are never 
-urgent."***
+> *"I have two kinds of problems: the urgent and the important. The urgent are not important, and the important are never 
+urgent."* - Dwight D. Eisenhower
 
-**Key points**
+{h3('Key points')}
 
-\\* People instinctively tend to prioritize urgent items, which is rarely the right thing to do
+- People instinctively tend to prioritize urgent items, which is rarely the right thing to do
 
-\\* Eisenhower Matrix aims at distinguishing between the two
+- Eisenhower Matrix aims at distinguishing between the two
 
-\\* Try it if you feel that you do too much fire fighting
+- Try it if you feel that you do too much fire fighting
 
-**Non-obvious stuff**
+{h3('In practice')}
 
 We tend to give our attention to urgent tasks at the expense of important tasks. Urgent tasks come in hot into our 
 inboxes and scream loudly for resolution. They are almost always someone else's problem, given to us on a short time 
@@ -110,7 +165,7 @@ Being at the mercy of the latest-and-loudest is no way to live --- you're consta
 building anything, constantly dealing with other people's problems but never developing your professional self, slowly 
 burning out from all the stress and never doing the things you know will be fulfilling.
 
-**Source**
+{h3('See also')}
 
 [The urgent and the important](https://www.rtalbert.org/blog-archive/index.php/2019/10/14/the-urgent-and-the-important)
 
@@ -150,18 +205,18 @@ Tasks that are neither urgent nor important get whatever time is left over.
 
 # Pareto: Pareto Principle
 
-***"If we double our time on our top 20 percent of activities, we can work a two-day week and achieve 60 percent more 
-than now."***
+> *"If we double our time on our top 20 percent of activities, we can work a two-day week and achieve 60 percent more 
+than now."*
 
-**Key points**
+{h3('Key points')}
 
-\\* Focus on the 20 percent of activities that generate 80 percent of your successes.
+- Focus on the 20 percent of activities that generate 80 percent of your successes.
 
-\\* The 80/20 principle allows you to work less, live more, and be more effective.
+- The 80/20 principle allows you to work less, live more, and be more effective.
 
-\\* A shocking 80 percent of our activities at work are probably a waste of our energy and time.
+- A shocking 80 percent of our activities at work are probably a waste of our energy and time.
 
-**Non-obvious stuff**
+{h3('In practice')}
 
 When we act less, we think more. And we think better. Most valuable creative ideas come to us when we are not hyper-busy 
 or stressed, but in a calmer, more contemplative and receptive frame of mind.
@@ -171,7 +226,7 @@ exercise is precisely to work less but smarter. The point is to free ourselves u
 to just be, to connect with others, and to do more nourishing, energising, soul-soothing things – all the things that 
 makes us feel alive and connected to our deeper purpose.
 
-**Source**
+{h3('See also')}
 
 [How to Work Less, Live More, and Be More Effective](https://www.psychologytoday.com/gb/blog/the-art-of-self-improvement/202312/work-less-live-more-and-be-more-effective)
 
@@ -189,9 +244,20 @@ Which of the non-generative activities can I minimize? Which activities can I sa
 
 # Buffett: Warren Buffett's 5/25 Rule
 
-Same as Pareto Principle, but prescribes the number of tasks.
+This is similar to the Pareto Principle, but prescribes the number of tasks. It works best for strategic planning, 
+monthly and weekly backlogs, etc.
 
-Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf](https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matrix.pdf)
+{h3('Key points')}
+
+- TO DO
+
+{h3('In practice')}
+
+- TO DO
+
+{h3('See also')}
+
+TO DO
 
 ## 5: Top-5 Tasks (focus)
 
@@ -201,23 +267,23 @@ Details: [https://sps.columbia.edu/sites/default/files/2023-08/Eisenhower%20Matr
 
 # 333: 3-3-3 Method
 
-***"You almost certainly can't consistently do the kind of work that demands serious mental focus for more than about 
-three or four hours a day."***
+> *"You almost certainly can't consistently do the kind of work that demands serious mental focus for more than about 
+three or four hours a day."*
 
-**Key points**
+{h3('Key points')}
 
-\\- It creates a structure for your workday and helps you decide when to do what. In the morning, spend 3 hours working 
+- It creates a structure for your workday and helps you decide when to do what. In the morning, spend 3 hours working 
 on your most important task. Then in the afternoon, do the shorter tasks and the maintenance tasks. 
 
-\\- It keeps us from falling behind on maintenance tasks.
+- It keeps us from falling behind on maintenance tasks.
 
-\\- It works best if you can allocate 3 -- 4 hours of uninterrupted focused time in your day, ideally in the morning.
+- It works best if you can allocate 3 -- 4 hours of uninterrupted focused time in your day, ideally in the morning.
 
-**Non-obvious stuff**
+{h3('In practice')}
 
 This is not just a prioritization technique, but a method to structure your day.
 
-**Source**
+{h3('See also')}
 
 [The three-or-four-hours rule for getting creative work done](https://www.oliverburkeman.com/fourhours)
 
@@ -229,79 +295,24 @@ This is not just a prioritization technique, but a method to structure your day.
 
 -----------------------------------------------------------------------------------------------------------------------
 
-# 135: 1-3-5 Rule
-
-***"Forcing yourself to choose a 1-3-5 list means the things you get done will be the things you chose to do—rather than 
-what just happened to get done."***
-
-**Key points**
-
-\\- There are 8 small tasks in a single day. This will work best if you can break your work down into small chunks.
-
-\\- Prefilling your backlog and dragging work items from there will save you time.
-
-\\- The big-win task must not be too big in order to allow for the remaining 8.
-
-\\- Complete the "big" task before lunch.
-
-**Non-obvious stuff**
-
-Similar to 3-3-3, but without telling you how much time you need to spend. Doing 9 tasks within a day might be really
-hard.
-
-The numbers are flexible. You can edit this template and specify your rules like 1-2-3 instead of 1-3-5. 
-
-Before leaving work, take a few minutes to define your 1-3-5 for the next day, so you're ready to hit the ground running 
-in the morning
-
-If your position is one where each day brings lots of unexpected tasks, try leaving one medium and two small tasks 
-blank, in preparation for the last-minute requests from your boss.
-
-Planning ahead like this also means you'll be able to have more informed conversations with your manager when he or she 
-drops something new on you that needs to be done right away—as well as the tools to re-prioritize your other work. For 
-example, when a surprise presentation falls on your lap, try: "Sure, I can get that to you by 3 PM, but the Q1 reports 
-won't be ready until tomorrow then, since I'd scheduled to work on that today."
-
-You will often merge 2 -- 3 small tasks into one
-
-**Source**
-
-[Follow the 1-3-5 Rule](https://www.themuse.com/advice/why-you-never-finish-your-todo-lists-at-work-and-how-to-change-that)
-
-(C) Alex Cavoulacos / The Muse
-
-## 1: One large task (important, big-win task you must complete)
-
-4 -- 8 pomodoros
-
-## 3: Three medium tasks (relatively important tasks you need to complete)
-
-1 pomodoro each
-
-## 5: Five small tasks (tasks you’d like to complete)
-
-1 -- 3 pomodoros for all five
-
------------------------------------------------------------------------------------------------------------------------
-
 # MSCW: MoSCoW Method
 
 This method works well for prioritizing tasks within a project. You'd use it for organizing bigger backlogs.
 
-**Key points**
+{h3('Key points')}
 
-\\- Relative priorities within "should have" and "could have" classes affect decisions on trade-in and trade-out.
+- Relative priorities within "should have" and "could have" classes affect decisions on trade-in and trade-out.
 
-\\- It is important to distinguish between the "Must haves" and the rest, but less important to distinguish between 
+- It is important to distinguish between the "Must haves" and the rest, but less important to distinguish between 
 "Should haves" and "Could haves". It is important to order tasks in the two middle sections.
 
-\\- Should re-evaluate the items regularly.
+- Should re-evaluate the items regularly.
 
-**Non-obvious stuff**
+{h3('In practice')}
 
-???
+TO DO
 
-**Source**
+{h3('See also')}
 
 [MoSCoW method (Wikipedia)](https://en.wikipedia.org/wiki/MoSCoW_method)
 
@@ -342,14 +353,14 @@ stating something is outside the scope of delivery). (The BCS in edition 3 & 4 o
 
 It's a simplified version of the MoSCoW method, which works brilliantly for personal backlogs.
 
-**Key points**
+{h3('Key points')}
 
-\\- Unlike techniques focused on sizing the tasks, this one focuses on perceived importance, which might be easier to 
+- Unlike techniques focused on sizing the tasks, this one focuses on perceived importance, which might be easier to 
 evaluate in practice.
 
-\\- It doesn't tell you what to do once you categorized the tasks.
+- It doesn't tell you what to do once you categorized the tasks.
 
-**Non-obvious stuff**
+{h3('In practice')}
 
 This method is the easiest to categorize your tasks in practice.
 
@@ -360,7 +371,7 @@ Spend a few minutes to review your previous day before planning the new one.
 
 Try with only one task in each category -- the results might surprise you.
 
-**Source**
+{h3('See also')}
 
 [Get the Best Start](https://web.archive.org/web/20140507073715/http://www.jayshirley.com/blog/2014/3/31/best-start-of-the-day)
 
@@ -396,12 +407,20 @@ in the long term.
 
 # Jar: Pickle Jar Theory
 
-***There’s something about a nice crunchy pickle, isn’t there?***
+> *There’s something about a nice crunchy pickle, isn’t there?*
 
-It's a fun view on the same technique as 1-3-5. The analogy works well for some people. If you find it silly -- choose
+It's a fun view on the same technique as 1-2-3. The analogy works well for some people. If you find it silly -- choose
 another prioritization technique.
 
-**Source**
+{h3('Key points')}
+
+- TO DO
+
+{h3('In practice')}
+
+TO DO
+
+{h3('See also')}
 
 [Time Management: The Pickle Jar Theory](https://alistapart.com/article/pickle/)
 
@@ -415,12 +434,13 @@ another prioritization technique.
 
 ## Water: Water (private life, downtime, or hobbies)
 
+-----------------------------------------------------------------------------------------------------------------------
 """
 
 
 # A simple state machine to initialize categories and subcategories
 def get_standard_workitem_categories(root: Category, now: datetime.datetime) -> Category:
-    wg = Category('Workitem Groups', '#workitem_groups', True, "Info", root, now)
+    wg = Category('Item Groups', '#workitem_groups', True, "Info", root, now)
 
     info = list()
     category: Category

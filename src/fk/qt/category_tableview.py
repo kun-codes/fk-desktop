@@ -26,7 +26,7 @@ from fk.core.category import Category
 from fk.core.category_strategies import CreateCategoryStrategy, DeleteCategoryStrategy
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.user import User
-from fk.qt.abstract_tableview import AbstractTableView
+from fk.qt.abstract_tableview import AbstractTableView, BeforeSelectionChanged, AfterSelectionChanged
 from fk.qt.actions import Actions
 from fk.qt.category_model import CategoryModel
 
@@ -71,6 +71,7 @@ class CategoryTableView(AbstractTableView[User, Category]):
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
         self.horizontalHeader().resizeSection(1, 24)
+        self.horizontalHeader().hideSection(1)  # Since we always display the details now
 
     def _on_info_clicked(self, index: QModelIndex):
         if index.column() == 1:

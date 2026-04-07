@@ -24,6 +24,10 @@ from fk.core.abstract_data_container import AbstractDataContainer
 logger = logging.getLogger(__name__)
 
 
+def h2(text: str) -> str:
+    return f'### <h2 style="font-family: Sans-serif;">{text.upper()}</h2>'
+
+
 # TODO: Do not allow delimiters in category names
 class Category(AbstractDataContainer['Category', 'Category|User']):
     _is_system: bool
@@ -62,7 +66,17 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
                f'{indent}  Uses: <{len(self._uses)}>'
 
     def get_info(self):
-        return self._info
+        if self._info is not None and self._info != '':
+            return f'''
+{h2(self.get_short_name())}
+
+{self._info}
+'''
+        else:
+            return f'''{h2(self.get_short_name())}
+
+*No description*
+'''
 
     def get_short_name(self) -> str:
         name = self.get_name()

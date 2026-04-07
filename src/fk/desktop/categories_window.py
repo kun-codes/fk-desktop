@@ -17,11 +17,13 @@ import datetime
 
 from PySide6 import QtUiTools, QtWidgets
 from PySide6.QtCore import QObject, QFile
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+from PySide6.QtGui import QAction, Qt
+from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel, QSizePolicy, QSplitter, QScrollArea
 
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder
+from fk.qt.abstract_tableview import AfterSelectionChanged
 from fk.qt.actions import Actions
 from fk.qt.category_widget import CategoryWidget
 
@@ -29,6 +31,7 @@ from fk.qt.category_widget import CategoryWidget
 class CategoriesWindow(QObject):
     _source: AbstractEventSource
     _categories_window: QMainWindow
+    _category_info: QLabel
     _data: dict[datetime.date, dict[str, list[datetime.timedelta, set[str]]]]
 
     def __init__(self,
@@ -47,6 +50,9 @@ class CategoriesWindow(QObject):
 
         layout: QHBoxLayout = self._categories_window.findChild(QtWidgets.QHBoxLayout, "layout")
 
+        splitter = QSplitter(self._categories_window)
+        layout.addWidget(splitter)
+
         categories_table: CategoryWidget = CategoryWidget(
             self._categories_window,
             app,
@@ -56,12 +62,46 @@ class CategoriesWindow(QObject):
             1)
         actions.bind('categories_table', categories_table.get_table())
         # TODO: Enable actions. Disable by default, and every time the window is closed.
-        layout.addWidget(categories_table)
+        splitter.addWidget(categories_table)
+
+        scroll = QScrollArea(self._categories_window)
+
+        description = QLabel(scroll)
+        description.setObjectName('categories_info')
+        self._category_info = description
+        description.setTextFormat(Qt.TextFormat.MarkdownText)
+        categories_table.get_table().on(AfterSelectionChanged,
+                                        lambda after, **_: self._display_category_info(after))
+        self._display_category_info(categories_table.get_table().get_current())
+        description.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.TextSelectableByKeyboard
+            | Qt.TextInteractionFlag.TextBrowserInteraction)
+        description.setWordWrap(True)
+        description.setOpenExternalLinks(True)
+        description.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        sp = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        description.setSizePolicy(sp)
+
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setWidget(description)
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet('border: none;')
+        splitter.addWidget(scroll)
+        splitter.setSizes([250, 450])
 
         close_action = QAction(self._categories_window, 'Close')
         close_action.triggered.connect(self._categories_window.close)
         close_action.setShortcut('Esc')
         self._categories_window.addAction(close_action)
+
+    def _display_category_info(self, category: Category):
+        if category is None or category.get_info() is None or category.get_info() == '':
+            self._category_info.setText('N/A')
+        else:
+            self._category_info.setText(category.get_info())
 
     def show(self):
         self._categories_window.show()
