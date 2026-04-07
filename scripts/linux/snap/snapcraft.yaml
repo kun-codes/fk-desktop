@@ -3,6 +3,15 @@ base: core22
 version: "1.0.2"
 license: GPL-3.0-only
 
+title: Flowkeeper
+contact:
+    - contact@flowkeeper.org
+issues:
+    - https://github.com/flowkeeper-org/fk-desktop/issues
+source-code:
+    - https://github.com/flowkeeper-org/fk-desktop
+website:
+    - https://flowkeeper.org/
 summary: Flowkeeper is a free Pomodoro Technique desktop timer for power users.
 description: |
     Flowkeeper is a Pomodoro backlog and timer with a "classic" desktop-first UI paradigm.
