@@ -19,7 +19,7 @@ description: |
     It stays as close as possible to the Pomodoro Technique definition and format from
     the original book by Francesco Cirillo.
 
-grade: devel
+grade: stable
 confinement: classic
 
 platforms:
