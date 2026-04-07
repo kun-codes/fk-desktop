@@ -8,11 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, ubuntu-22.04-arm, macos-15, macos-14, macos-13, windows-2025, windows-2022]
+        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, ubuntu-22.04-arm]
         compiler: [nuitka, pyinstaller]
-        exclude:
-          - os: macos-13
-            compiler: nuitka
     uses: flowkeeper-org/fk-desktop/.github/workflows/build.yml@main
     with:
       os: ${{ matrix.os }}
