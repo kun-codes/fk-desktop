@@ -34,3 +34,5 @@ jobs:
       os: ${{ inputs.os }}
       compiler: ${{ inputs.compiler }}
     secrets: inherit
+    permissions: read-all
+
