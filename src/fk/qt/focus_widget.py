@@ -158,7 +158,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
             self._added.append(void_pomodoro_button)
             finish_tracking_button = self._create_button("focus.finishTracking")
             center_button_layout.addWidget(finish_tracking_button)
-            self._added.append(finish_tracking_button)            
+            self._added.append(finish_tracking_button)
         self._timer_widget = TimerWidget(self,
                                          'timer',
                                          flavor,
@@ -178,10 +178,10 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
             layout.addWidget(w)
 
             w = self._create_button("focus.completeItem")
-            
+
             self._added.append(w)
             layout.addWidget(w)
-            
+
             w = self._create_button("focus.muteAudio")
             self._added.append(w)
             layout.addWidget(w)
@@ -240,7 +240,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                        name: str,
                        parent: QWidget = None):
         action = self._actions[name]
-        icon_path = action.icon() 
+        icon_path = action.icon()
         btn = QToolButton(self if parent is None else parent)
         btn.setObjectName(name)
         btn.setIcon(QIcon(action.icon()))
@@ -270,7 +270,6 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         if eyecandy_type == 'image':
             header_bg = self._settings.get(S.APPLICATION_EYECANDY_IMAGE)
             if header_bg:
-                header_bg = self._settings.get(S.APPLICATION_EYECANDY_IMAGE)
                 self._pixmap = QPixmap(header_bg)
             else:
                 self._pixmap = None
@@ -282,12 +281,11 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         painter = QPainter(self)
         eyecandy_type = self._settings.get(S.APPLICATION_EYECANDY_TYPE)
         if eyecandy_type == 'image':
-            if self._pixmap is not None:
-                img = self._pixmap
+            if self._pixmap is not None and self._pixmap.width() > 0:
                 painter.drawPixmap(
                     QPoint(0, 0),
-                    img.scaled(
-                        QSize(self.width(), self.width() * img.height() / img.width()),
+                    self._pixmap.scaled(
+                        QSize(self.width(), int(self.width() * self._pixmap.height() / self._pixmap.width())),
                         mode=Qt.TransformationMode.SmoothTransformation))
         elif eyecandy_type == 'gradient':
             gradient = self._settings.get(S.APPLICATION_EYECANDY_GRADIENT)
@@ -318,7 +316,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         if S.APPLICATION_PLAY_ALARM_SOUND in new_values or \
                 S.APPLICATION_PLAY_REST_SOUND in new_values or \
                 S.APPLICATION_PLAY_TICK_SOUND in new_values:
-        
+
             play_alarm = new_values.get(S.APPLICATION_PLAY_ALARM_SOUND,
                                         self._settings.get(S.APPLICATION_PLAY_ALARM_SOUND)) == 'True'
             play_rest = new_values.get(S.APPLICATION_PLAY_REST_SOUND,
@@ -341,6 +339,8 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         for backlog in self._source_holder.get_source().backlogs():
             workitem, _ = backlog.get_running_workitem()
             if workitem is not None:
+                uid = workitem.get_uid()
+
                 dlg = InterruptionDialog(
                     self.parent(),
                     self._source_holder.get_source(),
@@ -352,7 +352,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                     reason = f': {sanitize_user_input(dlg.get_reason())}' if dlg.get_reason() else ''
                     self._source_holder.get_source().execute(
                         AddInterruptionStrategy, [
-                            w.get_uid(),
+                            uid,
                             f'Pomodoro voided{reason}'])
                     self._source_holder.get_source().execute(
                         StopTimerStrategy,
@@ -364,6 +364,8 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         for backlog in self._source_holder.get_source().backlogs():
             workitem, _ = backlog.get_running_workitem()
             if workitem is not None:
+                uid = workitem.get_uid()
+
                 dlg = InterruptionDialog(
                     self.parent(),
                     self._source_holder.get_source(),
@@ -375,7 +377,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                 def ok():
                     self._source_holder.get_source().execute(
                         AddInterruptionStrategy, [
-                            workitem.get_uid(),
+                            uid,
                             sanitize_user_input(dlg.get_reason())])
 
                 dlg.accepted.connect(ok)
@@ -389,7 +391,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         if self._continue_workitem is None:
             raise Exception('Cannot start next pomodoro on non-existent work item')
         start_workitem(self._continue_workitem, self._source_holder.get_source())
-        
+
     def _mute_audio(self, domain, state) -> None:
         is_checked = self._actions['focus.muteAudio'].isChecked()
         self._settings.set({
