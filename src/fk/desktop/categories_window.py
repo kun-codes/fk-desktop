@@ -25,6 +25,7 @@ from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder
 from fk.qt.abstract_tableview import AfterSelectionChanged
 from fk.qt.actions import Actions
+from fk.qt.category_tableview import CategoryTableView
 from fk.qt.category_widget import CategoryWidget
 
 
@@ -32,6 +33,7 @@ class CategoriesWindow(QObject):
     _source: AbstractEventSource
     _categories_window: QMainWindow
     _category_info: QLabel
+    _scroll_area: QScrollArea
     _data: dict[datetime.date, dict[str, list[datetime.timedelta, set[str]]]]
 
     def __init__(self,
@@ -64,32 +66,7 @@ class CategoriesWindow(QObject):
         # TODO: Enable actions. Disable by default, and every time the window is closed.
         splitter.addWidget(categories_table)
 
-        scroll = QScrollArea(self._categories_window)
-
-        description = QLabel(scroll)
-        description.setObjectName('categories_info')
-        self._category_info = description
-        description.setTextFormat(Qt.TextFormat.MarkdownText)
-        categories_table.get_table().on(AfterSelectionChanged,
-                                        lambda after, **_: self._display_category_info(after))
-        self._display_category_info(categories_table.get_table().get_current())
-        description.setTextInteractionFlags(
-            Qt.TextInteractionFlag.TextSelectableByMouse
-            | Qt.TextInteractionFlag.TextSelectableByKeyboard
-            | Qt.TextInteractionFlag.TextBrowserInteraction)
-        description.setWordWrap(True)
-        description.setOpenExternalLinks(True)
-        description.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        sp = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        description.setSizePolicy(sp)
-
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        scroll.setWidget(description)
-        scroll.setWidgetResizable(True)
-        scroll.setStyleSheet('border: none;')
-        splitter.addWidget(scroll)
+        splitter.addWidget(self._configure_info_view(categories_table.get_table()))
         splitter.setSizes([250, 450])
 
         close_action = QAction(self._categories_window, 'Close')
@@ -97,11 +74,41 @@ class CategoriesWindow(QObject):
         close_action.setShortcut('Esc')
         self._categories_window.addAction(close_action)
 
+    def _configure_info_view(self, categories_table_view: CategoryTableView) -> QWidget:
+        description = QLabel(categories_table_view)
+        description.setObjectName('categories_info')
+        description.setTextFormat(Qt.TextFormat.MarkdownText)
+        description.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.TextSelectableByKeyboard
+            | Qt.TextInteractionFlag.TextBrowserInteraction)
+        description.setWordWrap(True)
+        description.setOpenExternalLinks(True)
+        description.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self._category_info = description
+
+        scroll = QScrollArea(self._categories_window)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setWidget(description)
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet('border: none;')
+        self._scroll_area = scroll
+
+        categories_table_view.on(AfterSelectionChanged, lambda after, **_: self._display_category_info(after))
+        self._display_category_info(categories_table_view.get_current())
+
+        return scroll
+
     def _display_category_info(self, category: Category):
         if category is None or category.get_info() is None or category.get_info() == '':
             self._category_info.setText('N/A')
         else:
             self._category_info.setText(category.get_info())
+
+        # Reset the scroll
+        self._scroll_area.verticalScrollBar().setValue(0)
+        self._scroll_area.horizontalScrollBar().setValue(0)
 
     def show(self):
         self._categories_window.show()
