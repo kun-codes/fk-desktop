@@ -129,8 +129,8 @@ class Tutorial:
         # Here we are dealing with the OLD source, from which we want to unsubscribe
         if source is not None:
             logger.debug(f'Unsubscribing tutorial from old source events')
-            for event in self._steps:
-                source.on(event, self._on_event)
+            for e in self._steps:
+                source.on(e, self._on_event)
 
     def _after_source_changed(self, event: str, source: AbstractEventSource) -> None:
         logger.debug(f'Subscribing tutorial to new source events')

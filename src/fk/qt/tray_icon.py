@@ -105,8 +105,6 @@ class TrayIcon(QSystemTrayIcon, AbstractTimerDisplay):
 
     def _tray_clicked(self) -> None:
         if self._continue_workitem is not None and self._continue_workitem.is_startable() and self.timer.is_idling():
-            if self._continue_workitem is None:
-                raise Exception('Cannot start next pomodoro on non-existent work item')
             start_workitem(self._continue_workitem, self._source_holder.get_source())
         else:
             if 'window.showMainWindow' in self._actions:

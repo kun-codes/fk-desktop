@@ -62,16 +62,15 @@ class ResizeEventFilter(QMainWindow):
                 'Application.window_height': str(new_height),
             })
 
-    def eventFilter(self, widget: QObject, event: QEvent) -> bool:
+    def eventFilter(self, widget: QObject, event: QEvent):
         if event.type() == QEvent.Type.Resize and isinstance(event, QResizeEvent):
             if widget == self._window:
-                if self._is_resizing:   # Don't fire those events too frequently
-                    return False
-                self._timer.schedule(1000,
-                                     lambda _1, _2: self.resize_completed(),
-                                     None,
-                                     True)
-                self._is_resizing = True
+                if not self._is_resizing:   # Don't fire those events too frequently
+                    self._timer.schedule(1000,
+                                         lambda _1, _2: self.resize_completed(),
+                                         None,
+                                         True)
+                    self._is_resizing = True
         return False
 
     def restore_size(self) -> None:
