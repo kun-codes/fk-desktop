@@ -25,6 +25,7 @@ from semantic_version import Version
 
 from fk.core import events
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.abstract_settings import S
 from fk.core.events import AfterWorkitemComplete, SourceMessagesProcessed, TimerRestComplete, TimerWorkStart
 from fk.core.timer import PomodoroTimer
 from fk.core.timer_data import TimerData
@@ -59,7 +60,7 @@ logger = logging.getLogger(__name__)
 
 def get_timer_ui_mode() -> str:
     # Options: keep (don't do anything), focus (collapse main layout), minimize (window to tray)
-    return settings.get('Application.timer_ui_mode')
+    return settings.get(S.APPLICATION_TIMER_UI_MODE)
 
 
 def pin_if_needed(always_on_top_setting: str):
@@ -95,7 +96,7 @@ def to_focus_mode(**_) -> None:
         logger.debug('Main window was already hidden when we entered focus mode.')
         focus_window.setFixedWidth(window.width())
 
-    show_title = settings.get('Application.show_window_title') == 'True'
+    show_title = settings.get(S.APPLICATION_SHOW_WINDOW_TITLE) == 'True'
     focus_window.setWindowFlags(focus_window.windowFlags() & ~Qt.WindowType.FramelessWindowHint if show_title else
                                 focus_window.windowFlags() | Qt.WindowType.FramelessWindowHint)
     focus_window.show()
@@ -110,9 +111,9 @@ def from_focus_mode(**_) -> None:
 
 
 def update_tables_visibility() -> None:
-    users_visible = (settings.get('Application.users_visible') == 'True')
+    users_visible = (settings.get(S.APPLICATION_USERS_VISIBLE) == 'True')
     users_table.setVisible(users_visible)
-    backlogs_visible = (settings.get('Application.backlogs_visible') == 'True')
+    backlogs_visible = (settings.get(S.APPLICATION_BACKLOGS_VISIBLE) == 'True')
     backlogs_widget.setVisible(backlogs_visible)
     left_table_layout.setVisible(users_visible or backlogs_visible)
 
@@ -167,29 +168,29 @@ def on_settings_changed(event: str, old_values: dict[str, str], new_values: dict
 
     for name in new_values.keys():
         new_value = new_values[name]
-        if name == 'Application.show_main_menu':
+        if name == S.APPLICATION_SHOW_MAIN_MENU:
             main_menu.setVisible(new_value == 'True')
-        elif name == 'Application.show_status_bar':
+        elif name == S.APPLICATION_SHOW_STATUS_BAR:
             status.setVisible(new_value == 'True')
-        elif name == 'Application.show_left_toolbar':
+        elif name == S.APPLICATION_SHOW_LEFT_TOOLBAR:
             left_toolbar.setVisible(new_value == 'True')
-        elif name == 'Application.show_tray_icon':
+        elif name == S.APPLICATION_SHOW_TRAY_ICON:
             tray.setVisible(new_value == 'True')
-        elif name == 'Application.shortcuts':
+        elif name == S.APPLICATION_SHORTCUTS:
             actions.update_from_settings(new_value)
-        elif name == 'Application.always_on_top':
+        elif name == S.APPLICATION_ALWAYS_ON_TOP:
             pin_if_needed(new_value)
-        elif name == 'Application.focus_flavor':
+        elif name == S.APPLICATION_FOCUS_FLAVOR:
             focus_widget.set_flavor(new_value)
             rest_fullscreen_widget.set_flavor(new_value)
-        elif name == 'Application.tray_icon_flavor':
+        elif name == S.APPLICATION_TRAY_ICON_FLAVOR:
             recreate_tray_icon(new_value,
-                               new_values.get('Application.show_tray_icon',
-                                              settings.get('Application.show_tray_icon')))
-        elif name == 'Application.backlogs_visible':
+                               new_values.get(S.APPLICATION_SHOW_TRAY_ICON,
+                                              settings.get(S.APPLICATION_SHOW_TRAY_ICON)))
+        elif name == S.APPLICATION_BACKLOGS_VISIBLE:
             backlogs_visible = new_value == 'True'
             backlogs_widget.setVisible(backlogs_visible)
-        elif name == 'Application.users_visible':
+        elif name == S.APPLICATION_USERS_VISIBLE:
             users_visible = new_value == 'True'
             users_table.setVisible(users_visible)
 
@@ -211,7 +212,7 @@ class MainWindow:
     @staticmethod
     def toggle_pin_window(_, state: bool):
         is_checked: bool = 'window.pinWindow' in actions and actions['window.pinWindow'].isChecked()
-        settings.set({'Application.always_on_top': str(is_checked)})
+        settings.set({S.APPLICATION_ALWAYS_ON_TOP: str(is_checked)})
 
     @staticmethod
     def toggle_main_window(_):
@@ -253,11 +254,11 @@ class MainWindow:
 
     @staticmethod
     def toggle_backlogs(_, enabled):
-        settings.set({'Application.backlogs_visible': str(enabled)})
+        settings.set({S.APPLICATION_BACKLOGS_VISIBLE: str(enabled)})
 
     @staticmethod
     def toggle_users(_, enabled):
-        settings.set({'Application.users_visible': str(enabled)})
+        settings.set({S.APPLICATION_USERS_VISIBLE: str(enabled)})
 
     @staticmethod
     def define_actions(a: Actions):
@@ -269,7 +270,7 @@ class MainWindow:
         if not is_wayland:
             a.add('window.pinWindow', "Pin Flowkeeper", None, "tool-pin", MainWindow.toggle_pin_window, True)
 
-        backlogs_were_visible = (a.get_settings().get('Application.backlogs_visible') == 'True')
+        backlogs_were_visible = (a.get_settings().get(S.APPLICATION_BACKLOGS_VISIBLE) == 'True')
         a.add('window.showBacklogs',
                     "Show / Hide Backlogs",
                     'Ctrl+B',
@@ -278,7 +279,7 @@ class MainWindow:
               True,
               backlogs_were_visible)
 
-        users_were_visible = (a.get_settings().get('Application.users_visible') == 'True')
+        users_were_visible = (a.get_settings().get(S.APPLICATION_USERS_VISIBLE) == 'True')
         a.add('window.showUsers',
                     "Team",
                     'Ctrl+T',
@@ -426,7 +427,7 @@ if __name__ == "__main__":
                                    app.get_source_holder(),
                                    settings,
                                    actions,
-                                   settings.get('Application.focus_flavor'))
+                                   settings.get(S.APPLICATION_FOCUS_FLAVOR))
         root_layout.insertWidget(0, focus_widget)
 
         # Focus window should keep the same title as the main one
@@ -439,7 +440,7 @@ if __name__ == "__main__":
                                                       pomodoro_timer,
                                                       app.get_source_holder(),
                                                       settings,
-                                                      settings.get('Application.focus_flavor'))
+                                                      settings.get(S.APPLICATION_FOCUS_FLAVOR))
 
         # Layouts
         # noinspection PyTypeChecker
@@ -491,20 +492,20 @@ if __name__ == "__main__":
             workitems_menu.addAction(actions['focus.voidPomodoro'])
             workitems_menu.addAction(actions['focus.finishTracking'])
             main_menu.addMenu(workitems_menu)
-            show_main_menu = (settings.get('Application.show_main_menu') == 'True')
+            show_main_menu = (settings.get(S.APPLICATION_SHOW_MAIN_MENU) == 'True')
             main_menu.setVisible(show_main_menu)
 
         # Status bar
         # noinspection PyTypeChecker
         status: QtWidgets.QStatusBar = window.findChild(QtWidgets.QStatusBar, "statusBar")
         if status is not None:
-            show_status_bar = (settings.get('Application.show_status_bar') == 'True')
+            show_status_bar = (settings.get(S.APPLICATION_SHOW_STATUS_BAR) == 'True')
             status.showMessage('Ready')
             status.setVisible(show_status_bar)
 
         # Tray icon
         tray: TrayIcon | None = None
-        recreate_tray_icon(settings.get('Application.tray_icon_flavor'), settings.get('Application.show_tray_icon'))
+        recreate_tray_icon(settings.get(S.APPLICATION_TRAY_ICON_FLAVOR), settings.get(S.APPLICATION_SHOW_TRAY_ICON))
 
         # Some global variables to support "Next pomodoro" mode
         # TODO Empty it if it gets deleted or completed
@@ -513,7 +514,7 @@ if __name__ == "__main__":
         # Left toolbar
         # noinspection PyTypeChecker
         left_toolbar: QtWidgets.QWidget = window.findChild(QtWidgets.QWidget, "left_toolbar")
-        show_left_toolbar = (settings.get('Application.show_left_toolbar') == 'True')
+        show_left_toolbar = (settings.get(S.APPLICATION_SHOW_LEFT_TOOLBAR) == 'True')
         left_toolbar.setVisible(show_left_toolbar)
 
         # noinspection PyTypeChecker
@@ -554,7 +555,7 @@ if __name__ == "__main__":
         actions.bind('focus', focus_widget)
         actions.bind('window', main_window)
 
-        pin_if_needed(settings.get('Application.always_on_top'))
+        pin_if_needed(settings.get(S.APPLICATION_ALWAYS_ON_TOP))
 
         tutorial: Tutorial | None = None
 

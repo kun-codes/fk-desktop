@@ -22,7 +22,7 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QVBoxLayout, QMessag
 
 from fk.core.abstract_event_source import AbstractEventSource, start_workitem
 from fk.core.abstract_serializer import sanitize_user_input
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_timer_display import AbstractTimerDisplay
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.events import AfterSettingsChanged
@@ -196,7 +196,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
             self._added.append(w)
             layout.addSpacerItem(w)
 
-            if self._settings.get('Application.show_click_here_hint') == 'True':
+            if self._settings.get(S.APPLICATION_SHOW_CLICK_HERE_HINT) == 'True':
                 self._hint_label = self._initialize_hint_label()
                 w = self._hint_label
                 self._added.append(w)
@@ -266,11 +266,11 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         self._timer_widget.reset()
 
     def eye_candy(self):
-        eyecandy_type = self._settings.get('Application.eyecandy_type')
+        eyecandy_type = self._settings.get(S.APPLICATION_EYECANDY_TYPE)
         if eyecandy_type == 'image':
-            header_bg = self._settings.get('Application.eyecandy_image')
+            header_bg = self._settings.get(S.APPLICATION_EYECANDY_IMAGE)
             if header_bg:
-                header_bg = self._settings.get('Application.eyecandy_image')
+                header_bg = self._settings.get(S.APPLICATION_EYECANDY_IMAGE)
                 self._pixmap = QPixmap(header_bg)
             else:
                 self._pixmap = None
@@ -280,7 +280,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         super().paintEvent(event)
         rect = self.rect()
         painter = QPainter(self)
-        eyecandy_type = self._settings.get('Application.eyecandy_type')
+        eyecandy_type = self._settings.get(S.APPLICATION_EYECANDY_TYPE)
         if eyecandy_type == 'image':
             if self._pixmap is not None:
                 img = self._pixmap
@@ -290,7 +290,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                         QSize(self.width(), self.width() * img.height() / img.width()),
                         mode=Qt.TransformationMode.SmoothTransformation))
         elif eyecandy_type == 'gradient':
-            gradient = self._settings.get('Application.eyecandy_gradient')
+            gradient = self._settings.get(S.APPLICATION_EYECANDY_GRADIENT)
             try:
                 painter.fillRect(rect, QGradient.Preset[gradient])
             except Exception as e:
@@ -307,21 +307,24 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         self._timer_widget.bg_color = QColor(variables['FOCUS_BG_COLOR'])
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.theme' in new_values:
+        if S.APPLICATION_THEME in new_values:
             self._update_colors()
-        if 'Application.eyecandy_type' in new_values or \
-                'Application.eyecandy_gradient' in new_values or \
-                'Application.eyecandy_image' in new_values:
+        if S.APPLICATION_EYECANDY_TYPE in new_values or \
+                S.APPLICATION_EYECANDY_GRADIENT in new_values or \
+                S.APPLICATION_EYECANDY_IMAGE in new_values:
             self.eye_candy()
-        if self._hint_label is not None and 'Application.show_click_here_hint' in new_values:
+        if self._hint_label is not None and S.APPLICATION_SHOW_CLICK_HERE_HINT in new_values:
             self._hint_label.hide()
-        if ('Application.play_alarm_sound' in new_values or
-        'Application.play_rest_sound' in new_values or
-        'Application.play_tick_sound' in new_values):
+        if S.APPLICATION_PLAY_ALARM_SOUND in new_values or \
+                S.APPLICATION_PLAY_REST_SOUND in new_values or \
+                S.APPLICATION_PLAY_TICK_SOUND in new_values:
         
-            play_alarm = new_values.get('Application.play_alarm_sound', self._settings.get('Application.play_alarm_sound')) == 'True'
-            play_rest = new_values.get('Application.play_rest_sound', self._settings.get('Application.play_rest_sound')) == 'True'
-            play_tick = new_values.get('Application.play_tick_sound', self._settings.get('Application.play_tick_sound')) == 'True'
+            play_alarm = new_values.get(S.APPLICATION_PLAY_ALARM_SOUND,
+                                        self._settings.get(S.APPLICATION_PLAY_ALARM_SOUND)) == 'True'
+            play_rest = new_values.get(S.APPLICATION_PLAY_REST_SOUND,
+                                       self._settings.get(S.APPLICATION_PLAY_REST_SOUND)) == 'True'
+            play_tick = new_values.get(S.APPLICATION_PLAY_TICK_SOUND,
+                                       self._settings.get(S.APPLICATION_PLAY_TICK_SOUND)) == 'True'
 
             is_checked = play_alarm or play_rest or play_tick
 
@@ -390,9 +393,9 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
     def _mute_audio(self, domain, state) -> None:
         is_checked = self._actions['focus.muteAudio'].isChecked()
         self._settings.set({
-            'Application.play_alarm_sound': str(is_checked),
-            'Application.play_rest_sound': str(is_checked),
-            'Application.play_tick_sound': str(is_checked),
+            S.APPLICATION_PLAY_ALARM_SOUND: str(is_checked),
+            S.APPLICATION_PLAY_REST_SOUND: str(is_checked),
+            S.APPLICATION_PLAY_TICK_SOUND: str(is_checked),
         })
 
 
@@ -451,7 +454,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
                 self._actions['focus.nextPomodoro'].setText(f'Next Pomodoro ({self._continue_workitem.get_short_display_name()})')
 
             # Continue the series automaticallysss
-            work_in_series = self._settings.get('Pomodoro.start_next_automatically') == 'True'
+            work_in_series = self._settings.get(S.POMODORO_START_NEXT_AUTOMATICALLY) == 'True'
             after_long_break = self.timer.get_pomodoro_in_series() == 0
             last_voided = self._last_pomodoro is not None and self._last_pomodoro.is_startable()
             if work_in_series and not after_long_break and not last_voided:
@@ -466,7 +469,7 @@ class FocusWidget(QWidget, AbstractTimerDisplay):
         self.setMaximumHeight(DISPLAY_HEIGHT)
 
     def _timer_clicked(self, pos: QPoint) -> None:
-        self._settings.set({'Application.show_click_here_hint': 'False'})
+        self._settings.set({S.APPLICATION_SHOW_CLICK_HERE_HINT: 'False'})
         context_menu = QMenu(self)
         timer = self.timer
         if timer.is_working() or timer.is_resting():

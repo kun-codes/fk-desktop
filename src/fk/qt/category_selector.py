@@ -21,7 +21,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu, QWidget
 
 from fk.core.abstract_event_source import AbstractEventSource
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.qt.actions import Actions
@@ -53,10 +53,10 @@ class CategorySelector(QMenu):
     def _on_category_selected(self, selected_uid: str, settings: AbstractSettings):
         for category_uid in self._actions:
             self._actions[category_uid].setChecked(selected_uid == category_uid)
-        settings.set({'Application.selected_category': selected_uid})
+        settings.set({S.APPLICATION_SELECTED_CATEGORY: selected_uid})
 
     def _on_category_cleared(self, settings: AbstractSettings):
-        settings.set({'Application.selected_category': ''})
+        settings.set({S.APPLICATION_SELECTED_CATEGORY: ''})
 
     def _create_action(self, cat: Category, selected_category_uid: str, settings: AbstractSettings) -> QAction:
         cat_uid = cat.get_uid()
@@ -71,7 +71,7 @@ class CategorySelector(QMenu):
         self.clear()
         self._actions.clear()
 
-        selected_category_uid = settings.get('Application.selected_category')
+        selected_category_uid = settings.get(S.APPLICATION_SELECTED_CATEGORY)
         for sub in self._parent_category.values():
             action = self._create_action(sub, selected_category_uid, settings)
             self._actions[sub.get_uid()] = action

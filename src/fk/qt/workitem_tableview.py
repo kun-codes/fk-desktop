@@ -21,6 +21,7 @@ from PySide6.QtWidgets import QWidget, QHeaderView, QMenu, QMessageBox
 
 from fk.core.abstract_data_item import generate_unique_name, generate_uid
 from fk.core.abstract_event_source import AbstractEventSource, start_workitem
+from fk.core.abstract_settings import S
 from fk.core.backlog import Backlog
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
@@ -96,12 +97,12 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
             self.horizontalHeader().resizeSections()
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.theme' in new_values or 'Application.feature_tags' in new_values:
+        if S.APPLICATION_THEME in new_values or S.APPLICATION_FEATURE_TAGS in new_values:
             self._configure_delegate()
             self._vertical_resizing()
 
     def _is_tags_enabled(self) -> bool:
-        return self._application.get_settings().get('Application.feature_tags') == 'True'
+        return self._application.get_settings().get(S.APPLICATION_FEATURE_TAGS) == 'True'
 
     def _configure_delegate(self):
         # Workitem state -- image or no delegate
@@ -192,7 +193,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
                     ("tool-filter-on", "tool-filter-off"),
                     WorkitemTableView._toggle_hide_completed_workitems,
                     True,
-                    actions.get_settings().get('Application.hide_completed') == 'True')
+                    actions.get_settings().get(S.APPLICATION_HIDE_COMPLETED) == 'True')
 
     def upstream_selected(self, backlog_or_tag: Backlog | Tag | None) -> None:
         super().upstream_selected(backlog_or_tag)
@@ -225,7 +226,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
     # Actions
 
     def get_category_for_new_item(self) -> str | None:
-        if self._source.get_settings().get('Application.default_workitem_category') == 'ask':
+        if self._source.get_settings().get(S.APPLICATION_DEFAULT_WORKITEM_CATEGORY) == 'ask':
             parent_category: Category|None = self.model().get_selected_category()
             if parent_category is not None:
                 context_menu = QMenu(self)
@@ -337,7 +338,7 @@ class WorkitemTableView(AbstractTableView[Backlog | Tag, Workitem]):
 
     def _toggle_hide_completed_workitems(self, checked: bool) -> None:
         self.model().hide_completed(checked)
-        self._source.set_config_parameters({'Application.hide_completed': str(checked)})
+        self._source.set_config_parameters({S.APPLICATION_HIDE_COMPLETED: str(checked)})
 
     def _vertical_resizing(self) -> None:
         # Resizing to contents results in visible blinking on Kubuntu 20.04, so cannot be enabled by default.

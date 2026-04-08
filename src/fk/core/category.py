@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def h2(text: str) -> str:
-    return f'### <h2 style="font-family: Sans-serif;">{text.upper()}</h2>'
+    return f'### <h2 style="font-family: Noto Sans, Sans-serif;">{text.upper()}</h2>'
 
 
 # TODO: Do not allow delimiters in category names

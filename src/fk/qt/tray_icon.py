@@ -20,7 +20,7 @@ from PySide6.QtGui import QIcon, Qt, QPixmap, QPainter, QColor
 from PySide6.QtWidgets import QWidget, QMainWindow, QSystemTrayIcon, QMenu
 
 from fk.core.abstract_event_source import start_workitem
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_timer_display import AbstractTimerDisplay
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.pomodoro import Pomodoro
@@ -125,7 +125,7 @@ class TrayIcon(QSystemTrayIcon, AbstractTimerDisplay):
         self.paint()
 
     def work_ending(self, pomodoro: Pomodoro) -> None:
-        if pomodoro.is_working() and self._settings.get('Pomodoro.end_of_work_notifications') == 'True':
+        if pomodoro.is_working() and self._settings.get(S.POMODORO_END_OF_WORK_NOTIFICATIONS) == 'True':
             remaining = pomodoro.get_timer().format_remaining_duration()
             self.showMessage(
                 "Time to wrap up",

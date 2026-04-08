@@ -23,6 +23,7 @@ from PySide6.QtWidgets import QWidget, QHeaderView, QMenu, QMessageBox, QInputDi
 from fk.core import events
 from fk.core.abstract_data_item import generate_unique_name, generate_uid
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.abstract_settings import S
 from fk.core.backlog import Backlog
 from fk.core.backlog_strategies import CreateBacklogStrategy, DeleteBacklogStrategy
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
@@ -61,7 +62,7 @@ class BacklogTableView(AbstractTableView[User, Backlog]):
         self._menu = self._init_menu(actions)
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         self.on(AfterSelectionChanged, lambda event, before, after: self._application.get_settings().set({
-            'Application.last_selected_backlog': after.get_uid() if after is not None else ''
+            S.APPLICATION_LAST_SELECTED_BACKLOG: after.get_uid() if after is not None else ''
         }))
         self._application = application
         self.update_actions(None)
@@ -153,7 +154,7 @@ class BacklogTableView(AbstractTableView[User, Backlog]):
     def _on_messages(self, event: str, source: AbstractEventSource) -> None:
         user = source.get_data().get_current_user()
         self.upstream_selected(user)
-        last_selected_oid = self._application.get_settings().get('Application.last_selected_backlog')
+        last_selected_oid = self._application.get_settings().get(S.APPLICATION_LAST_SELECTED_BACKLOG)
         if user is not None and last_selected_oid != '' and last_selected_oid in user:
             self.select(user[last_selected_oid])
 

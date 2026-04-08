@@ -19,6 +19,7 @@ from PySide6.QtGui import Qt, QAction, QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolButton, QMenu
 
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.abstract_settings import S
 from fk.core.backlog import Backlog
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.events import AfterSettingsChanged
@@ -97,7 +98,7 @@ class WorkitemWidget(QWidget):
 
     def update_category_name_in_selector(self):
         self._update_category_name_in_selector(
-            self._source_holder.get_settings().get('Application.selected_category'))
+            self._source_holder.get_settings().get(S.APPLICATION_SELECTED_CATEGORY))
 
     def _update_category_name_in_selector(self, uid):
         if uid == '':
@@ -106,13 +107,13 @@ class WorkitemWidget(QWidget):
             category = self._source_holder.get_source().find_category(uid)
             if category is None:
                 logger.warning(f'Category {uid} not found')
-                self._source_holder.get_settings().set({'Application.selected_category': ''})
+                self._source_holder.get_settings().set({S.APPLICATION_SELECTED_CATEGORY: ''})
             else:
                 self._category_selector.setText(category.get_name() + '   ')
 
     def on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.show_toolbar' in new_values:
-            show = new_values['Application.show_toolbar'] == 'True'
+        if S.APPLICATION_SHOW_TOOLBAR in new_values:
+            show = new_values[S.APPLICATION_SHOW_TOOLBAR] == 'True'
             logger.debug(f'Show workitem toolbar: {show}')
-        if 'Application.selected_category' in new_values:
-            self._update_category_name_in_selector(new_values['Application.selected_category'])
+        if S.APPLICATION_SELECTED_CATEGORY in new_values:
+            self._update_category_name_in_selector(new_values[S.APPLICATION_SELECTED_CATEGORY])

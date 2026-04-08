@@ -21,7 +21,7 @@ from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer, QMediaDevices, QAud
 from PySide6.QtWidgets import QWidget
 
 from fk.core.abstract_event_source import AbstractEventSource
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.events import SourceMessagesProcessed, AfterSettingsChanged, TimerWorkStart
 from fk.core.pomodoro import POMODORO_TYPE_NORMAL, Pomodoro
@@ -63,11 +63,11 @@ class AudioPlayer(QObject):
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
         needs_reset = False
         for key in new_values.keys():
-            if key in ['Application.play_alarm_sound', 'Application.alarm_sound_file', 'Application.alarm_sound_volume',
-                       'Application.play_rest_sound', 'Application.rest_sound_file', 'Application.rest_sound_volume',
-                       'Application.play_tick_sound', 'Application.tick_sound_file', 'Application.tick_sound_volume',
-                       'Application.play_notification_sound', 'Application.notification_sound_file', 'Application.notification_sound_volume',
-                       'Application.audio_output']:
+            if key in [S.APPLICATION_PLAY_ALARM_SOUND, S.APPLICATION_ALARM_SOUND_FILE, S.APPLICATION_ALARM_SOUND_VOLUME,
+                       S.APPLICATION_PLAY_REST_SOUND, S.APPLICATION_REST_SOUND_FILE, S.APPLICATION_REST_SOUND_VOLUME,
+                       S.APPLICATION_PLAY_TICK_SOUND, S.APPLICATION_TICK_SOUND_FILE, S.APPLICATION_TICK_SOUND_VOLUME,
+                       S.APPLICATION_PLAY_NOTIFICATION_SOUND, S.APPLICATION_NOTIFICATION_SOUND_FILE, S.APPLICATION_NOTIFICATION_SOUND_VOLUME,
+                       S.APPLICATION_AUDIO_OUTPUT]:
                 needs_reset = True
         if needs_reset:
             self._reset()
@@ -75,7 +75,7 @@ class AudioPlayer(QObject):
 
     def _reset(self):
         found: QAudioDevice = None
-        setting: str = self._settings.get('Application.audio_output')
+        setting: str = self._settings.get(S.APPLICATION_AUDIO_OUTPUT)
         default: QAudioDevice = None
         for device in QMediaDevices.audioOutputs():
             if device.id().toStdString() == setting:
@@ -118,13 +118,13 @@ class AudioPlayer(QObject):
                 and pomodoro is not None
                 and pomodoro.get_type() == POMODORO_TYPE_NORMAL
                 and pomodoro.get_rest_duration() > 0    # Normal break
-                and self._settings.get('Application.play_notification_sound') == 'True'):
+                and self._settings.get(S.APPLICATION_PLAY_NOTIFICATION_SOUND) == 'True'):
 
             self._audio_player.stop()  # don't overlap tick sound and wood knock sound
             self._reset()
 
-            self._set_volume('Application.notification_sound_volume')
-            self._audio_player.setSource(self._settings.get('Application.notification_sound_file'))
+            self._set_volume(S.APPLICATION_NOTIFICATION_SOUND_VOLUME)
+            self._audio_player.setSource(self._settings.get(S.APPLICATION_NOTIFICATION_SOUND_FILE))
             self._audio_player.setLoops(1)
 
             # Start ticking after notification
@@ -146,8 +146,8 @@ class AudioPlayer(QObject):
             self._audio_player.stop()  # In case it was ticking or playing rest music
 
             # Alarm bell
-            play_alarm_sound = (self._settings.get('Application.play_alarm_sound') == 'True')
-            play_rest_sound = (self._settings.get('Application.play_rest_sound') == 'True')
+            play_alarm_sound = (self._settings.get(S.APPLICATION_PLAY_ALARM_SOUND) == 'True')
+            play_rest_sound = (self._settings.get(S.APPLICATION_PLAY_REST_SOUND) == 'True')
             if play_alarm_sound and (
                 event == 'TimerRestComplete'
                 or not play_rest_sound
@@ -160,8 +160,8 @@ class AudioPlayer(QObject):
                 #  in the meantime, setting self._audio_player to None in _reset(). Bug #81 was
                 #  reported when this happened due to computer waking up from sleep.
                 if self._audio_player is not None:
-                    self._set_volume('Application.alarm_sound_volume')
-                    alarm_file = self._settings.get('Application.alarm_sound_file')
+                    self._set_volume(S.APPLICATION_ALARM_SOUND_VOLUME)
+                    alarm_file = self._settings.get(S.APPLICATION_ALARM_SOUND_FILE)
                     self._audio_player.setSource(alarm_file)
                     self._audio_player.setLoops(1)
                     self._audio_player.play()
@@ -175,15 +175,15 @@ class AudioPlayer(QObject):
 
     def _start_ticking(self, event: str = None, **kwargs) -> None:
         if self._audio_player is not None:
-            play_tick_sound = (self._settings.get('Application.play_tick_sound') == 'True')
+            play_tick_sound = (self._settings.get(S.APPLICATION_PLAY_TICK_SOUND) == 'True')
             if play_tick_sound:
                 self._audio_player.stop()     # Just in case
-                tick_file = self._settings.get('Application.tick_sound_file')
+                tick_file = self._settings.get(S.APPLICATION_TICK_SOUND_FILE)
                 self._reset()
 
                 # See comment in _play_audio()
                 if self._audio_player is not None:
-                    self._set_volume('Application.tick_sound_volume')
+                    self._set_volume(S.APPLICATION_TICK_SOUND_VOLUME)
                     self._audio_player.setSource(tick_file)
                     self._audio_player.setLoops(QMediaPlayer.Loops.Infinite)
                     self._audio_player.play()
@@ -210,15 +210,15 @@ class AudioPlayer(QObject):
             now = datetime.datetime.now(datetime.timezone.utc)
             elapsed_ms = round(pomodoro.get_elapsed_rest_duration(now) * 1000)
 
-            play_rest_sound = (self._settings.get('Application.play_rest_sound') == 'True')
+            play_rest_sound = (self._settings.get(S.APPLICATION_PLAY_REST_SOUND) == 'True')
             if play_rest_sound:
                 self._audio_player.stop()     # In case it was ticking
-                rest_file = self._settings.get('Application.rest_sound_file')
+                rest_file = self._settings.get(S.APPLICATION_REST_SOUND_FILE)
                 self._reset()
 
                 # See comment in _play_audio()
                 if self._audio_player is not None:
-                    self._set_volume('Application.rest_sound_volume')
+                    self._set_volume(S.APPLICATION_REST_SOUND_VOLUME)
                     self._audio_player.setSource(rest_file)
                     self._audio_player.setLoops(1)
                     self._seek_when_ready(elapsed_ms)

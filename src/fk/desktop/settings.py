@@ -25,7 +25,7 @@ from PySide6.QtWidgets import QLabel, QApplication, QTabWidget, QWidget, QDialog
     QSpinBox, QCheckBox, QFrame, QHBoxLayout, QPushButton, QComboBox, QDialogButtonBox, QFileDialog, QFontComboBox, \
     QMessageBox, QVBoxLayout, QKeySequenceEdit, QTimeEdit, QTableWidget, QTableWidgetItem, QSizePolicy
 
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.sandbox import get_sandbox_type
 from fk.qt.actions import Actions
 from fk.qt.qt_settings import QtSettings
@@ -101,7 +101,7 @@ class SettingsDialog(QDialog):
     def _init_sign_out_button(self):
         lst = self._data._definitions['Connection']
         for i, d in enumerate(lst):
-            if d[0] == 'WebsocketEventSource.logout':
+            if d[0] == S.WEBSOCKETEVENTSOURCE_LOGOUT:
                 t = list(d)
                 t[2] = f'Sign out <{self._data.get_username()}>'
                 lst[i] = tuple(t)

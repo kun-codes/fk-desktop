@@ -20,7 +20,7 @@ from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication, QMainWindow, QToolButton, QSpacerItem, \
     QPushButton
 
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_timer_display import AbstractTimerDisplay
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.events import AfterSettingsChanged
@@ -163,12 +163,12 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._header_text.setFont(self._application.get_header_font())
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.full_screen_notifications' in new_values:
+        if S.APPLICATION_FULL_SCREEN_NOTIFICATIONS in new_values:
             # If disabled while showing, hide the window
-            if new_values['Application.full_screen_notifications'] == 'False':
+            if new_values[S.APPLICATION_FULL_SCREEN_NOTIFICATIONS] == 'False':
                 self._hide()
-        if 'Application.focus_flavor' in new_values:
-            self.set_flavor(new_values['Application.focus_flavor'])
+        if S.APPLICATION_FOCUS_FLAVOR in new_values:
+            self.set_flavor(new_values[S.APPLICATION_FOCUS_FLAVOR])
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -181,7 +181,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
             self._header_text.setText(state_text)
 
     def mode_changed(self, old_mode: str, new_mode: str) -> None:
-        if self._settings.get('Application.full_screen_notifications') != 'True':
+        if self._settings.get(S.APPLICATION_FULL_SCREEN_NOTIFICATIONS) != 'True':
             return
 
         if new_mode in ('resting', 'long-resting'):
@@ -209,7 +209,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
             self._hide()
 
     def _disable_rest_screen(self):
-        self._settings.set({'Application.full_screen_notifications': 'False'})
+        self._settings.set({S.APPLICATION_FULL_SCREEN_NOTIFICATIONS: 'False'})
         self._hide()
 
     def resizeEvent(self, event):

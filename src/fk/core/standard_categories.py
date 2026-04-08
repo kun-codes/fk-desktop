@@ -4,7 +4,7 @@ from fk.core.category import Category
 
 
 def h3(text: str) -> str:
-    return f'#### <h3 style="font-family: Sans-serif; font-weight: 300;">{text.upper()}</h3>'
+    return f'#### <h3 style="font-family: Noto Sans, Sans-serif;">{text.upper()}</h3>'
 
 
 STANDARD_WORKITEM_CATEGORIES = f"""
@@ -13,35 +13,57 @@ STANDARD_WORKITEM_CATEGORIES = f"""
 > *"Forcing yourself to choose a 1-3-5 list means the things you get done will be the things you chose to do—rather than 
 what just happened to get done."*
 
-{h3('Key points')}
+{h3('Main idea')}
 
-- There are 5 small tasks in a single day. This will work best if you can break your work down into small chunks.
+Split your work into three categories: 
 
-- Prefilling your backlog and dragging work items from there will save you time.
+1. A **single** complex task (see advice below), 
+2. two secondary tasks for stuff like calls, meetings and helping your colleagues, 
+3. and three little "maintenance" things like cleaning your desk, responding to emails, or filling time sheets.
 
-- The big-win task must not be too big in order to allow for the remaining 5.
+Use it
 
-- Complete the "big" task before lunch.
+- For daily backlogs,
+- if you can free your entire morning from calls, meetings, etc.,
+- when you don't like breaking your complex work into subtasks.
 
 {h3('In practice')}
 
-Similar to 3-3-3, but without telling you how much time you need to spend. Doing 9 tasks within a day might be really
-hard.
+1. Decline calls and meetings in the first half of the day. Close your messenger, email, turn off the phone, etc. Your
+productivity in the morning defines whether the rest of the day will succeed or fail. Doing the "complex task" in the 
+afternoon is much, MUCH less efficient.
 
-The numbers are flexible. You can edit this template and specify your rules like 1-3-5 instead of 1-2-3. 
+2. Your first and most important work item will take about three hours or 6 pomodoros. 
+ * You aim at extracting maximum productivity from the morning session. The "big" item thus doesn't have to be specific 
+ -- "Work on the bugs in Jira" would be a valid target, as long as you focus on it. 
+ * Be realistic with the estimate for this session. On Monday you might be able to do 7 pomodoros, and on Friday -- 
+ only 5. Don't overestimate it, since you still want to complete the remaining things on your list.
+ * It is important that you don't plan anything else in between. Do not start working on other tasks before you 
+ completed the first one. Protect your Pomodoro twice as hard in the morning.
 
-Before leaving work, take a few minutes to define your 1-2-3 for the next day, so you're ready to hit the ground running 
-in the morning
+3. The second group is a good place for your calls, meetings and overall less important tasks. Create two of such items 
+and allocate 1 -- 2 pomodoros to each one of them.
 
-If your position is one where each day brings lots of unexpected tasks, try leaving one medium and two small tasks 
-blank, in preparation for the last-minute requests from your boss.
+4. Everything else goes into the third group. It doesn't deserve more than one, maximum two pomodoros *in total*. This 
+way you'll do about 6 + 3 + 1 = 10 pomodoros, which is a comfortable and realistic estimate for an average productive 
+day.
 
-Planning ahead like this also means you'll be able to have more informed conversations with your manager when he or she 
-drops something new on you that needs to be done right away—as well as the tools to re-prioritize your other work. For 
-example, when a surprise presentation falls on your lap, try: "Sure, I can get that to you by 3 PM, but the Q1 reports 
-won't be ready until tomorrow then, since I'd scheduled to work on that today."
+5. Before leaving work, take a few minutes to define your 1-2-3 for the next day, so you're ready to hit the ground 
+running in the morning.
 
-You will often merge 2 -- 3 small tasks into one
+{h3('Compared to other methods')}
+
+The 1-2-3, 3-3-3 and ABCD methods are very similar and focus on completing complex and unpleasant work first. They 
+assume that *everything* that is planned needs to be done. This class of techniques should work best for the likes of 
+software developers.
+
+- 1-2-3 Rule only defines the number of tasks (just six for a day!) and is the simplest of the three.
+- 3-3-3 Method prescribes the duration for the first task and has seven of them in total. It's a good choice if you 
+tend to underestimate your work.
+- ABCDE Method is the least prescriptive of the three, and helps you identify work that you can delegate to others or 
+not do at all.
+
+Other methods value simplicity, prioritize importance VS urgency, or focus on removing unnecessary work.
 
 {h3('See also')}
 
@@ -65,8 +87,61 @@ You will often merge 2 -- 3 small tasks into one
 
 # ABCDE: ABCDE Method
 
-This can be seen as an extension of 1-2-3 rule. Here A, B and C are synonymous to 1, 2 and 3, while D and E help you 
-shed unneeded work.
+This method helps you prioritize work items. It doesn't care about tasks count, duration or complexity.
+
+{h3('Main idea')}
+
+Split your work into five categories: 
+
+1. A: The most important, critical tasks, 
+2. B: Tasks with only minor consequences if not completed, 
+3. C: Nice-to-do items with no significant consequence whether done or not,
+4. D: Work that you can delegate to others,
+5. E: Activities you should eliminate altogether.
+
+Use it
+
+- For large and high-level backlogs (weekly TODOs, project plans, etc.),
+- if you don't want to estimate each task at this stage,
+- if you work in a team.
+
+{h3('In practice')}
+
+1. Decline calls and meetings in the first half of the day. Close your messenger, email, turn off the phone, etc. Your
+productivity in the morning defines whether the rest of the day will succeed or fail. Doing the "complex task" in the 
+afternoon is much, MUCH less efficient.
+
+2. Your first and most important work item will take about three hours or 6 pomodoros. 
+ * You aim at extracting maximum productivity from the morning session. The "big" item thus doesn't have to be specific 
+ -- "Work on the bugs in Jira" would be a valid target, as long as you focus on it. 
+ * Be realistic with the estimate for this session. On Monday you might be able to do 7 pomodoros, and on Friday -- 
+ only 5. Don't overestimate it, since you still want to complete the remaining things on your list.
+ * It is important that you don't plan anything else in between. Do not start working on other tasks before you 
+ completed the first one. Protect your Pomodoro twice as hard in the morning.
+
+3. The second group is a good place for your calls, meetings and overall less important tasks. Create two of such items 
+and allocate 1 -- 2 pomodoros to each one of them.
+
+4. Everything else goes into the third group. It doesn't deserve more than one, maximum two pomodoros *in total*. This 
+way you'll do about 6 + 3 + 1 = 10 pomodoros, which is a comfortable and realistic estimate for an average productive 
+day.
+
+5. Before leaving work, take a few minutes to define your 1-2-3 for the next day, so you're ready to hit the ground 
+running in the morning.
+
+{h3('Compared to other methods')}
+
+The 1-2-3, 3-3-3 and ABCD methods are very similar and focus on completing complex and unpleasant work first. They 
+assume that *everything* that is planned needs to be done. This class of techniques should work best for the likes of 
+software developers.
+
+- 1-2-3 Rule only defines the number of tasks (just six for a day!) and is the simplest of the three.
+- 3-3-3 Method prescribes the duration for the first task and has seven of them in total. It's a good choice if you 
+tend to underestimate your work.
+- ABCDE Method is the least prescriptive of the three, and helps you identify work that you can delegate to others or 
+not do at all.
+
+Other methods value simplicity, prioritize importance VS urgency, or focus on removing unnecessary work.
 
 {h3('Key points')}
 

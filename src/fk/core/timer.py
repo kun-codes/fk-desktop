@@ -19,7 +19,7 @@ import logging
 from fk.core import events
 from fk.core.abstract_event_emitter import AbstractEventEmitter
 from fk.core.abstract_event_source import AbstractEventSource
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_timer import AbstractTimer
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
 from fk.core.pomodoro import Pomodoro, POMODORO_TYPE_NORMAL, POMODORO_TYPE_TRACKER
@@ -130,8 +130,8 @@ class PomodoroTimer(AbstractEventEmitter):
 
         if target_state == 'rest':
             settings = self._source_holder.get_settings()
-            if settings.get('Pomodoro.end_of_work_notifications') == 'True':
-                notify_ms = float(settings.get('Pomodoro.end_of_work_notification_duration')) * 1000
+            if settings.get(S.POMODORO_END_OF_WORK_NOTIFICATIONS) == 'True':
+                notify_ms = float(settings.get(S.POMODORO_END_OF_WORK_NOTIFICATION_DURATION)) * 1000
                 if ms > notify_ms + 1000:
                     self._notification_timer.schedule(ms - notify_ms,
                                                       self._handle_notification,

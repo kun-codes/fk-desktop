@@ -22,6 +22,7 @@ from PySide6.QtGui import QFontMetrics, QStandardItem
 from PySide6.QtWidgets import QApplication
 
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.abstract_settings import S
 from fk.core.backlog import Backlog
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
@@ -221,9 +222,9 @@ class WorkitemModel(AbstractDropModel):
         self._font_category.setUnderline(True)
         self._backlog_or_tag = None
         settings = source_holder.get_settings()
-        self._hide_completed = (settings.get('Application.hide_completed') == 'True')
-        self._selected_category_uid = settings.get('Application.selected_category')
-        self._update_row_height(int(settings.get('Application.table_row_height')))
+        self._hide_completed = (settings.get(S.APPLICATION_HIDE_COMPLETED) == 'True')
+        self._selected_category_uid = settings.get(S.APPLICATION_SELECTED_CATEGORY)
+        self._update_row_height(int(settings.get(S.APPLICATION_TABLE_ROW_HEIGHT)))
         self.itemChanged.connect(lambda item: self.handle_rename(item, RenameWorkitemStrategy))
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         settings.on(AfterSettingsChanged, self._on_setting_changed)
@@ -234,10 +235,10 @@ class WorkitemModel(AbstractDropModel):
         self.setHorizontalHeaderItem(2, QStandardItem(''))
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.table_row_height' in new_values:
-            self._update_row_height(int(new_values["Application.table_row_height"]))
-        if 'Application.selected_category' in new_values:
-            self._selected_category_uid = new_values["Application.selected_category"]
+        if S.APPLICATION_TABLE_ROW_HEIGHT in new_values:
+            self._update_row_height(int(new_values[S.APPLICATION_TABLE_ROW_HEIGHT]))
+        if S.APPLICATION_SELECTED_CATEGORY in new_values:
+            self._selected_category_uid = new_values[S.APPLICATION_SELECTED_CATEGORY]
             self.load(self._backlog_or_tag)
 
     def _update_row_height(self, new_height: int):
@@ -429,7 +430,7 @@ class WorkitemModel(AbstractDropModel):
             # It's a rare event anyway
             self.load(self._backlog_or_tag)
         elif self._selected_category_uid == category.get_uid():
-            self._source_holder.get_settings().set({'Application.selected_category': ''})
+            self._source_holder.get_settings().set({S.APPLICATION_SELECTED_CATEGORY: ''})
 
     def _category_renamed(self, category: Category, old_name: str, new_name: str, **kwargs) -> None:
         if self._category_belongs_here(category):
