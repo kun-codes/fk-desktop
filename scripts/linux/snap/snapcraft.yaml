@@ -30,7 +30,7 @@ apps:
     flowkeeper:
         command: usr/bin/flowkeeper
         environment:
-            LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_ON:$SNAP/usr/lib:$LD_LIBRARY_PATH
+            LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_ON/pulseaudio:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_ON:$SNAP/usr/lib:$LD_LIBRARY_PATH
         common-id: org.flowkeeper.Flowkeeper
         desktop: usr/share/applications/org.flowkeeper.Flowkeeper.desktop
         plugs:
