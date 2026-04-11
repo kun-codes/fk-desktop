@@ -9,6 +9,12 @@ on:
       compiler:
         required: true
         type: string
+      tag:
+        required: true
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -113,9 +119,10 @@ jobs:
           echo "Cleaning /dist up"
           rm -rf dist/standalone
 
-      - name: Archive the binaries
-        uses: actions/upload-artifact@v4
+      - name: Create release
+        uses: softprops/action-gh-release@v1
         with:
-          name: dist-${{ inputs.os }}-${{ inputs.compiler }}-all
-          path: |
-            dist
+          tag_name: ${{ inputs.tag }}
+          name: "Build ${{ inputs.tag }}"
+          prerelease: true
+          files: "dist/*"

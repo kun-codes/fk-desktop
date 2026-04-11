@@ -3,8 +3,23 @@ name: Manual build - all
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
+  generate-tag:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Generate random 6-digit tag
+        id: tag
+        run: |
+          TAG=$(shuf -i 100000-999999 -n 1)
+          echo "tag=build-${TAG}" >> $GITHUB_OUTPUT
+
   call-build:
+    needs: generate-tag
     strategy:
       fail-fast: false
       matrix:
@@ -14,4 +29,5 @@ jobs:
     with:
       os: ${{ matrix.os }}
       compiler: ${{ matrix.compiler }}
+      tag: ${{ needs.generate-tag.outputs.tag }}
     secrets: inherit
