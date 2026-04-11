@@ -74,7 +74,7 @@ class PageExportSettings(QWizardPage):
         # noinspection PyUnresolvedReferences
         self.export_location.textChanged.connect(lambda s: self.wizard().set_filename(s))
         self.export_location.setPlaceholderText('Export filename')
-        if get_sandbox_type() == 'Flatpak':
+        if get_sandbox_type() is not None:
             # Force the user to use the XDG portal-aware file chooser
             self.export_location.setDisabled(True)
 

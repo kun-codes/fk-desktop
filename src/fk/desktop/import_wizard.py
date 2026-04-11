@@ -185,7 +185,7 @@ class PageImportSettings(QWizardPage):
         self.import_location.textChanged.connect(lambda s: self.completeChanged.emit())
         layout_h.addWidget(self.import_location)
 
-        if get_sandbox_type() == 'Flatpak':
+        if get_sandbox_type() is not None:
             # Force the user to use the XDG portal-aware file chooser
             self.import_location.setDisabled(True)
 
@@ -218,7 +218,7 @@ class PageImportSettings(QWizardPage):
         self.import_location.textChanged.connect(self.completeChanged)
         layout_h.addWidget(self.import_location)
 
-        if get_sandbox_type() == 'Flatpak':
+        if get_sandbox_type() is not None:
             # Force the user to use the XDG portal-aware file chooser
             self.import_location.setDisabled(True)
 
