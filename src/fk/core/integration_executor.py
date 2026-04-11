@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import logging
 import shlex
-from subprocess import Popen, DEVNULL
+from subprocess import Popen
 
 from fk.core.abstract_event_emitter import AbstractEventEmitter
 from fk.core.abstract_settings import AbstractSettings
@@ -88,4 +88,4 @@ class IntegrationExecutor:
                 args.insert(0, 'flatpak-spawn')
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'Received event {full_event}. Executing: {args}')
-            Popen(args, stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL)
+            Popen(args)
