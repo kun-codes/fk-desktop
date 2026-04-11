@@ -10,7 +10,6 @@ on:
 
 permissions:
   checks: write
-  contents: write
 
 jobs:
   run-tests:
@@ -59,53 +58,3 @@ jobs:
           REMOTE_JOB_TOKEN: ${{ secrets.REMOTE_MAIN_JOB_TOKEN }}
         run: |
           curl -I -u "github-trigger:$REMOTE_USER_TOKEN" "$REMOTE_URL/job/gh-main/build?token=$REMOTE_JOB_TOKEN" 2>/dev/null > /dev/null
-
-  generate-tag:
-    runs-on: ubuntu-22.04
-    if: github.event_name == 'push'
-    needs: run-tests
-    outputs:
-      tag: ${{ steps.tag.outputs.tag }}
-    steps:
-      - name: Generate random 6-digit tag
-        id: tag
-        run: |
-          TAG=$(shuf -i 100000-999999 -n 1)
-          echo "tag=build-${TAG}" >> $GITHUB_OUTPUT
-
-  call-build:
-    if: github.event_name == 'push'
-    needs: generate-tag
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, ubuntu-22.04-arm]
-        compiler: [nuitka, pyinstaller]
-    uses: ./.github/workflows/build.yml
-    with:
-      os: ${{ matrix.os }}
-      compiler: ${{ matrix.compiler }}
-    secrets: inherit
-
-  release:
-    if: github.event_name == 'push'
-    needs: [generate-tag, call-build]
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, ubuntu-22.04-arm]
-        compiler: [nuitka, pyinstaller]
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}-${{ matrix.compiler }}-all
-          path: .
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ needs.generate-tag.outputs.tag }}
-          name: "Dev build ${{ needs.generate-tag.outputs.tag }}"
-          prerelease: true
-          files: "./*"
