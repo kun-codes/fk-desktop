@@ -1,5 +1,8 @@
 name: Manual build - one
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -23,9 +26,22 @@ on:
           - pyinstaller
 
 jobs:
+  generate-tag:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Generate random 6-digit tag
+        id: tag
+        run: |
+          TAG=$(shuf -i 100000-999999 -n 1)
+          echo "tag=build-${TAG}" >> $GITHUB_OUTPUT
+
   call-build:
+    needs: generate-tag
     uses: ./.github/workflows/build.yml
     with:
       os: ${{ inputs.os }}
       compiler: ${{ inputs.compiler }}
+      tag: ${{ needs.generate-tag.outputs.tag }}
     secrets: inherit

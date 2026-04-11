@@ -20,23 +20,5 @@ jobs:
     with:
       os: ${{ matrix.os }}
       compiler: ${{ matrix.compiler }}
+      tag: ${{ github.ref_name }}
     secrets: inherit
-
-  release:
-    needs: call-build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, ubuntu-22.04-arm]
-        compiler: [nuitka, pyinstaller]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}-${{ matrix.compiler }}-all
-          path: .
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "./*"
