@@ -93,6 +93,5 @@ jobs:
         uses: johnwbyrd/update-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: "*"
+          files: "*.*"
           release: rc
-
