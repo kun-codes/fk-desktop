@@ -16,11 +16,11 @@
 import logging
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QFont
+from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication, QMainWindow, QToolButton, QSpacerItem, \
     QPushButton
 
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_timer_display import AbstractTimerDisplay
 from fk.core.event_source_holder import EventSourceHolder
 from fk.core.events import AfterSettingsChanged
@@ -44,6 +44,7 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
     _added: [QWidget]
     _do_not_show_again_button: QPushButton
     _corner_margin: int = 32
+    _prevent_deletion: QMainWindow
 
     def __init__(self,
                  parent: QWidget,
@@ -58,11 +59,11 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._settings = settings
         self._application = application
 
-        self._window = QMainWindow()
-        self._window.setWindowTitle("Flowkeeper - Rest Time")
-        self._window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self._window = None
 
-        self._window.setCentralWidget(self)
+        # A trick to preserve this widget from being deleted as we close() the window
+        self._prevent_deletion = QMainWindow()
+        self._prevent_deletion.setCentralWidget(self)
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
@@ -93,6 +94,27 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._settings.on(AfterSettingsChanged, self._on_setting_changed)
 
         self.setObjectName("restFullscreenWidget")
+
+    def _show(self):
+        if self._window is None:
+            self._window = QMainWindow()
+            self._window.setWindowTitle("Flowkeeper - Rest Time")
+            self._window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+            self._window.setCentralWidget(self)
+
+            # Show full screen on the active screen
+            screen = QApplication.primaryScreen()
+            screen_geometry = screen.availableGeometry()
+            self._window.setGeometry(screen_geometry)
+            self._window.showFullScreen()
+
+    def _hide(self):
+        if self._window is not None:
+            # "Move" this widget (self) to a hidden window to prevent its deletion
+            self._prevent_deletion.setCentralWidget(self)
+            self._window.close()
+            self._window.deleteLater()
+            self._window = None
 
     def set_flavor(self, flavor):
         layout = self.layout()
@@ -141,12 +163,12 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
         self._header_text.setFont(self._application.get_header_font())
 
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.full_screen_notifications' in new_values:
+        if S.APPLICATION_FULL_SCREEN_NOTIFICATIONS in new_values:
             # If disabled while showing, hide the window
-            if new_values['Application.full_screen_notifications'] == 'False' and self._window.isVisible():
-                self._window.hide()
-        if 'Application.focus_flavor' in new_values:
-            self.set_flavor(new_values['Application.focus_flavor'])
+            if new_values[S.APPLICATION_FULL_SCREEN_NOTIFICATIONS] == 'False':
+                self._hide()
+        if S.APPLICATION_FOCUS_FLAVOR in new_values:
+            self.set_flavor(new_values[S.APPLICATION_FOCUS_FLAVOR])
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -159,43 +181,36 @@ class RestFullscreenWidget(QWidget, AbstractTimerDisplay):
             self._header_text.setText(state_text)
 
     def mode_changed(self, old_mode: str, new_mode: str) -> None:
-        if self._settings.get('Application.full_screen_notifications') != 'True':
+        if self._settings.get(S.APPLICATION_FULL_SCREEN_NOTIFICATIONS) != 'True':
             return
 
         if new_mode in ('resting', 'long-resting'):
-            screen = QApplication.primaryScreen()
-
-            # Show full screen on the active screen
-            screen_geometry = screen.availableGeometry()
-            self._window.setGeometry(screen_geometry)
-            self._window.showFullScreen()
-
-            # Initial update of the timer
+            self._show()
             self._on_tick()
         else:
-            # Hide window when not resting
-            self._window.hide()
+            self._hide()
 
     def kill(self):
         super().kill()
         self._settings.unsubscribe(self._on_setting_changed)
         self._application.unsubscribe(self._on_fonts_changed)
-        self._window.hide()
-        self._window.deleteLater()
+        self._prevent_deletion.deleteLater()
+        self._prevent_deletion = None
+        self._hide()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton or event.button() == Qt.MouseButton.RightButton:
-            self._window.close()
+            self._hide()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Q and event.modifiers() == Qt.ControlModifier:
             QApplication.quit()
         elif event.key() == Qt.Key_Escape:
-            self._window.close()
+            self._hide()
 
     def _disable_rest_screen(self):
-        self._settings.set({'Application.full_screen_notifications': 'False'})
-        self._window.close()
+        self._settings.set({S.APPLICATION_FULL_SCREEN_NOTIFICATIONS: 'False'})
+        self._hide()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

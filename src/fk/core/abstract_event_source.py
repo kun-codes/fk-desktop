@@ -25,7 +25,7 @@ from fk.core import events
 from fk.core.abstract_cryptograph import AbstractCryptograph
 from fk.core.abstract_event_emitter import AbstractEventEmitter
 from fk.core.abstract_serializer import AbstractSerializer
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_strategy import AbstractStrategy
 from fk.core.backlog import Backlog
 from fk.core.category import Category
@@ -130,8 +130,8 @@ class AbstractEventSource(AbstractEventEmitter, ABC, Generic[TRoot]):
         self._cryptograph = cryptograph
         self._last_seq = 0
         self._estimated_count = 0
-        self._ignore_invalid_sequences = settings.get('Source.ignore_invalid_sequence') == 'True'
-        self._ignore_errors = settings.get('Source.ignore_errors') == 'True'
+        self._ignore_invalid_sequences = settings.get(S.SOURCE_IGNORE_INVALID_SEQUENCE) == 'True'
+        self._ignore_errors = settings.get(S.SOURCE_IGNORE_ERRORS) == 'True'
 
     # Override
     @abstractmethod
@@ -356,19 +356,19 @@ def start_workitem(workitem: Workitem, source: AbstractEventSource) -> None:
     else:
         rest_duration = None
 
-        if settings.get('Pomodoro.long_break_algorithm') == 'simple':
+        if settings.get(S.POMODORO_LONG_BREAK_ALGORITHM) == 'simple':
             timer: TimerData = source.get_data().get_current_user().get_timer()
             pomodoro_in_series = timer.get_pomodoro_in_series()
-            if pomodoro_in_series >= int(settings.get('Pomodoro.long_break_each')) - 1:
+            if pomodoro_in_series >= int(settings.get(S.POMODORO_LONG_BREAK_EACH)) - 1:
                 logger.debug('The user starts a workitem. A long break is suggested after it is completed.')
                 rest_duration = "0"
 
         if rest_duration is None:  # Default to standard duration
             logger.debug('The user starts a workitem. A short break is suggested after it is completed.')
-            rest_duration = settings.get('Pomodoro.default_rest_duration')
+            rest_duration = settings.get(S.POMODORO_DEFAULT_REST_DURATION)
 
         source.execute(StartTimerStrategy, [
             workitem.get_uid(),
-            settings.get('Pomodoro.default_work_duration'),
+            settings.get(S.POMODORO_DEFAULT_WORK_DURATION),
             rest_duration,
         ])

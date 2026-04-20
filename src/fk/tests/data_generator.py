@@ -316,7 +316,7 @@ def emulate(days: int, user: str) -> Iterable[AbstractStrategy]:
                                                    settings)
                     incomplete_workitems.remove(workitem_uid)
                     pomodoros = list(filter(lambda p: p[0] != workitem_uid, pomodoros))
-                elif random() < 0.05:
+                elif random() < 0.06:
                     yield DeleteWorkitemStrategy(seq,
                                                 now,
                                                 user,
@@ -386,7 +386,7 @@ def emulate(days: int, user: str) -> Iterable[AbstractStrategy]:
                                                        settings)
                         incomplete_workitems.remove(workitem_uid)
                         pomodoros = list(filter(lambda p: p[0] != workitem_uid, pomodoros))
-                    elif random() < 0.05:
+                    elif random() < 0.06:
                         now += datetime.timedelta(seconds=randint(1, pomodoro_duration - 1))
                         seq += 1
                         yield DeleteWorkitemStrategy(seq,

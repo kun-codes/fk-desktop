@@ -24,6 +24,10 @@ from fk.core.abstract_data_container import AbstractDataContainer
 logger = logging.getLogger(__name__)
 
 
+def h2(text: str) -> str:
+    return f'### <h2 style="font-family: Noto Sans, Sans-serif;">{text.upper()}</h2>'
+
+
 # TODO: Do not allow delimiters in category names
 class Category(AbstractDataContainer['Category', 'Category|User']):
     _is_system: bool
@@ -55,13 +59,24 @@ class Category(AbstractDataContainer['Category', 'Category|User']):
         return self._is_system
 
     def dump(self, indent: str = '', mask_uid: bool = False, mask_last_modified: bool = False) -> str:
+        info = ("<" + str(len(self._info)) + "> characters\n") if self._info is not None else "None\n"
         return f'{super().dump(indent, mask_uid, mask_last_modified)}\n' \
                f'{indent}  System: {self._is_system}\n' \
-               f'{indent}  Info: {("<" + str(len(self._info)) + "> characters\n") if self._info is not None else "None\n"}' \
+               f'{indent}  Info: {info}' \
                f'{indent}  Uses: <{len(self._uses)}>'
 
     def get_info(self):
-        return self._info
+        if self._info is not None and self._info != '':
+            return f'''
+{h2(self.get_short_name())}
+
+{self._info}
+'''
+        else:
+            return f'''{h2(self.get_short_name())}
+
+*No description*
+'''
 
     def get_short_name(self) -> str:
         name = self.get_name()

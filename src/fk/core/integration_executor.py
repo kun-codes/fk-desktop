@@ -22,7 +22,7 @@ import shlex
 from subprocess import Popen
 
 from fk.core.abstract_event_emitter import AbstractEventEmitter
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.events import AfterSettingsChanged, ALL_EVENTS, set_emitter_added_callback
 from fk.core.sandbox import get_sandbox_type
 
@@ -45,11 +45,11 @@ class IntegrationExecutor:
         self._resync_subscriptions_from_settings()
 
     def _on_setting_changed(self, new_values: dict[str, str], **kwargs):
-        if 'Integration.callbacks' in new_values:
-            self._sync_subscriptions(json.loads(new_values['Integration.callbacks']))
+        if S.INTEGRATION_CALLBACKS in new_values:
+            self._sync_subscriptions(json.loads(new_values[S.INTEGRATION_CALLBACKS]))
 
     def _resync_subscriptions_from_settings(self) -> None:
-        self._sync_subscriptions(json.loads(self._settings.get('Integration.callbacks')))
+        self._sync_subscriptions(json.loads(self._settings.get(S.INTEGRATION_CALLBACKS)))
 
     def _sync_subscriptions(self, new_conf: dict[str, str]) -> None:
         for event in new_conf:
@@ -84,7 +84,7 @@ class IntegrationExecutor:
             # formatted = command.format(**kwargs)
             args = shlex.split(formatted)
             env = None
-            if get_sandbox_type() == 'Flatpak' and self._settings.get('Integration.flatpak_spawn') == 'True':
+            if get_sandbox_type() == 'Flatpak' and self._settings.get(S.INTEGRATION_FLATPAK_SPAWN) == 'True':
                 # Use flatpak-spawn to execute commands outside the sandbox
                 args.insert(0, '--host')
                 args.insert(0, 'flatpak-spawn')

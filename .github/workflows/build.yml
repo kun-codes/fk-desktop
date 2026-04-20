@@ -34,6 +34,7 @@ jobs:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.MAC_SIGN_CERT }}
           P12_PASSWORD: ${{ secrets.MAC_SIGN_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.MAC_KEYCHAIN_PASSWORD }}
+          INPUT_COMPILER: ${{ inputs.compiler }}
         shell: bash
         run: |
           export FK_VERSION=$(scripts/common/get-version.sh)
@@ -59,7 +60,7 @@ jobs:
           fi
           pip install -r requirements.txt
 
-          if [[ "${{ inputs.compiler}}" == "nuitka" ]]; then
+          if [[ "$INPUT_COMPILER" == "nuitka" ]]; then
             pip install nuitka
           else
             pip install pyinstaller
@@ -121,14 +122,16 @@ jobs:
           NOTARIZATION_PASSWORD: ${{ secrets.MAC_NOTARIZATION_PASSWORD }}
           NOTARIZATION_ID: ${{ secrets.MAC_NOTARIZATION_ID }}
           NOTARIZATION_TEAM: ${{ secrets.MAC_NOTARIZATION_TEAM }}
+          INPUT_OS: ${{ inputs.os }}
+          INPUT_COMPILER: ${{ inputs.compiler }}
         shell: bash
         run: |
           echo "Prepare dist directory"
           mkdir -p dist/standalone
-          PREFIX="dist/flowkeeper-${FK_VERSION}-${{ inputs.os }}-${{ inputs.compiler }}"
+          PREFIX="dist/flowkeeper-${FK_VERSION}-${INPUT_OS}-${INPUT_COMPILER}"
           echo "Will create artifacts with $PREFIX prefix"
 
-          if [[ "${{ inputs.compiler}}" == "nuitka" ]]; then
+          if [[ "$INPUT_COMPILER" == "nuitka" ]]; then
             if [[ "$OSTYPE" == "darwin"* ]]; then
               echo "macOS doesn't support portable binaries"
               mv build/desktop.app dist/standalone/Flowkeeper.app
@@ -148,7 +151,7 @@ jobs:
               mv build/flowkeeper/* dist/standalone
             fi
           fi
-          echo "Moved ${{ inputs.compiler }} binaries to dist/standalone"
+          echo "Moved $INPUT_COMPILER binaries to dist/standalone"
           find dist/
 
           if [[ "$OSTYPE" == "darwin"* ]]; then

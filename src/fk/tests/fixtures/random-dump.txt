@@ -638,7 +638,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <356> characters
         Uses: <2>
       Intervals: ['From 2025-12-10 12:56:53.090000+00:00 to None [1500.0 / 300.0]', 'From 2025-12-10 13:27:39.090000+00:00 to 2025-12-10 14:36:25.090000+00:00 [1500.0 / 0.0]', 'From 2025-12-10 14:37:27.090000+00:00 to 2025-12-10 14:51:34.090000+00:00 [1500.0 / 300.0]']
       State: finished
@@ -697,7 +697,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <318> characters
         Uses: <1>
       Intervals: ['From 2025-12-10 12:34:17.080000+00:00 to 2025-12-10 12:47:04.080000+00:00 [0 / 0]', 'From 2025-12-10 12:47:27.090000+00:00 to 2025-12-10 12:55:32.090000+00:00 [0 / 0]']
       State: running
@@ -756,7 +756,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <356> characters
         Uses: <2>
       Intervals: ['From 2025-12-10 11:32:32.070000+00:00 to None [1500.0 / 300.0]', 'From 2025-12-10 12:03:15.070000+00:00 to None [1500.0 / 300.0]']
       State: running
@@ -2992,7 +2992,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <4> characters
+        Info: <0> characters
         Uses: <1>
       Intervals: ['From 2025-12-09 13:06:54.010000+00:00 to None [1500.0 / 300.0]', 'From 2025-12-09 13:38:18.010000+00:00 to None [1500.0 / 300.0]', 'From 2025-12-09 14:09:07.010000+00:00 to 2025-12-09 15:02:59.010000+00:00 [1500.0 / 0.0]']
       State: running
@@ -3030,11 +3030,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2025-12-19 12:53:11+00:00 to None [1500.0 / 300.0]']
       State: running
@@ -4413,11 +4413,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: C - Could have (desirable but not necessary)
+        Name: C - Could have (desirable but not necessary / if time allows some of thest may be delivered)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <224> characters
         Uses: <3>
       Intervals: ['From 2025-12-22 12:57:53.090000+00:00 to None [1500.0 / 300.0]', 'From 2025-12-22 13:39:17.090000+00:00 to 2025-12-22 13:41:42.090000+00:00 [1500.0 / 300.0]']
       State: finished
@@ -4850,7 +4850,7 @@
       Owner: user@local.host
       Parent UID: d3b951bf-379e-41d1-a4c2-1eb5054ce693
       Create date: 2025-12-15 14:22:01+00:00
-      Last modified: 2025-12-15 14:22:01+00:00
+      Last modified: 2025-12-15 14:22:07+00:00
       Name: Send idea for #Beta
       Children:
       - <Empty>
@@ -4953,11 +4953,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2026-01-09 19:38:33.100000+00:00 to 2026-01-09 19:59:21.100000+00:00 [1500.0 / 300.0]', 'From 2026-01-09 20:00:24.100000+00:00 to None [1500.0 / 300.0]', 'From 2026-01-09 20:32:03.100000+00:00 to 2026-01-09 21:05:21.100000+00:00 [1500.0 / 0.0]']
       State: running
@@ -5361,11 +5361,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: M - Must have (failure if at least one is not done)
+        Name: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <447> characters
         Uses: <5>
       Intervals: ['From 2025-12-22 12:20:59.060000+00:00 to 2025-12-22 12:28:37.060000+00:00 [0 / 0]', 'From 2025-12-22 12:29:37.070000+00:00 to 2025-12-22 12:37:55.070000+00:00 [0 / 0]', 'From 2025-12-22 12:38:58.080000+00:00 to 2025-12-22 12:50:04.080000+00:00 [0 / 0]', 'From 2025-12-22 12:51:06.090000+00:00 to 2025-12-22 12:56:26.090000+00:00 [0 / 0]']
       State: finished
@@ -5675,11 +5675,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: W - Won't have (least-critical or not appropriate)
+        Name: W - Won't have (least-critical or not appropriate / the project will not deliver these)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <632> characters
         Uses: <4>
       Intervals: ['From 2025-12-19 12:04:20+00:00 to None [1500.0 / 300.0]', 'From 2025-12-19 12:35:19+00:00 to 2025-12-19 12:52:16+00:00 [1500.0 / 300.0]']
       State: finished
@@ -5807,11 +5807,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2025-12-22 11:08:25.010000+00:00 to None [1500.0 / 300.0]']
       State: finished
@@ -6385,7 +6385,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <301> characters
         Uses: <3>
       Intervals: ['From 2025-12-24 19:30:57.010000+00:00 to 2025-12-24 19:43:23.010000+00:00 [0 / 0]']
       State: finished
@@ -6693,7 +6693,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <570> characters
         Uses: <1>
       Intervals: ['From 2025-12-24 12:08:20+00:00 to None [1500.0 / 300.0]', 'From 2025-12-24 12:56:19+00:00 to None [1500.0 / 300.0]', 'From 2025-12-24 13:27:18+00:00 to None [1500.0 / 300.0]']
       State: running
@@ -6777,7 +6777,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <412> characters
         Uses: <1>
       Intervals: ['From 2025-12-29 13:48:00+00:00 to 2025-12-29 14:03:40+00:00 [1500.0 / 300.0]', 'From 2025-12-29 14:04:41+00:00 to None [1500.0 / 300.0]']
       State: finished
@@ -6844,7 +6844,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <301> characters
         Uses: <3>
       Intervals: ['From 2025-12-29 12:59:24+00:00 to None [1500.0 / 300.0]', 'From 2025-12-29 13:30:56+00:00 to 2025-12-29 13:46:44+00:00 [1500.0 / 300.0]']
       State: running
@@ -6886,7 +6886,7 @@
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <301> characters
         Uses: <3>
       Intervals: []
       State: new
@@ -9477,11 +9477,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2026-01-09 21:44:45.100000+00:00 to 2026-01-09 22:00:03.100000+00:00 [1500.0 / 300.0]', 'From 2026-01-09 22:00:41.100000+00:00 to None [1500.0 / 300.0]', 'From 2026-01-09 22:32:32.100000+00:00 to 2026-01-09 23:00:22.100000+00:00 [1500.0 / 300.0]']
       State: finished
@@ -9592,11 +9592,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2026-01-09 21:06:35.100000+00:00 to None [1500.0 / 300.0]', 'From 2026-01-09 21:38:45.100000+00:00 to 2026-01-09 21:43:32.100000+00:00 [1500.0 / 300.0]']
       State: finished
@@ -9809,11 +9809,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: M - Must have (failure if at least one is not done)
+        Name: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <447> characters
         Uses: <5>
       Intervals: ['From 2026-01-09 16:29:32.050000+00:00 to 2026-01-09 16:43:20.050000+00:00 [0 / 0]', 'From 2026-01-09 16:44:56.060000+00:00 to 2026-01-09 16:53:06.060000+00:00 [0 / 0]', 'From 2026-01-09 16:54:17.070000+00:00 to 2026-01-09 17:11:28.070000+00:00 [0 / 0]', 'From 2026-01-09 17:12:23.080000+00:00 to 2026-01-09 17:24:36.080000+00:00 [0 / 0]', 'From 2026-01-09 17:25:21.090000+00:00 to 2026-01-09 17:33:20.090000+00:00 [0 / 0]', 'From 2026-01-09 17:34:15.100000+00:00 to 2026-01-09 17:45:52.100000+00:00 [0 / 0]']
       State: running
@@ -9893,11 +9893,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2026-01-09 13:50:01+00:00 to None [1500.0 / 300.0]', 'From 2026-01-09 14:21:24+00:00 to None [1500.0 / 300.0]', 'From 2026-01-09 14:52:40+00:00 to None [1500.0 / 300.0]']
       State: running
@@ -9968,11 +9968,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: W - Won't have (least-critical or not appropriate)
+        Name: W - Won't have (least-critical or not appropriate / the project will not deliver these)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <632> characters
         Uses: <4>
       Intervals: ['From 2026-01-12 17:36:49.060000+00:00 to None [1500.0 / 300.0]', 'From 2026-01-12 18:21:10.060000+00:00 to None [1500.0 / 300.0]']
       State: finished
@@ -10061,11 +10061,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: M - Must have (failure if at least one is not done)
+        Name: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <447> characters
         Uses: <5>
       Intervals: ['From 2026-01-12 16:46:06.030000+00:00 to 2026-01-12 16:58:42.030000+00:00 [0 / 0]', 'From 2026-01-12 16:59:51.040000+00:00 to 2026-01-12 17:09:16.040000+00:00 [0 / 0]', 'From 2026-01-12 17:10:35.050000+00:00 to 2026-01-12 17:22:33.050000+00:00 [0 / 0]', 'From 2026-01-12 17:23:31.060000+00:00 to 2026-01-12 17:35:44.060000+00:00 [0 / 0]']
       State: running
@@ -10137,11 +10137,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: W - Won't have (least-critical or not appropriate)
+        Name: W - Won't have (least-critical or not appropriate / the project will not deliver these)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <632> characters
         Uses: <4>
       Intervals: ['From 2026-01-12 15:04:07.020000+00:00 to 2026-01-12 16:13:34.020000+00:00 [1500.0 / 0.0]', 'From 2026-01-12 16:15:00.020000+00:00 to None [1500.0 / 300.0]']
       State: finished
@@ -10269,11 +10269,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: S - Should have (important but not necessary)
+        Name: S - Should have (important but not necessary / it is currently intended to deliver those as well)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <331> characters
         Uses: <7>
       Intervals: ['From 2026-01-12 13:25:37+00:00 to None [1500.0 / 300.0]', 'From 2026-01-12 13:56:41+00:00 to 2026-01-12 14:09:21+00:00 [1500.0 / 300.0]', 'From 2026-01-12 14:10:51+00:00 to None [1500.0 / 300.0]']
       State: running
@@ -10336,11 +10336,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: M - Must have (failure if at least one is not done)
+        Name: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <447> characters
         Uses: <5>
       Intervals: ['From 2026-01-12 12:37:54+00:00 to None [1500.0 / 300.0]', 'From 2026-01-12 13:08:39+00:00 to 2026-01-12 13:24:26+00:00 [1500.0 / 300.0]']
       State: finished
@@ -10923,11 +10923,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: C - Could have (desirable but not necessary)
+        Name: C - Could have (desirable but not necessary / if time allows some of thest may be delivered)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <224> characters
         Uses: <3>
       Intervals: []
       State: finished
@@ -11016,11 +11016,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: W - Won't have (least-critical or not appropriate)
+        Name: W - Won't have (least-critical or not appropriate / the project will not deliver these)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <632> characters
         Uses: <4>
       Intervals: ['From 2026-01-15 16:25:05.010000+00:00 to 2026-01-15 16:36:33.010000+00:00 [0 / 0]', 'From 2026-01-15 16:38:07.020000+00:00 to 2026-01-15 16:44:20.020000+00:00 [0 / 0]', 'From 2026-01-15 16:45:04.030000+00:00 to 2026-01-15 16:47:46.030000+00:00 [0 / 0]', 'From 2026-01-15 16:49:01.040000+00:00 to 2026-01-15 17:00:00.040000+00:00 [0 / 0]']
       State: running
@@ -11100,11 +11100,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: M - Must have (failure if at least one is not done)
+        Name: M - Must have (failure if at least one is not done / without these, it is not worth delivering the project)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <447> characters
         Uses: <5>
       Intervals: ['From 2026-01-15 14:39:57+00:00 to 2026-01-15 15:55:16+00:00 [1500.0 / 0.0]', 'From 2026-01-15 15:56:16+00:00 to 2026-01-15 16:23:49+00:00 [1500.0 / 300.0]']
       State: finished
@@ -12803,11 +12803,11 @@
         Parent UID: #wg_MSCW
         Create date: 2000-01-02 23:00:00+00:00
         Last modified: 2000-01-02 23:00:00+00:00
-        Name: C - Could have (desirable but not necessary)
+        Name: C - Could have (desirable but not necessary / if time allows some of thest may be delivered)
         Children:
         - <Empty>
         System: True
-        Info: <0> characters
+        Info: <224> characters
         Uses: <3>
       Intervals: ['From 2026-01-29 12:53:05+00:00 to None [1500.0 / 300.0]']
       State: finished

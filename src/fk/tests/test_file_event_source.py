@@ -20,7 +20,7 @@ from unittest import TestCase
 
 from fk.core.abstract_cryptograph import AbstractCryptograph
 from fk.core.abstract_serializer import AbstractSerializer, T
-from fk.core.abstract_settings import AbstractSettings
+from fk.core.abstract_settings import AbstractSettings, S
 from fk.core.abstract_strategy import AbstractStrategy
 from fk.core.backlog_strategies import CreateBacklogStrategy
 from fk.core.fernet_cryptograph import FernetCryptograph
@@ -55,8 +55,8 @@ class FilteringSerializer(AbstractSerializer):
 def _create_filtered_source(strategy_filter: Callable[[AbstractStrategy], bool] = None) -> FileEventSource:
     _settings = MockSettings(filename=RAND_FILENAME)
     _settings.set({
-        'Source.ignore_errors': 'True',
-        'Source.ignore_invalid_sequence': 'True',
+        S.SOURCE_IGNORE_ERRORS: 'True',
+        S.SOURCE_IGNORE_INVALID_SEQUENCE: 'True',
     })  # Otherwise we won't be able to start it
     _cryptograph = FernetCryptograph(_settings)
     _source = FileEventSource[Tenant](_settings, _cryptograph, Tenant(_settings))

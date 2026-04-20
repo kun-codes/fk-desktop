@@ -76,8 +76,9 @@ class CategoryWidget(QWidget):
         if upstream is None:
             self._breadcrumbs.setText('N/A')
         else:
-            text = ''
+            tokens = []
             while not upstream.is_root():
-                text = f'> {upstream.get_name()} {text}'
+                tokens.append(upstream.get_name())
                 upstream = upstream.get_parent()
-            self._breadcrumbs.setText(f'All {text}')
+            tokens.append('All')
+            self._breadcrumbs.setText(' > '.join(reversed(tokens)))

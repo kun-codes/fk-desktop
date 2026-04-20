@@ -50,7 +50,7 @@ QMainWindow, #StatsWindow, #FocusBackground {
     border-right: 1px solid $BORDER_COLOR;
 }
 
-#workitems_table, #users_table, #backlogs_table, #backlogs_widget, #workitems_widget, #categories_table, #categories_widget, #categories_breadcrumbs {
+#workitems_table, #users_table, #backlogs_table, #backlogs_widget, #workitems_widget, #categories_table, #categories_widget, #categories_breadcrumbs, #categories_info {
     color: $TABLE_TEXT_COLOR;
     border: none;
     padding: 10px;
@@ -76,8 +76,12 @@ QMainWindow, #StatsWindow, #FocusBackground {
     border-right: 1px solid $BORDER_COLOR;
 }
 
-#workitems_widget, #statsView, #statsMain {
+#workitems_widget, #statsView, #statsMain, #categories_info {
     background-color: $PRIMARY_BG_COLOR;
+}
+
+#categories_info {
+    font-family: "EB Garamond", "Crimson Text", "Georgia", "IBM Plex Serif", "Plex Serif", "Times New Roman", Serif;
 }
 
 #workitems_table {

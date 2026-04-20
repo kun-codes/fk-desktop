@@ -17,11 +17,12 @@ import datetime
 import logging
 
 from PySide6 import QtGui, QtWidgets
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QFontMetrics, QStandardItem
 from PySide6.QtWidgets import QApplication
 
 from fk.core.abstract_event_source import AbstractEventSource
+from fk.core.abstract_settings import S
 from fk.core.backlog import Backlog
 from fk.core.category import Category
 from fk.core.event_source_holder import EventSourceHolder, AfterSourceChanged
@@ -207,6 +208,8 @@ class WorkitemModel(AbstractDropModel):
     _hide_completed: bool
     _selected_category_uid: str
 
+    data_loaded = Signal(None)
+
     def __init__(self, parent: QtWidgets.QWidget, source_holder: EventSourceHolder):
         super().__init__(1, parent, source_holder)
         self._font_new = QtGui.QFont()
@@ -219,18 +222,23 @@ class WorkitemModel(AbstractDropModel):
         self._font_category.setUnderline(True)
         self._backlog_or_tag = None
         settings = source_holder.get_settings()
-        self._hide_completed = (settings.get('Application.hide_completed') == 'True')
-        self._selected_category_uid = settings.get('Application.selected_category')
-        self._update_row_height(int(settings.get('Application.table_row_height')))
+        self._hide_completed = (settings.get(S.APPLICATION_HIDE_COMPLETED) == 'True')
+        self._selected_category_uid = settings.get(S.APPLICATION_SELECTED_CATEGORY)
+        self._update_row_height(int(settings.get(S.APPLICATION_TABLE_ROW_HEIGHT)))
         self.itemChanged.connect(lambda item: self.handle_rename(item, RenameWorkitemStrategy))
         source_holder.on(AfterSourceChanged, self._on_source_changed)
         settings.on(AfterSettingsChanged, self._on_setting_changed)
 
+        # Pre-create columns, so that we can define their resize policy in the view
+        self.setHorizontalHeaderItem(0, QStandardItem(''))
+        self.setHorizontalHeaderItem(1, QStandardItem(''))
+        self.setHorizontalHeaderItem(2, QStandardItem(''))
+
     def _on_setting_changed(self, event: str, old_values: dict[str, str], new_values: dict[str, str]):
-        if 'Application.table_row_height' in new_values:
-            self._update_row_height(int(new_values["Application.table_row_height"]))
-        if 'Application.selected_category' in new_values:
-            self._selected_category_uid = new_values["Application.selected_category"]
+        if S.APPLICATION_TABLE_ROW_HEIGHT in new_values:
+            self._update_row_height(int(new_values[S.APPLICATION_TABLE_ROW_HEIGHT]))
+        if S.APPLICATION_SELECTED_CATEGORY in new_values:
+            self._selected_category_uid = new_values[S.APPLICATION_SELECTED_CATEGORY]
             self.load(self._backlog_or_tag)
 
     def _update_row_height(self, new_height: int):
@@ -401,7 +409,6 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(c)
                         if new_index >= 0:
-                            print('Moving the row because workitem category changed')
                             self._move_row(workitem, new_index)
                             return
 
@@ -410,7 +417,6 @@ class WorkitemModel(AbstractDropModel):
                     if c.get_parent() == parent_category:
                         new_index = self._get_category_insertion_index(None)
                         if new_index >= 0:
-                            print('Moving the row because workitem category is removed')
                             self._move_row(workitem, new_index)
                             return
 
@@ -424,7 +430,7 @@ class WorkitemModel(AbstractDropModel):
             # It's a rare event anyway
             self.load(self._backlog_or_tag)
         elif self._selected_category_uid == category.get_uid():
-            self._source_holder.get_settings().set({'Application.selected_category': ''})
+            self._source_holder.get_settings().set({S.APPLICATION_SELECTED_CATEGORY: ''})
 
     def _category_renamed(self, category: Category, old_name: str, new_name: str, **kwargs) -> None:
         if self._category_belongs_here(category):
@@ -507,7 +513,7 @@ class WorkitemModel(AbstractDropModel):
 
     def load(self, backlog_or_tag: Backlog | Tag) -> None:
         logger.debug(f'WorkitemModel.load({backlog_or_tag})')
-        self.clear()
+        self.removeRows(0, self.rowCount())
         self._backlog_or_tag = backlog_or_tag
         if backlog_or_tag is not None:
             if type(backlog_or_tag) is Backlog:
@@ -537,9 +543,7 @@ class WorkitemModel(AbstractDropModel):
                         if not self._hide_completed or not workitem.is_sealed():
                             self.appendRow(self.item_for_object(workitem))
 
-        self.setHorizontalHeaderItem(0, QStandardItem(''))
-        self.setHorizontalHeaderItem(1, QStandardItem(''))
-        self.setHorizontalHeaderItem(2, QStandardItem(''))
+        self.data_loaded.emit()
 
     def hide_completed(self, hide: bool) -> None:
         self._hide_completed = hide
